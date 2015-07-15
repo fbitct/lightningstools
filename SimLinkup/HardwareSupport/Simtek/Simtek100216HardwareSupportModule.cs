@@ -5,6 +5,8 @@ using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -22,6 +24,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal _ftitInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _ftitInputSignalChangedEventHandler;
         private AnalogSignal _ftitOutputSignal;
+
+        private IFanTurbineInletTemperature _renderer = new FanTurbineInletTemperature();
+
         private bool _isDisposed;
 
         #endregion
@@ -84,6 +89,15 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         #endregion
+
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.InletTemperatureDegreesCelcius = (float)_ftitInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
+        #endregion
+
 
         #region Signals Handling
 

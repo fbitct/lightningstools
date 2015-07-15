@@ -5,6 +5,8 @@ using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -22,10 +24,13 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal _airspeedInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _airspeedInputSignalChangedEventHandler;
         private AnalogSignal _airspeedOutputSignal;
-        private bool _isDisposed;
+
         private AnalogSignal _machInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _machInputSignalChangedEventHandler;
         private AnalogSignal _machOutputSignal;
+
+        private IAirspeedIndicator _renderer = new AirspeedIndicator();
+        private bool _isDisposed;
 
         #endregion
 
@@ -87,6 +92,18 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         #endregion
+
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            //_renderer.InstrumentState.AirspeedIndexKnots = _airspeedIndexInputSignal;
+            //_renderer.InstrumentState.NeverExceedSpeedKnots = _neverExceedSpeedInputSignal;
+            _renderer.InstrumentState.AirspeedKnots = (float)_airspeedInputSignal.State;
+            _renderer.InstrumentState.MachNumber = (float)_machInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
+        #endregion
+
 
         #region Signals Handling
 

@@ -5,6 +5,8 @@ using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -22,6 +24,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal _epuFuelPercentageInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _epuFuelPercentageInputSignalChangedEventHandler;
         private AnalogSignal _epuFuelPercentageOutputSignal;
+
+        private IEPUFuelGauge _renderer = new EPUFuelGauge();
+
         private bool _isDisposed;
 
         #endregion
@@ -83,6 +88,14 @@ namespace SimLinkup.HardwareSupport.Simtek
             get { return null; }
         }
 
+        #endregion
+
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.FuelRemainingPercent = (float)_epuFuelPercentageInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
         #endregion
 
         #region Signals Handling

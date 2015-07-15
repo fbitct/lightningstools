@@ -5,6 +5,8 @@ using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -30,6 +32,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal _foreRightOutputSignal;
         private AnalogSignal _counterOutputSignal;
 
+        private IFuelQuantityIndicator _renderer = new FuelQuantityIndicator();
         #endregion
 
         #region Constructors
@@ -89,6 +92,16 @@ namespace SimLinkup.HardwareSupport.Simtek
             get { return null; }
         }
 
+        #endregion
+
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.AftLeftFuelQuantityPounds = (float)_aftLeftFuelInputSignal.State;
+            _renderer.InstrumentState.ForeRightFuelQuantityPounds = (float)_foreRightFuelInputSignal.State;
+            _renderer.InstrumentState.TotalFuelQuantityPounds = (float)_totalFuelInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
         #endregion
 
         #region Signals Handling
@@ -298,11 +311,11 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             if (_foreRightOutputSignal != null)
             {
-                _foreRightOutputSignal.State = (((_foreRightFuelInputSignal.State / 1000.00) / 42.00) * 20.00)-10.00;
+                _foreRightOutputSignal.State = (((_foreRightFuelInputSignal.State / 100.00) / 42.00) * 20.00)-10.00;
             }
             if (_aftLeftOutputSignal != null)
             {
-                _aftLeftOutputSignal.State = (((_aftLeftFuelInputSignal.State / 1000.00) / 42.00) * 20.00)-10.00;
+                _aftLeftOutputSignal.State = (((_aftLeftFuelInputSignal.State / 100.00) / 42.00) * 20.00)-10.00;
             }
             if (_counterOutputSignal != null)
             {

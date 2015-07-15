@@ -6,6 +6,8 @@ using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -25,6 +27,8 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal.AnalogSignalChangedEventHandler _oilPressureInputSignalChangedEventHandler;
         private AnalogSignal _oilPressureSINOutputSignal;
         private AnalogSignal _oilPressureCOSOutputSignal;
+
+        private IOilPressureGauge _renderer = new OilPressureGauge();
 
         #endregion
 
@@ -85,6 +89,14 @@ namespace SimLinkup.HardwareSupport.Simtek
             get { return null; }
         }
 
+        #endregion
+
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.OilPressurePercent = (float)_oilPressureInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
         #endregion
 
         #region Signals Handling

@@ -6,6 +6,8 @@ using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -28,7 +30,8 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal _barometricPressureInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _altitudeInputSignalChangedEventHandler;
         private AnalogSignal.AnalogSignalChangedEventHandler _barometricPressureInputSignalChangedEventHandler;
-   
+
+        private IAltimeter _renderer = new Altimeter();
         private bool _isDisposed;
 
         #endregion
@@ -98,6 +101,15 @@ namespace SimLinkup.HardwareSupport.Simtek
             get { return null; }
         }
 
+        #endregion
+
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.BarometricPressure = (float)_barometricPressureInputSignal.State * 100;
+            _renderer.InstrumentState.IndicatedAltitudeFeetMSL = (float)_altitudeInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
         #endregion
 
         #region Signals Handling

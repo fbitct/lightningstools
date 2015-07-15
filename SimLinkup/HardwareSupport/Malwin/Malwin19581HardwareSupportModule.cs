@@ -98,7 +98,8 @@ namespace SimLinkup.HardwareSupport.Malwin
         #region Visualization
         public override void Render(Graphics g, Rectangle destinationRectangle)
         {
-            
+            g.Clear(Color.Black);
+
             _hydARenderer.InstrumentState.HydraulicPressurePoundsPerSquareInch = (float)_hydPressureAInputSignal.State;
             var hydARectangle = new Rectangle(destinationRectangle.X, destinationRectangle.Y, destinationRectangle.Width / 2, destinationRectangle.Height / 2);
             using (var hydABitmap = new Bitmap(hydARectangle.Width, hydARectangle.Height))

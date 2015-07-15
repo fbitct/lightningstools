@@ -22,6 +22,7 @@ namespace F4Utils.SimSupport
         private const float GLIDESLOPE_DEVIATION_LIMIT_DEGREES = 1.0F;
         private const float LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
         private const float SIDESLIP_ANGLE_LIMIT_DEGREES = 5;
+        private const float HPA_TO_HG = 1.0f/33.8638866667f;
         private Nullable<double> PITCH_TIME_CONSTANT = 60;
         private Nullable<double> ROLL_TIME_CONSTANT = 60;
         private readonly Dictionary<string, ISimOutput> _simOutputs = new Dictionary<string, ISimOutput>();
@@ -137,7 +138,18 @@ namespace F4Utils.SimSupport
                         SetOutput((AnalogSignal)output,  -_lastFlightData.aauz);
                         break;
                     case F4SimOutputs.ALTIMETER__BAROMETRIC_PRESSURE_INCHES_HG:
-                        SetOutput((AnalogSignal)output, _lastFlightData.AltCalReading /100.0f);
+                        if ((((AltBits)_lastFlightData.altBits) & AltBits.CalType) == AltBits.CalType)
+                        {
+                            var hg = _lastFlightData.AltCalReading / 100.0f;
+                            SetOutput((AnalogSignal)output, hg);
+                        }
+                        else
+                        {
+                            var hPa = _lastFlightData.AltCalReading;
+                            var hg = hPa * HPA_TO_HG;
+                            SetOutput((AnalogSignal)output,hg );
+
+                        }
                         break;
                     case F4SimOutputs.TRUE_ALTITUDE__MSL:
                         SetOutput((AnalogSignal)output,  -_lastFlightData.z);
@@ -451,10 +463,10 @@ namespace F4Utils.SimSupport
                         break;
 
                     case F4SimOutputs.FUEL_QTY__FOREWARD_QTY_LBS:
-                        SetOutput((AnalogSignal)output,  _lastFlightData.fwd);
+                        SetOutput((AnalogSignal)output,  _lastFlightData.fwd/10.0f);
                         break;
                     case F4SimOutputs.FUEL_QTY__AFT_QTY_LBS:
-                        SetOutput((AnalogSignal)output,  _lastFlightData.aft);
+                        SetOutput((AnalogSignal)output,  _lastFlightData.aft/10.0f);
                         break;
                     case F4SimOutputs.FUEL_QTY__TOTAL_FUEL_LBS:
                         SetOutput((AnalogSignal)output,  _lastFlightData.total);

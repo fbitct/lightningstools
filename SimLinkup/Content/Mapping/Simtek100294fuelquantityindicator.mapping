@@ -45,46 +45,46 @@
     </SignalMapping>
 
 
-    <!-- *********************************************************************-->
-    <!-- MAPPINGS FROM SIMTEK HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
-    <!-- *********************************************************************-->
-    <!-- AFT/LEFT NEEDLE -->
+    <!-- *********************************************************************--><!--
+    --><!-- MAPPINGS FROM SIMTEK HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS --><!--
+    --><!-- *********************************************************************--><!--
+    --><!-- AFT/LEFT NEEDLE --><!--
     <SignalMapping>
-      <!-- SIMTEK FUEL QUANTITY INDICATOR HARDWARE SUPPORT MODULE AFT/LEFT NEEDLE OUTPUT -->
+      --><!-- SIMTEK FUEL QUANTITY INDICATOR HARDWARE SUPPORT MODULE AFT/LEFT NEEDLE OUTPUT --><!--
       <Source xsi:type="AnalogSignal">
         <Id>100294_AL_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 36 -->
+      --><!-- ANALOG DEVICES DAC OUTPUT 36 --><!--
       <Destination xsi:type="AnalogSignal">
         <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][36]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
-    <!-- FORE/RIGHT NEEDLE -->
+    --><!-- FORE/RIGHT NEEDLE --><!--
     <SignalMapping>
-      <!-- SIMTEK FUEL QUANTITY INDICATOR HARDWARE SUPPORT MODULE FORE/RIGHT NEEDLE OUTPUT -->
+      --><!-- SIMTEK FUEL QUANTITY INDICATOR HARDWARE SUPPORT MODULE FORE/RIGHT NEEDLE OUTPUT --><!--
       <Source xsi:type="AnalogSignal">
         <Id>100294_FR_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 37 -->
+      --><!-- ANALOG DEVICES DAC OUTPUT 37 --><!--
       <Destination xsi:type="AnalogSignal">
         <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][37]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
-    <!-- TOTAL FUEL COUNTER  -->
+    --><!-- TOTAL FUEL COUNTER  --><!--
     <SignalMapping>
-      <!-- SIMTEK FUEL QUANTITY INDICATOR HARDWARE SUPPORT MODULE TOTAL FUEL COUNTER OUTPUT -->
+      --><!-- SIMTEK FUEL QUANTITY INDICATOR HARDWARE SUPPORT MODULE TOTAL FUEL COUNTER OUTPUT --><!--
       <Source xsi:type="AnalogSignal">
         <Id>100294_Counter_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 38 -->
+      --><!-- ANALOG DEVICES DAC OUTPUT 38 --><!--
       <Destination xsi:type="AnalogSignal">
         <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][38]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
-    </SignalMapping>
+    </SignalMapping>-->
   </SignalMappings>
 </MappingProfile>

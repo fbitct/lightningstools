@@ -6,6 +6,8 @@ using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
 using log4net;
+using System.Drawing;
+using LightningGauges.Renderers.F16;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -30,6 +32,11 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal.AnalogSignalChangedEventHandler _rollInputSignalChangedEventHandler;
         private AnalogSignal _rollSinOutputSignal;
 
+        private DigitalSignal _offFlagInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _offFlagInputSignalChangedEventHandler;
+        private DigitalSignal _offFlagOutputSignal;
+
+        private IStandbyADI _renderer = new StandbyADI();
         #endregion
 
         #region Constructors
@@ -76,7 +83,7 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override DigitalSignal[] DigitalInputs
         {
-            get { return null; }
+            get { return new[] { _offFlagInputSignal }; }
         }
 
         public override AnalogSignal[] AnalogOutputs
@@ -89,9 +96,19 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override DigitalSignal[] DigitalOutputs
         {
-            get { return null; }
+            get { return new[] { _offFlagOutputSignal }; }
         }
 
+        #endregion
+
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.PitchDegrees = (float)_pitchInputSignal.State;
+            _renderer.InstrumentState.RollDegrees = (float)_rollInputSignal.State;
+            _renderer.InstrumentState.OffFlag = _offFlagInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
         #endregion
 
         #region Signals Handling
@@ -104,16 +121,23 @@ namespace SimLinkup.HardwareSupport.Simtek
                 pitch_InputSignalChanged;
             _rollInputSignalChangedEventHandler =
                 roll_InputSignalChanged;
+            _offFlagInputSignalChangedEventHandler =
+                offFlag_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
         {
             _pitchInputSignalChangedEventHandler = null;
             _rollInputSignalChangedEventHandler = null;
+            _offFlagInputSignalChangedEventHandler = null;
         }
 
         private void RegisterForInputEvents()
         {
+            if (_offFlagInputSignal != null)
+            {
+                _offFlagInputSignal.SignalChanged += _offFlagInputSignalChangedEventHandler;
+            }
             if (_pitchInputSignal != null)
             {
                 _pitchInputSignal.SignalChanged += _pitchInputSignalChangedEventHandler;
@@ -126,6 +150,16 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         private void UnregisterForInputEvents()
         {
+            if (_offFlagInputSignalChangedEventHandler != null && _offFlagInputSignal != null)
+            {
+                try
+                {
+                    _offFlagInputSignal.SignalChanged -= _offFlagInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
             if (_pitchInputSignalChangedEventHandler != null && _pitchInputSignal != null)
             {
                 try
@@ -156,7 +190,23 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             _pitchInputSignal = CreatePitchInputSignal();
             _rollInputSignal = CreateRollInputSignal();
+            _offFlagInputSignal = CreateOFFFlagInputSignal();
         }
+        private DigitalSignal CreateOFFFlagInputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Inputs";
+            thisSignal.CollectionName = "Digital Inputs";
+            thisSignal.FriendlyName = "OFF Flag";
+            thisSignal.Id = "10033501_OFF_Flag_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
+        }
+
 
         private AnalogSignal CreatePitchInputSignal()
         {
@@ -200,6 +250,21 @@ namespace SimLinkup.HardwareSupport.Simtek
             _pitchCosOutputSignal = CreatePitchCosOutputSignal();
             _rollSinOutputSignal = CreateRollSinOutputSignal();
             _rollCosOutputSignal = CreateRollCosOutputSignal();
+            _offFlagOutputSignal = CreateOFFFlagOutputSignal();
+        }
+        private DigitalSignal CreateOFFFlagOutputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
+            thisSignal.CollectionName = "Digital Outputs";
+            thisSignal.FriendlyName = "OFF Flag";
+            thisSignal.Id = "10033501_OFF_Flag_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
         }
 
         private AnalogSignal CreatePitchSinOutputSignal()
@@ -287,7 +352,14 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             UpdateRollOutputValues();
         }
-
+        private void offFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
+        {
+            UpdateOFFFlagOutputValue();
+        }
+        private void UpdateOFFFlagOutputValue()
+        {
+            _offFlagOutputSignal.State = _offFlagInputSignal.State;
+        }
         private void UpdatePitchOutputValues()
         {
             if (_pitchInputSignal != null)

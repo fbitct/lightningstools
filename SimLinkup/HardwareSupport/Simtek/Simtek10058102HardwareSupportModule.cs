@@ -5,6 +5,8 @@ using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -20,13 +22,14 @@ namespace SimLinkup.HardwareSupport.Simtek
         #region Instance variables
 
         private bool _isDisposed;
-        private AnalogSignal _vviInputSignal;
-        private AnalogSignal.AnalogSignalChangedEventHandler _vviInputSignalChangedEventHandler;
-        private AnalogSignal _vviOutputSignal;
+        private AnalogSignal _verticalVelocityInputSignal;
+        private AnalogSignal.AnalogSignalChangedEventHandler _verticalVelocityInputSignalChangedEventHandler;
+        private AnalogSignal _verticalVelocityOutputSignal;
 
-        private DigitalSignal _vviPowerInputSignal;
-        private DigitalSignal.SignalChangedEventHandler _vviPowerInputSignalChangedEventHandler;
+        private DigitalSignal _offFlagInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _offFlagInputSignalChangedEventHandler;
 
+        private IVerticalVelocityIndicatorUSA _renderer = new VerticalVelocityIndicatorUSA();
         #endregion
 
         #region Constructors
@@ -68,17 +71,17 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override AnalogSignal[] AnalogInputs
         {
-            get { return new[] {_vviInputSignal}; }
+            get { return new[] {_verticalVelocityInputSignal}; }
         }
 
         public override DigitalSignal[] DigitalInputs
         {
-            get { return new[] {_vviPowerInputSignal}; }
+            get { return new[] {_offFlagInputSignal}; }
         }
 
         public override AnalogSignal[] AnalogOutputs
         {
-            get { return new[] {_vviOutputSignal}; }
+            get { return new[] {_verticalVelocityOutputSignal}; }
         }
 
         public override DigitalSignal[] DigitalOutputs
@@ -88,52 +91,74 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         #endregion
 
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            g.Clear(Color.Black);
+
+            _renderer.InstrumentState.OffFlag = _offFlagInputSignal.State;
+            _renderer.InstrumentState.VerticalVelocityFeet = (float)_verticalVelocityInputSignal.State;
+
+            var vviWidth = (int)(destinationRectangle.Height * (102f / 227f));
+            var vviHeight = destinationRectangle.Height;
+
+            using (var vviBmp = new Bitmap(vviWidth, vviHeight))
+            using (var vviBmpGraphics = Graphics.FromImage(vviBmp))
+            {
+                _renderer.Render(vviBmpGraphics, new Rectangle(0,0, vviWidth, vviHeight));
+                var targetRectangle = new Rectangle(destinationRectangle.X + (int)((destinationRectangle.Width - vviWidth) / 2.0), destinationRectangle.Y, vviWidth, destinationRectangle.Height);
+                g.DrawImage(vviBmp, targetRectangle);
+            }
+        }
+        #endregion
+
+
         #region Signals Handling
 
         #region Signals Event Handling
 
         private void CreateInputEventHandlers()
         {
-            _vviInputSignalChangedEventHandler = vvi_InputSignalChanged;
-            _vviPowerInputSignalChangedEventHandler =
+            _verticalVelocityInputSignalChangedEventHandler = vvi_InputSignalChanged;
+            _offFlagInputSignalChangedEventHandler =
                 vviPower_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
         {
-            _vviInputSignalChangedEventHandler = null;
-            _vviPowerInputSignalChangedEventHandler = null;
+            _verticalVelocityInputSignalChangedEventHandler = null;
+            _offFlagInputSignalChangedEventHandler = null;
         }
 
         private void RegisterForInputEvents()
         {
-            if (_vviInputSignal != null)
+            if (_verticalVelocityInputSignal != null)
             {
-                _vviInputSignal.SignalChanged += _vviInputSignalChangedEventHandler;
+                _verticalVelocityInputSignal.SignalChanged += _verticalVelocityInputSignalChangedEventHandler;
             }
-            if (_vviPowerInputSignal != null)
+            if (_offFlagInputSignal != null)
             {
-                _vviPowerInputSignal.SignalChanged += _vviPowerInputSignalChangedEventHandler;
+                _offFlagInputSignal.SignalChanged += _offFlagInputSignalChangedEventHandler;
             }
         }
 
         private void UnregisterForInputEvents()
         {
-            if (_vviInputSignalChangedEventHandler != null && _vviInputSignal != null)
+            if (_verticalVelocityInputSignalChangedEventHandler != null && _verticalVelocityInputSignal != null)
             {
                 try
                 {
-                    _vviInputSignal.SignalChanged -= _vviInputSignalChangedEventHandler;
+                    _verticalVelocityInputSignal.SignalChanged -= _verticalVelocityInputSignalChangedEventHandler;
                 }
                 catch (RemotingException)
                 {
                 }
             }
-            if (_vviPowerInputSignalChangedEventHandler != null && _vviPowerInputSignal != null)
+            if (_offFlagInputSignalChangedEventHandler != null && _offFlagInputSignal != null)
             {
                 try
                 {
-                    _vviPowerInputSignal.SignalChanged -= _vviPowerInputSignalChangedEventHandler;
+                    _offFlagInputSignal.SignalChanged -= _offFlagInputSignalChangedEventHandler;
                 }
                 catch (RemotingException)
                 {
@@ -147,16 +172,16 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         private void CreateInputSignals()
         {
-            _vviInputSignal = CreateVVIInputSignal();
-            _vviPowerInputSignal = CreateVVIPowerInputSignal();
+            _verticalVelocityInputSignal = CreateVerticalVelocityInputSignal();
+            _offFlagInputSignal = CreateOffFlagInputSignal();
         }
 
         private void CreateOutputSignals()
         {
-            _vviOutputSignal = CreateVVIOutputSignal();
+            _verticalVelocityOutputSignal = CreateVerticalVelocityOutputSignal();
         }
 
-        private AnalogSignal CreateVVIOutputSignal()
+        private AnalogSignal CreateVerticalVelocityOutputSignal()
         {
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Outputs";
@@ -174,13 +199,13 @@ namespace SimLinkup.HardwareSupport.Simtek
             return thisSignal;
         }
 
-        private AnalogSignal CreateVVIInputSignal()
+        private AnalogSignal CreateVerticalVelocityInputSignal()
         {
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "VVI";
-            thisSignal.Id = "10058102_VVI_From_Sim";
+            thisSignal.FriendlyName = "Vertical Velocity (feet per minute)";
+            thisSignal.Id = "10058102_Vertical_Velocity_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
@@ -191,12 +216,12 @@ namespace SimLinkup.HardwareSupport.Simtek
             return thisSignal;
         }
 
-        private DigitalSignal CreateVVIPowerInputSignal()
+        private DigitalSignal CreateOffFlagInputSignal()
         {
             var thisSignal = new DigitalSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Digital Inputs";
-            thisSignal.FriendlyName = "VVI Power Off Flag";
+            thisSignal.FriendlyName = "OFF Flag";
             thisSignal.Id = "10058102_VVI_Power_Off_Flag_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -219,17 +244,17 @@ namespace SimLinkup.HardwareSupport.Simtek
         private void UpdateOutputValues()
         {
             var vviPowerOff = false;
-            if (_vviPowerInputSignal != null)
+            if (_offFlagInputSignal != null)
             {
-                vviPowerOff = _vviPowerInputSignal.State;
+                vviPowerOff = _offFlagInputSignal.State;
             }
 
-            if (_vviInputSignal != null)
+            if (_verticalVelocityInputSignal != null)
             {
-                var vviInput = _vviInputSignal.State;
+                var vviInput = _verticalVelocityInputSignal.State;
                 double vviOutputValue = 0;
 
-                if (_vviOutputSignal != null)
+                if (_verticalVelocityOutputSignal != null)
                 {
                     if (vviPowerOff)
                     {
@@ -284,7 +309,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         vviOutputValue = 10;
                     }
 
-                    _vviOutputSignal.State = vviOutputValue;
+                    _verticalVelocityOutputSignal.State = vviOutputValue;
                 }
             }
         }

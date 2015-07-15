@@ -27,7 +27,7 @@
     </Source>
     <!-- SIMTEK AOA OFF FLAG INPUT-->
     <Destination xsi:type="DigitalSignal">
-      <Id>10058201_AOA_Power_Off_Flag_From_Sim</Id>
+      <Id>10058201_OFF_Flag_From_Sim</Id>
     </Destination>
     <MappingType>StraightThrough</MappingType>
     </SignalMapping>

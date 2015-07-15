@@ -6,6 +6,8 @@ using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -26,6 +28,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal _nozzlePositionSINOutputSignal;
         private AnalogSignal _nozzlePositionCOSOutputSignal;
 
+        private INozzlePositionIndicator _renderer = new NozzlePositionIndicator();
         #endregion
 
         #region Constructors
@@ -85,6 +88,14 @@ namespace SimLinkup.HardwareSupport.Simtek
             get { return null; }
         }
 
+        #endregion
+
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.NozzlePositionPercent = (float)_nozzlePositionInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
         #endregion
 
         #region Signals Handling

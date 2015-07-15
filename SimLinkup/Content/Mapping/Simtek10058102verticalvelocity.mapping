@@ -13,7 +13,7 @@
       </Source>
       <!-- SIMTEK VVI (FPM) INPUT-->
       <Destination xsi:type="AnalogSignal">
-        <Id>10058102_VVI_From_Sim</Id>
+        <Id>10058102_Vertical_Velocity_From_Sim</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>

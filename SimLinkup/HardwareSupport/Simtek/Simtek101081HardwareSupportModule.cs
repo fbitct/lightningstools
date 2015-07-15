@@ -6,6 +6,8 @@ using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -25,6 +27,12 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal _altitudeFineSinOutputSignal;
         private AnalogSignal _altitudeInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _altitudeInputSignalChangedEventHandler;
+
+        private AnalogSignal _barometricPressureInputSignal;
+        private AnalogSignal.AnalogSignalChangedEventHandler _barometricPressureInputSignalChangedEventHandler;
+
+
+        private IAltimeter _renderer = new Altimeter();
         private bool _isDisposed;
 
         #endregion
@@ -68,7 +76,7 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override AnalogSignal[] AnalogInputs
         {
-            get { return new[] {_altitudeInputSignal}; }
+            get { return new[] {_altitudeInputSignal, _barometricPressureInputSignal}; }
         }
 
         public override DigitalSignal[] DigitalInputs
@@ -91,6 +99,15 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         #endregion
 
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.BarometricPressure = (float)_barometricPressureInputSignal.State *100;
+            _renderer.InstrumentState.IndicatedAltitudeFeetMSL = (float)_altitudeInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
+        #endregion
+
         #region Signals Handling
 
         #region Signals Event Handling
@@ -99,11 +116,14 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             _altitudeInputSignalChangedEventHandler =
                 altitude_InputSignalChanged;
+            _barometricPressureInputSignalChangedEventHandler =
+                barometricPressure_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
         {
             _altitudeInputSignalChangedEventHandler = null;
+            _barometricPressureInputSignalChangedEventHandler = null;
         }
 
         private void RegisterForInputEvents()
@@ -111,6 +131,10 @@ namespace SimLinkup.HardwareSupport.Simtek
             if (_altitudeInputSignal != null)
             {
                 _altitudeInputSignal.SignalChanged += _altitudeInputSignalChangedEventHandler;
+            }
+            if (_barometricPressureInputSignal != null)
+            {
+                _barometricPressureInputSignal.SignalChanged += _barometricPressureInputSignalChangedEventHandler;
             }
         }
 
@@ -126,6 +150,16 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                 }
             }
+            if (_barometricPressureInputSignalChangedEventHandler != null && _barometricPressureInputSignal != null)
+            {
+                try
+                {
+                    _barometricPressureInputSignal.SignalChanged -= _barometricPressureInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
         }
 
         #endregion
@@ -135,6 +169,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private void CreateInputSignals()
         {
             _altitudeInputSignal = CreateAltitudeInputSignal();
+            _barometricPressureInputSignal = CreateBarometricPressureInputSignal();
         }
 
         private AnalogSignal CreateAltitudeInputSignal()
@@ -151,6 +186,22 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.State = 0;
             thisSignal.MinValue = -1000;
             thisSignal.MaxValue = 80000;
+            return thisSignal;
+        }
+        private AnalogSignal CreateBarometricPressureInputSignal()
+        {
+            var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
+            thisSignal.CollectionName = "Analog Inputs";
+            thisSignal.FriendlyName = "Barometric Pressure (Indicated), In. Hg.";
+            thisSignal.Id = "101081_Barometric_Pressure_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = 29.92;
+            thisSignal.MinValue = 28.10;
+            thisSignal.MaxValue = 31.00;
             return thisSignal;
         }
 
@@ -221,7 +272,14 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             UpdateAltitudeOutputValues();
         }
-
+        private void barometricPressure_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
+        {
+            UpdateBarometricPressureOutputValues();
+        }
+        private void UpdateBarometricPressureOutputValues()
+        {
+            //do nothing
+        }
         private void UpdateAltitudeOutputValues()
         {
             if (_altitudeInputSignal != null)

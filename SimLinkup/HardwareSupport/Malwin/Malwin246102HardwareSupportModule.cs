@@ -7,6 +7,8 @@ using Common.MacroProgramming;
 using Common.Math;
 using log4net;
 using SimLinkup.HardwareSupport.Simtek;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Malwin
 {
@@ -25,6 +27,9 @@ namespace SimLinkup.HardwareSupport.Malwin
         private AnalogSignal _cabinPressureAltitudeInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _cabinPressureAltitudeInputSignalChangedEventHandler;
         private AnalogSignal _cabinPressureAltitudeSinOutputSignal;
+
+        private ICabinPressureAltitudeIndicator _renderer = new CabinPressureAltitudeIndicator();
+
         private bool _isDisposed;
 
         #endregion
@@ -86,6 +91,14 @@ namespace SimLinkup.HardwareSupport.Malwin
             get { return null; }
         }
 
+        #endregion
+
+        #region Visualization 
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.CabinPressureAltitudeFeet = (float)_cabinPressureAltitudeInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
         #endregion
 
         #region Signals Handling

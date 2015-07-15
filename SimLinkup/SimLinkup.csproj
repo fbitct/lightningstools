@@ -227,13 +227,13 @@
     <None Include="Content\Mapping\Simtek100295fuelflowindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Mapping\Simtek100294fuelquantityindicator.mapping.orig">
+    <None Include="Content\Mapping\Simtek100294fuelquantityindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Mapping\Simtek100181altimeter.mapping.orig">
+    <None Include="Content\Mapping\Simtek100181altimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\Simtek100194machmeter.mapping">
@@ -274,6 +274,12 @@
     <None Include="Content\Mapping\Simtek10058201angleofattack.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
+    </None>
+    <None Include="Content\Mapping\Simtek101082machmeter.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\Simtek101084standbyADI.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\Simtek101088nozzlePositionIndicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

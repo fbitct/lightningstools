@@ -5,6 +5,8 @@ using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -25,6 +27,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal _aoaOutputSignal;
         private DigitalSignal.SignalChangedEventHandler _aoaPowerInputSignalChangedEventHandler;
         private DigitalSignal _aoaPowerOffInputSignal;
+
+        private IAngleOfAttackIndicator _renderer = new AngleOfAttackIndicator();
+
         private bool _isDisposed;
 
         #endregion
@@ -143,6 +148,26 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         #endregion
 
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            g.Clear(Color.Black);
+            _renderer.InstrumentState.OffFlag = _aoaPowerOffInputSignal.State;
+            _renderer.InstrumentState.AngleOfAttackDegrees = (float)_aoaInputSignal.State;
+
+            var aoaWidth = (int)(destinationRectangle.Height * (102f / 227f));
+            var aoaHeight = destinationRectangle.Height;
+
+            using (var aoaBmp = new Bitmap(aoaWidth, aoaHeight))
+            using (var aoaBmpGraphics = Graphics.FromImage(aoaBmp))
+            {
+                _renderer.Render(aoaBmpGraphics, new Rectangle(0, 0, aoaWidth, aoaHeight));
+                var targetRectangle = new Rectangle(destinationRectangle.X + (int)((destinationRectangle.Width - aoaWidth) / 2.0), destinationRectangle.Y, aoaWidth, destinationRectangle.Height);
+                g.DrawImage(aoaBmp, targetRectangle);
+            }
+        }
+        #endregion
+
         #region Signal Creation
 
         private void CreateInputSignals()
@@ -179,7 +204,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "AOA";
+            thisSignal.FriendlyName = "Angle of Attack [alpha] (degrees)";
             thisSignal.Id = "10058201_AOA_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -196,8 +221,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             var thisSignal = new DigitalSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Digital Inputs";
-            thisSignal.FriendlyName = "AOA Power Off Flag";
-            thisSignal.Id = "10058201_AOA_Power_Off_Flag_From_Sim";
+            thisSignal.FriendlyName = "OFF Flag";
+            thisSignal.Id = "10058201_OFF_Flag_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;

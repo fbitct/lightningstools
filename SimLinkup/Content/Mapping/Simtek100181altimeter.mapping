@@ -18,29 +18,42 @@
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
-    <!-- *********************************************************************-->
-    <!-- MAPPINGS FROM SIMTEK HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
-    <!-- *********************************************************************-->
-    <!-- FINE ALTITUDE (SIN ) -->
+    <!-- ALTIMETER CALIBRATION IN INCHES HG -->
     <SignalMapping>
-      <!-- SIMTEK ALTIMETER HARDWARE SUPPORT MODULE FINE ALTITUDE (SIN) OUTPUT -->
+      <!-- F4 ALTIMETER CALIBRATION OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_ALTIMETER__BAROMETRIC_PRESSURE_INCHES_HG</Id>
+      </Source>
+      <!-- SIMTEK ALTIMETER CALIBRATION INPUT-->
+      <Destination xsi:type="AnalogSignal">
+        <Id>101081_Barometric_Pressure_From_Sim</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+    
+    <!-- *********************************************************************--><!--
+    --><!-- MAPPINGS FROM SIMTEK HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS --><!--
+    --><!-- *********************************************************************--><!--
+    --><!-- FINE ALTITUDE (SIN ) --><!--
+    <SignalMapping>
+      --><!-- SIMTEK ALTIMETER HARDWARE SUPPORT MODULE FINE ALTITUDE (SIN) OUTPUT --><!--
       <Source xsi:type="AnalogSignal">
         <Id>101081_Altitude_Fine_SIN_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 2 -->
+      --><!-- ANALOG DEVICES DAC OUTPUT 2 --><!--
       <Destination xsi:type="AnalogSignal">
         <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][2]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
-    <!-- FINE ALTITUDE (COS) -->
+    --><!-- FINE ALTITUDE (COS) --><!--
     <SignalMapping>
-      <!-- SIMTEK ALTIMETER HARDWARE SUPPORT MODULE FINE ALTITUDE (COS) OUTPUT -->
+      --><!-- SIMTEK ALTIMETER HARDWARE SUPPORT MODULE FINE ALTITUDE (COS) OUTPUT --><!--
       <Source xsi:type="AnalogSignal">
         <Id>101081_Altitude_Fine_COS_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 3 -->
+      --><!-- ANALOG DEVICES DAC OUTPUT 3 --><!--
       <Destination xsi:type="AnalogSignal">
         <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][3]</Id>
       </Destination>
@@ -48,18 +61,18 @@
     </SignalMapping>
 
 
-    <!-- COARSE ALTITUDE  -->
+    --><!-- COARSE ALTITUDE  --><!--
     <SignalMapping>
-      <!-- SIMTEK ALTIMETER HARDWARE SUPPORT MODULE COARSE ALTITUDE OUTPUT -->
+      --><!-- SIMTEK ALTIMETER HARDWARE SUPPORT MODULE COARSE ALTITUDE OUTPUT --><!--
       <Source xsi:type="AnalogSignal">
         <Id>101081_Altitude_Coarse_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 4-->
+      --><!-- ANALOG DEVICES DAC OUTPUT 4--><!--
       <Destination xsi:type="AnalogSignal">
         <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][4]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
-    </SignalMapping>
+    </SignalMapping>-->
     
   </SignalMappings>
 </MappingProfile>
