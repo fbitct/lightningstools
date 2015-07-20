@@ -89,12 +89,13 @@ namespace F4Utils.SimSupport
             {
                 _log.Error(e.Message, e);
             }
-            var fi = new FileInfo(file);
+            var fi = !string.IsNullOrEmpty(file) ? new FileInfo(file) : null;
             return FileExists(file) ? fi : FindThreeDeeCockpitFileUsingOldMethod();
         }
 
         private static bool FileExists(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName)) return false;
             try
             {
                 var invalidPathChars = Path.GetInvalidPathChars();
