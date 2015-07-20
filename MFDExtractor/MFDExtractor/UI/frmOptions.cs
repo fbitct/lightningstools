@@ -50,6 +50,7 @@ namespace MFDExtractor.UI
         private bool _extractorRunningStateOnFormOpen;
         private bool _formLoading = true;
 
+        private bool _loadingSettings;
 
         /// <summary>
         ///     Event handler for the form's Load event
@@ -256,6 +257,7 @@ namespace MFDExtractor.UI
         }
         private void SettingsChanged(object sender, EventArgs e)
         {
+            if (_loadingSettings) return;
             //store the currently-selected user control on the Options form (required because
             //when we reload the user settings in the next step, the currenty-selected
             //control will go out of focus
@@ -275,185 +277,193 @@ namespace MFDExtractor.UI
         /// </summary>
         private void LoadSettings()
         {
-            //unregister for settings change notifications
-            Settings.Default.PropertyChanged -= SettingsChanged;
-
-            //load all committed user settings from memory (these may not mirror the settings
-            //which have been persisted to the user-config file on disk; that only happens 
-            //when Properties.Settings.Default.Save() is called)
-            Settings settings = Settings.Default;
-            settings.UpgradeNeeded = false;
-
-            //update the UI elements with the corresponding settings values that we just read in
-            ipaNetworkClientUseServerIpAddress.Text = settings.ClientUseServerIpAddress;
-            txtNetworkClientUseServerPortNum.Text =
-                settings.ClientUseServerPortNum.ToString(CultureInfo.InvariantCulture);
-            txtNetworkServerUsePortNum.Text = settings.ServerUsePortNumber.ToString(CultureInfo.InvariantCulture);
-
-            //set the current Extractor instance's network mode as per the user-config
-            var networkMode = (NetworkMode) settings.NetworkingMode;
-            if (networkMode == NetworkMode.Client)
+            try
             {
-                EnableClientModeOptions();
-            }
-            else if (networkMode == NetworkMode.Server)
-            {
-                EnableServerModeOptions();
-            }
-            else
-            {
-                EnableStandaloneModeOptions();
-            }
+                _loadingSettings = true;
+                //unregister for settings change notifications
+                Settings.Default.PropertyChanged -= SettingsChanged;
 
-            cboThreadPriority.SelectedItem = settings.ThreadPriority.ToString();
+                //load all committed user settings from memory (these may not mirror the settings
+                //which have been persisted to the user-config file on disk; that only happens 
+                //when Properties.Settings.Default.Save() is called)
+                Settings settings = Settings.Default;
+                settings.UpgradeNeeded = false;
 
+                //update the UI elements with the corresponding settings values that we just read in
+                ipaNetworkClientUseServerIpAddress.Text = settings.ClientUseServerIpAddress;
+                txtNetworkClientUseServerPortNum.Text =
+                    settings.ClientUseServerPortNum.ToString(CultureInfo.InvariantCulture);
+                txtNetworkServerUsePortNum.Text = settings.ServerUsePortNumber.ToString(CultureInfo.InvariantCulture);
 
-            
+                //set the current Extractor instance's network mode as per the user-config
+                var networkMode = (NetworkMode)settings.NetworkingMode;
+                if (networkMode == NetworkMode.Client)
+                {
+                    EnableClientModeOptions();
+                }
+                else if (networkMode == NetworkMode.Server)
+                {
+                    EnableServerModeOptions();
+                }
+                else
+                {
+                    EnableStandaloneModeOptions();
+                }
 
-            chkEnableMFD4.Checked = settings.EnableMfd4Output;
-            chkEnableMFD3.Checked = settings.EnableMfd3Output;
-            chkEnableLeftMFD.Checked = settings.EnableLMFDOutput;
-            chkEnableRightMFD.Checked = settings.EnableRMFDOutput;
-            chkEnableHud.Checked = settings.EnableHudOutput;
-
-            cmdRecoverHud.Enabled = chkEnableHud.Checked;
-            cmdRecoverMfd3.Enabled = chkEnableMFD3.Checked;
-            cmdRecoverMfd4.Enabled = chkEnableMFD4.Checked;
-            cmdRecoverLeftMfd.Enabled = chkEnableLeftMFD.Checked;
-            cmdRecoverRightMfd.Enabled = chkEnableRightMFD.Checked;
-
-            chkStartOnLaunch.Checked = settings.StartOnLaunch;
-            chkStartWithWindows.Checked = settings.LaunchWithWindows;
-
-            txtPollDelay.Text = "" + settings.PollingDelay;
-            cboThreadPriority.SelectedItem = settings.ThreadPriority;
-            cboImageFormat.SelectedIndex = cboImageFormat.FindString(settings.NetworkImageFormat);
-            UpdateCompressionTypeList();
-            cboCompressionType.SelectedIndex = cboCompressionType.FindString(settings.CompressionType);
-
-            chkAzimuthIndicator.Checked = settings.EnableRWROutput;
-            chkADI.Checked = settings.EnableADIOutput;
-            chkStandbyADI.Checked = settings.EnableBackupADIOutput;
-            chkAirspeedIndicator.Checked = settings.EnableASIOutput;
-            chkAltimeter.Checked = settings.EnableAltimeterOutput;
-            chkAOAIndexer.Checked = settings.EnableAOAIndexerOutput;
-            chkAOAIndicator.Checked = settings.EnableAOAIndicatorOutput;
-            chkCautionPanel.Checked = settings.EnableCautionPanelOutput;
-            chkCMDSPanel.Checked = settings.EnableCMDSOutput;
-            chkCompass.Checked = settings.EnableCompassOutput;
-            chkDED.Checked = settings.EnableDEDOutput;
-            chkFTIT1.Checked = settings.EnableFTIT1Output;
-            chkFTIT2.Checked = settings.EnableFTIT2Output;
-            chkAccelerometer.Checked = settings.EnableAccelerometerOutput;
-            chkNOZ1.Checked = settings.EnableNOZ1Output;
-            chkNOZ2.Checked = settings.EnableNOZ2Output;
-            chkOIL1.Checked = settings.EnableOIL1Output;
-            chkOIL2.Checked = settings.EnableOIL2Output;
-            chkRPM1.Checked = settings.EnableRPM1Output;
-            chkRPM2.Checked = settings.EnableRPM2Output;
-            chkEPU.Checked = settings.EnableEPUFuelOutput;
-            chkFuelFlow.Checked = settings.EnableFuelFlowOutput;
-            chkISIS.Checked = settings.EnableISISOutput;
-            chkFuelQty.Checked = settings.EnableFuelQuantityOutput;
-            chkGearLights.Checked = settings.EnableGearLightsOutput;
-            chkHSI.Checked = settings.EnableHSIOutput;
-            chkEHSI.Checked = settings.EnableEHSIOutput;
-            chkNWSIndexer.Checked = settings.EnableNWSIndexerOutput;
-            chkPFL.Checked = settings.EnablePFLOutput;
-            chkSpeedbrake.Checked = settings.EnableSpeedbrakeOutput;
-            chkVVI.Checked = settings.EnableVVIOutput;
-            chkHydA.Checked = settings.EnableHYDAOutput;
-            chkHydB.Checked = settings.EnableHYDBOutput;
-            chkCabinPress.Checked = settings.EnableCabinPressOutput;
-            chkRollTrim.Checked = settings.EnableRollTrimOutput;
-            chkPitchTrim.Checked = settings.EnablePitchTrimOutput;
+                cboThreadPriority.SelectedItem = settings.ThreadPriority.ToString();
 
 
-            string azimuthIndicatorType = settings.AzimuthIndicatorType;
-            var azimuthIndicatorStyle =
-                (AzimuthIndicator.InstrumentStyle)
-                Enum.Parse(typeof (AzimuthIndicator.InstrumentStyle), azimuthIndicatorType);
-            switch (azimuthIndicatorStyle)
-            {
-                case AzimuthIndicator.InstrumentStyle.IP1310ALR:
-                    if (settings.AzimuthIndicator_ShowBezel)
-                    {
-                        rdoAzimuthIndicatorStyleDigital.Checked = false;
-                        rdoRWRHAFBezelType.Checked = false;
-                        rdoATDPlus.Checked = false;
-                        rdoAzimuthIndicatorNoBezel.Checked = false;
-                        rdoRWRIP1310BezelType.Checked = true;
-                        rdoAzimuthIndicatorStyleScope.Checked = true;
-                    }
-                    else
-                    {
+
+
+                chkEnableMFD4.Checked = settings.EnableMfd4Output;
+                chkEnableMFD3.Checked = settings.EnableMfd3Output;
+                chkEnableLeftMFD.Checked = settings.EnableLMFDOutput;
+                chkEnableRightMFD.Checked = settings.EnableRMFDOutput;
+                chkEnableHud.Checked = settings.EnableHudOutput;
+
+                cmdRecoverHud.Enabled = chkEnableHud.Checked;
+                cmdRecoverMfd3.Enabled = chkEnableMFD3.Checked;
+                cmdRecoverMfd4.Enabled = chkEnableMFD4.Checked;
+                cmdRecoverLeftMfd.Enabled = chkEnableLeftMFD.Checked;
+                cmdRecoverRightMfd.Enabled = chkEnableRightMFD.Checked;
+
+                chkStartOnLaunch.Checked = settings.StartOnLaunch;
+                chkStartWithWindows.Checked = settings.LaunchWithWindows;
+
+                txtPollDelay.Text = "" + settings.PollingDelay;
+                cboThreadPriority.SelectedItem = settings.ThreadPriority;
+                cboImageFormat.SelectedIndex = cboImageFormat.FindString(settings.NetworkImageFormat);
+                UpdateCompressionTypeList();
+                cboCompressionType.SelectedIndex = cboCompressionType.FindString(settings.CompressionType);
+
+                chkAzimuthIndicator.Checked = settings.EnableRWROutput;
+                chkADI.Checked = settings.EnableADIOutput;
+                chkStandbyADI.Checked = settings.EnableBackupADIOutput;
+                chkAirspeedIndicator.Checked = settings.EnableASIOutput;
+                chkAltimeter.Checked = settings.EnableAltimeterOutput;
+                chkAOAIndexer.Checked = settings.EnableAOAIndexerOutput;
+                chkAOAIndicator.Checked = settings.EnableAOAIndicatorOutput;
+                chkCautionPanel.Checked = settings.EnableCautionPanelOutput;
+                chkCMDSPanel.Checked = settings.EnableCMDSOutput;
+                chkCompass.Checked = settings.EnableCompassOutput;
+                chkDED.Checked = settings.EnableDEDOutput;
+                chkFTIT1.Checked = settings.EnableFTIT1Output;
+                chkFTIT2.Checked = settings.EnableFTIT2Output;
+                chkAccelerometer.Checked = settings.EnableAccelerometerOutput;
+                chkNOZ1.Checked = settings.EnableNOZ1Output;
+                chkNOZ2.Checked = settings.EnableNOZ2Output;
+                chkOIL1.Checked = settings.EnableOIL1Output;
+                chkOIL2.Checked = settings.EnableOIL2Output;
+                chkRPM1.Checked = settings.EnableRPM1Output;
+                chkRPM2.Checked = settings.EnableRPM2Output;
+                chkEPU.Checked = settings.EnableEPUFuelOutput;
+                chkFuelFlow.Checked = settings.EnableFuelFlowOutput;
+                chkISIS.Checked = settings.EnableISISOutput;
+                chkFuelQty.Checked = settings.EnableFuelQuantityOutput;
+                chkGearLights.Checked = settings.EnableGearLightsOutput;
+                chkHSI.Checked = settings.EnableHSIOutput;
+                chkEHSI.Checked = settings.EnableEHSIOutput;
+                chkNWSIndexer.Checked = settings.EnableNWSIndexerOutput;
+                chkPFL.Checked = settings.EnablePFLOutput;
+                chkSpeedbrake.Checked = settings.EnableSpeedbrakeOutput;
+                chkVVI.Checked = settings.EnableVVIOutput;
+                chkHydA.Checked = settings.EnableHYDAOutput;
+                chkHydB.Checked = settings.EnableHYDBOutput;
+                chkCabinPress.Checked = settings.EnableCabinPressOutput;
+                chkRollTrim.Checked = settings.EnableRollTrimOutput;
+                chkPitchTrim.Checked = settings.EnablePitchTrimOutput;
+
+
+                string azimuthIndicatorType = settings.AzimuthIndicatorType;
+                var azimuthIndicatorStyle =
+                    (AzimuthIndicator.InstrumentStyle)
+                    Enum.Parse(typeof(AzimuthIndicator.InstrumentStyle), azimuthIndicatorType);
+                switch (azimuthIndicatorStyle)
+                {
+                    case AzimuthIndicator.InstrumentStyle.IP1310ALR:
+                        if (settings.AzimuthIndicator_ShowBezel)
+                        {
+                            rdoAzimuthIndicatorStyleDigital.Checked = false;
+                            rdoRWRHAFBezelType.Checked = false;
+                            rdoATDPlus.Checked = false;
+                            rdoAzimuthIndicatorNoBezel.Checked = false;
+                            rdoRWRIP1310BezelType.Checked = true;
+                            rdoAzimuthIndicatorStyleScope.Checked = true;
+                        }
+                        else
+                        {
+                            rdoAzimuthIndicatorStyleDigital.Checked = false;
+                            rdoRWRIP1310BezelType.Checked = false;
+                            rdoRWRHAFBezelType.Checked = false;
+                            rdoATDPlus.Checked = false;
+                            rdoAzimuthIndicatorNoBezel.Checked = true;
+                            rdoAzimuthIndicatorStyleScope.Checked = true;
+                        }
+                        break;
+                    case AzimuthIndicator.InstrumentStyle.HAF:
                         rdoAzimuthIndicatorStyleDigital.Checked = false;
                         rdoRWRIP1310BezelType.Checked = false;
-                        rdoRWRHAFBezelType.Checked = false;
                         rdoATDPlus.Checked = false;
-                        rdoAzimuthIndicatorNoBezel.Checked = true;
+                        rdoAzimuthIndicatorNoBezel.Checked = false;
+                        rdoRWRHAFBezelType.Checked = true;
                         rdoAzimuthIndicatorStyleScope.Checked = true;
-                    }
-                    break;
-                case AzimuthIndicator.InstrumentStyle.HAF:
-                    rdoAzimuthIndicatorStyleDigital.Checked = false;
-                    rdoRWRIP1310BezelType.Checked = false;
-                    rdoATDPlus.Checked = false;
-                    rdoAzimuthIndicatorNoBezel.Checked = false;
-                    rdoRWRHAFBezelType.Checked = true;
-                    rdoAzimuthIndicatorStyleScope.Checked = true;
-                    break;
-                case AzimuthIndicator.InstrumentStyle.AdvancedThreatDisplay:
-                    rdoAzimuthIndicatorStyleScope.Checked = false;
-                    rdoRWRIP1310BezelType.Checked = false;
-                    rdoRWRHAFBezelType.Checked = false;
-                    rdoAzimuthIndicatorNoBezel.Checked = false;
-                    rdoAzimuthIndicatorStyleDigital.Checked = true;
-                    rdoATDPlus.Checked = true;
-                    break;
-            }
+                        break;
+                    case AzimuthIndicator.InstrumentStyle.AdvancedThreatDisplay:
+                        rdoAzimuthIndicatorStyleScope.Checked = false;
+                        rdoRWRIP1310BezelType.Checked = false;
+                        rdoRWRHAFBezelType.Checked = false;
+                        rdoAzimuthIndicatorNoBezel.Checked = false;
+                        rdoAzimuthIndicatorStyleDigital.Checked = true;
+                        rdoATDPlus.Checked = true;
+                        break;
+                }
 
-            string altimeterStyleString = Settings.Default.Altimeter_Style;
-            var altimeterStyle =
-                (Altimeter.AltimeterOptions.F16AltimeterStyle)
-                Enum.Parse(typeof (Altimeter.AltimeterOptions.F16AltimeterStyle), altimeterStyleString);
-            switch (altimeterStyle)
+                string altimeterStyleString = Settings.Default.Altimeter_Style;
+                var altimeterStyle =
+                    (Altimeter.AltimeterOptions.F16AltimeterStyle)
+                    Enum.Parse(typeof(Altimeter.AltimeterOptions.F16AltimeterStyle), altimeterStyleString);
+                switch (altimeterStyle)
+                {
+                    case Altimeter.AltimeterOptions.F16AltimeterStyle.Electromechanical:
+                        rdoAltimeterStyleElectromechanical.Checked = true;
+                        rdoAltimeterStyleDigital.Checked = false;
+                        break;
+                    case Altimeter.AltimeterOptions.F16AltimeterStyle.Electronic:
+                        rdoAltimeterStyleElectromechanical.Checked = false;
+                        rdoAltimeterStyleDigital.Checked = true;
+                        break;
+                }
+
+                string vviStyleString = Settings.Default.VVI_Style;
+                var vviStyle = (VVIStyles)Enum.Parse(typeof(VVIStyles), vviStyleString);
+                switch (vviStyle)
+                {
+                    case VVIStyles.Tape:
+                        rdoVVIStyleNeedle.Checked = false;
+                        rdoVVIStyleTape.Checked = true;
+                        break;
+                    case VVIStyles.Needle:
+                        rdoVVIStyleNeedle.Checked = true;
+                        rdoVVIStyleTape.Checked = false;
+                        break;
+                }
+                grpVVIOptions.Enabled = chkVVI.Checked;
+                grpAltimeterStyle.Enabled = chkAltimeter.Checked;
+                grpAzimuthIndicatorStyle.Enabled = chkAzimuthIndicator.Checked;
+
+                rdoFuelQuantityNeedleCModel.Checked = Settings.Default.FuelQuantityIndicator_NeedleCModel;
+                rdoFuelQuantityDModel.Checked = !Settings.Default.FuelQuantityIndicator_NeedleCModel;
+
+                gbFuelQuantityOptions.Enabled = chkFuelQty.Checked;
+                LoadGDIPlusSettings();
+                chkHighlightOutputWindowsWhenContainMouseCursor.Checked = Settings.Default.HighlightOutputWindows;
+                chkOnlyUpdateImagesWhenDataChanges.Checked = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
+                Settings.Default.PropertyChanged += SettingsChanged;
+            }
+            finally
             {
-                case Altimeter.AltimeterOptions.F16AltimeterStyle.Electromechanical:
-                    rdoAltimeterStyleElectromechanical.Checked = true;
-                    rdoAltimeterStyleDigital.Checked = false;
-                    break;
-                case Altimeter.AltimeterOptions.F16AltimeterStyle.Electronic:
-                    rdoAltimeterStyleElectromechanical.Checked = false;
-                    rdoAltimeterStyleDigital.Checked = true;
-                    break;
+                _loadingSettings = false;
             }
-
-            string vviStyleString = Settings.Default.VVI_Style;
-            var vviStyle = (VVIStyles) Enum.Parse(typeof (VVIStyles), vviStyleString);
-            switch (vviStyle)
-            {
-                case VVIStyles.Tape:
-                    rdoVVIStyleNeedle.Checked = false;
-                    rdoVVIStyleTape.Checked = true;
-                    break;
-                case VVIStyles.Needle:
-                    rdoVVIStyleNeedle.Checked = true;
-                    rdoVVIStyleTape.Checked = false;
-                    break;
-            }
-            grpVVIOptions.Enabled = chkVVI.Checked;
-            grpAltimeterStyle.Enabled = chkAltimeter.Checked;
-            grpAzimuthIndicatorStyle.Enabled = chkAzimuthIndicator.Checked;
-
-            rdoFuelQuantityNeedleCModel.Checked = Settings.Default.FuelQuantityIndicator_NeedleCModel;
-            rdoFuelQuantityDModel.Checked = !Settings.Default.FuelQuantityIndicator_NeedleCModel;
-
-            gbFuelQuantityOptions.Enabled = chkFuelQty.Checked;
-            LoadGDIPlusSettings();
-            chkHighlightOutputWindowsWhenContainMouseCursor.Checked = Settings.Default.HighlightOutputWindows;
-            chkOnlyUpdateImagesWhenDataChanges.Checked = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            Settings.Default.PropertyChanged += SettingsChanged;
         }
 
         /// <summary>
