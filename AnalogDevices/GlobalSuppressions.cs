@@ -156,3 +156,7 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAC", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#OffsetDAC0")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAC", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#OffsetDAC1")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "DAC", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#OffsetDAC2")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Dac", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#PulseLDacPin()")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Dac", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#SetLDacPinLow()")]
+[assembly: SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Dac", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#SetLDacPinHigh()")]
+
