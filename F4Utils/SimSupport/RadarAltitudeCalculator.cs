@@ -16,7 +16,7 @@ namespace F4Utils.SimSupport
         }
 		public float ComputeRadarAltitude(FlightData flightData, TerrainDB terrainDB, uint lod=2)
 		{
-            var terrainHeight = terrainDB.CalculateTerrainHeight(flightData.x, flightData.y, lod);
+            var terrainHeight = terrainDB == null ? 0 : terrainDB.CalculateTerrainHeight(flightData.x, flightData.y, lod);
 			var ralt = -flightData.z - terrainHeight;
 
 			//reset AGL altitude to zero if we're on the ground
