@@ -82,6 +82,7 @@
     </Reference>
     <Reference Include="Microsoft.VisualBasic">
     </Reference>
+    <Reference Include="Microsoft.VisualC" />
     <Reference Include="System">
     </Reference>
     <Reference Include="System.Data">
