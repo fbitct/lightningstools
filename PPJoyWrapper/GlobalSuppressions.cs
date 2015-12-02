@@ -638,3 +638,5 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Scope = "member", Target = "PPJoy.DeviceManager.#GetAllDevices()")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Scope = "member", Target = "PPJoy.DeviceManager.#MaxValidUnitNumber(PPJoy.JoystickTypes)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Scope = "member", Target = "PPJoy.DeviceManager.#IdealMappings")]
+[assembly: SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "mapping", Scope = "member", Target = "PPJoy.DeviceManager.#BuildMapData(PPJoy.MappingCollection)")]
+
