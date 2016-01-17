@@ -99,11 +99,10 @@
     <EmbeddedResource Include="UI\UserControls\SignalsView.resx">
       <DependentUpon>SignalsView.cs</DependentUpon>
     </EmbeddedResource>
-    <Content Include="Content\Mapping\GouldHS070D51341standbyCompass.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Compile Include="HardwareSupport\AMI\AMI900158001HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\AMI\AMI900158001HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\AMI\AMI9001584HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\AMI\AMI9001584HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\AMI\AMI9002780-02HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\AMI\AMI900278002HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\AnalogDevices\AnalogDevicesHardwareSupportModule.cs" />
@@ -201,51 +200,10 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
-    <Content Include="Content\Mapping\AMI900158001horizontalsituationindicator.mapping">
-      <SubType>Designer</SubType>
+    <None Include="Content\Mapping\AMI9001584fuelquantityindicator.mapping.orig">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\AMI900278002primaryADI.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Content\Mapping\Malwin19581hydraulicPressureB.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\PowellIP1310ALRazimuthindicator.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek100207rpm.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek100216ftit.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek100295fuelflowindicator.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek100294fuelquantityindicator.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek100181altimeter.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek100194machmeter.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek100285altimeter.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="Content\Mapping\AMI900157501angleofattack.mapping.orig">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Malwin19581hydraulicPressureA.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="HardwareSupportModule.registry">
@@ -261,38 +219,31 @@
     <Content Include="phcc.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\Astronautics128710primaryADI.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Content\Mapping\Simtek10033501standbyADI.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek10058102verticalvelocity.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek10058201angleofattack.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Content\Mapping\Simtek101082machmeter.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek101084standbyADI.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek101088nozzlePositionIndicator.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek10108902fuelquantityindicator.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek101090epuFuel.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek101091oilPressure.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="Content\Mapping\AMI900158001horizontalsituationindicator.mapping" />
+    <None Include="Content\Mapping\AMI900278002primaryADI.mapping" />
+    <None Include="Content\Mapping\Astronautics128710primaryADI.mapping" />
+    <None Include="Content\Mapping\GouldHS070D51341standbyCompass.mapping" />
+    <None Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping" />
+    <None Include="Content\Mapping\Malwin19581hydraulicPressureA.mapping" />
+    <None Include="Content\Mapping\Malwin19581hydraulicPressureB.mapping" />
+    <None Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping" />
+    <None Include="Content\Mapping\PowellIP1310ALRazimuthindicator.mapping" />
+    <None Include="Content\Mapping\Simtek100181altimeter.mapping" />
+    <None Include="Content\Mapping\Simtek100194machmeter.mapping" />
+    <None Include="Content\Mapping\Simtek100207rpm.mapping" />
+    <None Include="Content\Mapping\Simtek100216ftit.mapping" />
+    <None Include="Content\Mapping\Simtek100285altimeter.mapping" />
+    <None Include="Content\Mapping\Simtek100294fuelquantityindicator.mapping" />
+    <None Include="Content\Mapping\Simtek100295fuelflowindicator.mapping" />
+    <None Include="Content\Mapping\Simtek10033501standbyADI.mapping" />
+    <None Include="Content\Mapping\Simtek10058102verticalvelocity.mapping" />
+    <None Include="Content\Mapping\Simtek10058201angleofattack.mapping" />
+    <None Include="Content\Mapping\Simtek101082machmeter.mapping" />
+    <None Include="Content\Mapping\Simtek101084standbyADI.mapping" />
+    <None Include="Content\Mapping\Simtek101088nozzlePositionIndicator.mapping" />
+    <None Include="Content\Mapping\Simtek10108902fuelquantityindicator.mapping" />
+    <None Include="Content\Mapping\Simtek101090epuFuel.mapping" />
+    <None Include="Content\Mapping\Simtek101091oilPressure.mapping" />
     <None Include="PowellIP1310ALRHardwareSupportModule.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

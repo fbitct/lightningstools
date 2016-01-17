@@ -11,6 +11,7 @@
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek10058201HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek10058102HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.AMI.AMI900158001HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
+    <Module>SimLinkup.HardwareSupport.AMI.AMI9001584HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek100335015HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek100295HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek101091HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
