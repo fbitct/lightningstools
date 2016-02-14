@@ -160,9 +160,9 @@ namespace SimLinkup.HardwareSupport.Westin
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0; //volts
+            thisSignal.State = 0.1; //volts
             thisSignal.IsVoltage = true;
-            thisSignal.MinValue = 0;
+            thisSignal.MinValue = 0.1;
             thisSignal.MaxValue = 2;
             return thisSignal;
         }
@@ -201,7 +201,7 @@ namespace SimLinkup.HardwareSupport.Westin
                 {
                     if (epuInput < 0)
                     {
-                        epuOutputValue = 0;
+                        epuOutputValue = 0.1;
                     }
                     else if (epuInput > 100)
                     {
@@ -209,12 +209,12 @@ namespace SimLinkup.HardwareSupport.Westin
                     }
                     else
                     {
-                        epuOutputValue = ((epuInput / 100) * 2);
+                        epuOutputValue = ((epuInput / 100) * 1.9)+0.1;
                     }
 
                     if (epuOutputValue < 0)
                     {
-                        epuOutputValue = 0;
+                        epuOutputValue = 0.1;
                     }
                     else if (epuOutputValue > 2)
                     {

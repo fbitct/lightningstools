@@ -13,7 +13,7 @@
       </Source>
       <!-- WESTIN EPU FUEL INPUT-->
       <Destination xsi:type="AnalogSignal">
-        <Id>101090_EPU_From_Sim</Id>
+        <Id>521993_EPU_From_Sim</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
