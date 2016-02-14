@@ -202,7 +202,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
             thisSignal.MinValue = 0;
-            thisSignal.MaxValue = 20100;
+            thisSignal.MaxValue = 18000;
             return thisSignal;
         }
 
@@ -259,7 +259,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = -6.00; //volts
+            thisSignal.State = -7.00; //volts
             thisSignal.IsVoltage = true;
             thisSignal.MinValue = -10;
             thisSignal.MaxValue = 10;
@@ -277,7 +277,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = -6.00; //volts
+            thisSignal.State = -7.00; //volts
             thisSignal.IsVoltage = true;
             thisSignal.MinValue = -10;
             thisSignal.MaxValue = 10;
@@ -312,11 +312,11 @@ namespace SimLinkup.HardwareSupport.AMI
             //NOTE: these values are correct for Nigel's modification to the AMI 9001584 to replace the 1-turn pot with a 3-turn pot for the needles to widen the range of indicated values
             if (_foreRightOutputSignal != null)
             {
-                _foreRightOutputSignal.State = (((_foreRightFuelInputSignal.State / 100.00) / 42.00) * 16.00) - 6.00; //zero indicated at -6.00V; 4200 lbs indicated at +10V
+                _foreRightOutputSignal.State = (((_foreRightFuelInputSignal.State / 100.00) / 42.00) * 14.00) - 7.00; //zero indicated at -7.00V; 4200 lbs indicated at +7V
             }
             if (_aftLeftOutputSignal != null)
             {
-                _aftLeftOutputSignal.State = (((_aftLeftFuelInputSignal.State / 100.00) / 42.00) * 16.00) - 6.00;//zero indicated at -6.00V; 4200 lbs indicated at +10V
+                _aftLeftOutputSignal.State = (((_aftLeftFuelInputSignal.State / 100.00) / 42.00) * 14.00) - 7.00;//zero indicated at -7.00V; 4200 lbs indicated at +7V
             }
             if (_counterOutputSignal != null)
             {
