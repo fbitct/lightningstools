@@ -111,7 +111,7 @@ namespace SDI
 
         public void SetStatorBaseAngle(StatorSignals statorSignal, short offset)
         {
-            const ushort MAX_OFFSET = (2 ^ 10) - 1; //10 bits of precision allowed
+            const ushort MAX_OFFSET = 1023; //10 bits of precision allowed
             const ushort LSB_BITMASK = 0xFF; //bits 0-7
             const ushort MSB_BITMASK = 0x300; //bits 8-9
 
@@ -240,7 +240,7 @@ namespace SDI
 
         public void SetUpdateRateControlMode_Limit(byte limitThreshold)
         {
-            const byte MAX_LIMIT_THRESHOLD = (2 ^ 6) - 1; //6 bits
+            const byte MAX_LIMIT_THRESHOLD = 63; //6 bits
             if (limitThreshold > MAX_LIMIT_THRESHOLD)
             {
                 throw new ArgumentOutOfRangeException("limitThreshold", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_LIMIT_THRESHOLD));
@@ -250,7 +250,7 @@ namespace SDI
         }
         public void SetUpdateRateControlMode_Smooth(byte smoothingMinimumThresholdValue, UpdateRateControlSmoothingMode smoothingMode)
         {
-            const byte MAX_SMOOTHING_MINIMUM_THRESHOLD = (2 ^ 4) - 1; //4 bits
+            const byte MAX_SMOOTHING_MINIMUM_THRESHOLD = 15; //4 bits
             if ((smoothingMinimumThresholdValue > MAX_SMOOTHING_MINIMUM_THRESHOLD))
             {
                 throw new ArgumentOutOfRangeException("smoothingMinimumThresholdValue", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_SMOOTHING_MINIMUM_THRESHOLD));
@@ -261,7 +261,7 @@ namespace SDI
 
         public void SetUpdateRateControlMode_Speed(short stepUpdateDelayMillis)
         {
-            const byte MAX_STEP_UPDATE_DELAY = (2 ^ 5) - 1; //5 bits
+            const byte MAX_STEP_UPDATE_DELAY = 31; //5 bits
            
             if (stepUpdateDelayMillis <0 || stepUpdateDelayMillis > MAX_STEP_UPDATE_DELAY)
             {
@@ -282,7 +282,7 @@ namespace SDI
         }
         public void Demo(DemoMovementSpeeds movementSpeed, byte movementStepSize, DemoModus modus, bool start)
         {
-            const byte MAX_MOVEMENT_STEP_SIZE = (2 ^ 4) - 1; //4 bits
+            const byte MAX_MOVEMENT_STEP_SIZE = 15; //4 bits
             if (movementStepSize >MAX_MOVEMENT_STEP_SIZE )
             {
                 throw new ArgumentOutOfRangeException("movementStepSize", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_MOVEMENT_STEP_SIZE));
@@ -316,7 +316,7 @@ namespace SDI
         }
         public void Watchdog(bool enable, byte countdown)
         {
-            const ushort MAX_COUNTDOWN = (2 ^ 6) - 1;
+            const ushort MAX_COUNTDOWN = 63; //6 bits
             if (countdown > MAX_COUNTDOWN)
             {
                 throw new ArgumentOutOfRangeException("countdown", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_COUNTDOWN));
