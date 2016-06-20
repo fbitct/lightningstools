@@ -46,7 +46,6 @@
             this.rdoLEDFlashesAtHeartbeatRate = new System.Windows.Forms.RadioButton();
             this.rdoLEDAlwaysOn = new System.Windows.Forms.RadioButton();
             this.rdoLEDAlwaysOff = new System.Windows.Forms.RadioButton();
-            this.gbSynchroControl = new System.Windows.Forms.GroupBox();
             this.gbWatchdog = new System.Windows.Forms.GroupBox();
             this.lblCountdownDesc = new System.Windows.Forms.Label();
             this.lblWatchdogCountdown = new System.Windows.Forms.Label();
@@ -115,6 +114,13 @@
             this.nudLimitMin = new System.Windows.Forms.NumericUpDown();
             this.lblLimitMin = new System.Windows.Forms.Label();
             this.chkStartDemo = new System.Windows.Forms.CheckBox();
+            this.gbMain = new System.Windows.Forms.GroupBox();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabDeviceSetup = new System.Windows.Forms.TabPage();
+            this.tabRawData = new System.Windows.Forms.TabPage();
+            this.tabSynchroSetup = new System.Windows.Forms.TabPage();
+            this.tabDemoMode = new System.Windows.Forms.TabPage();
+            this.tabSynchroControl = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.epErrorProvider)).BeginInit();
             this.gbRawDataControl.SuspendLayout();
             this.gbLED.SuspendLayout();
@@ -137,6 +143,12 @@
             this.gbMovementLimits.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudLimitMax)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLimitMin)).BeginInit();
+            this.gbMain.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabDeviceSetup.SuspendLayout();
+            this.tabRawData.SuspendLayout();
+            this.tabSynchroSetup.SuspendLayout();
+            this.tabDemoMode.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblDeviceAddress
@@ -157,11 +169,11 @@
             this.gbRawDataControl.Controls.Add(this.btnSend);
             this.gbRawDataControl.Controls.Add(this.lblDataByte);
             this.gbRawDataControl.Controls.Add(this.txtDataByte);
-            this.gbRawDataControl.Location = new System.Drawing.Point(12, 792);
+            this.gbRawDataControl.Location = new System.Drawing.Point(6, 6);
             this.gbRawDataControl.Margin = new System.Windows.Forms.Padding(6);
             this.gbRawDataControl.Name = "gbRawDataControl";
             this.gbRawDataControl.Padding = new System.Windows.Forms.Padding(6);
-            this.gbRawDataControl.Size = new System.Drawing.Size(306, 206);
+            this.gbRawDataControl.Size = new System.Drawing.Size(304, 293);
             this.gbRawDataControl.TabIndex = 0;
             this.gbRawDataControl.TabStop = false;
             this.gbRawDataControl.Text = "Raw Data Control";
@@ -169,7 +181,7 @@
             // lblSubAddr
             // 
             this.lblSubAddr.AutoSize = true;
-            this.lblSubAddr.Location = new System.Drawing.Point(37, 46);
+            this.lblSubAddr.Location = new System.Drawing.Point(37, 118);
             this.lblSubAddr.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.lblSubAddr.Name = "lblSubAddr";
             this.lblSubAddr.Size = new System.Drawing.Size(133, 25);
@@ -179,7 +191,7 @@
             // 
             // txtSubAddr
             // 
-            this.txtSubAddr.Location = new System.Drawing.Point(181, 40);
+            this.txtSubAddr.Location = new System.Drawing.Point(181, 112);
             this.txtSubAddr.Margin = new System.Windows.Forms.Padding(6);
             this.txtSubAddr.MaxLength = 4;
             this.txtSubAddr.Name = "txtSubAddr";
@@ -190,10 +202,10 @@
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(20, 141);
+            this.btnSend.Location = new System.Drawing.Point(42, 224);
             this.btnSend.Margin = new System.Windows.Forms.Padding(6);
             this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(150, 44);
+            this.btnSend.Size = new System.Drawing.Size(227, 44);
             this.btnSend.TabIndex = 6;
             this.btnSend.Text = "&Send";
             this.btnSend.UseVisualStyleBackColor = true;
@@ -202,7 +214,7 @@
             // lblDataByte
             // 
             this.lblDataByte.AutoSize = true;
-            this.lblDataByte.Location = new System.Drawing.Point(55, 96);
+            this.lblDataByte.Location = new System.Drawing.Point(55, 168);
             this.lblDataByte.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.lblDataByte.Name = "lblDataByte";
             this.lblDataByte.Size = new System.Drawing.Size(112, 25);
@@ -212,7 +224,7 @@
             // 
             // txtDataByte
             // 
-            this.txtDataByte.Location = new System.Drawing.Point(181, 90);
+            this.txtDataByte.Location = new System.Drawing.Point(181, 162);
             this.txtDataByte.Margin = new System.Windows.Forms.Padding(6);
             this.txtDataByte.MaxLength = 4;
             this.txtDataByte.Name = "txtDataByte";
@@ -234,7 +246,7 @@
             // cbSerialPort
             // 
             this.cbSerialPort.FormattingEnabled = true;
-            this.cbSerialPort.Location = new System.Drawing.Point(140, 23);
+            this.cbSerialPort.Location = new System.Drawing.Point(140, 13);
             this.cbSerialPort.Margin = new System.Windows.Forms.Padding(6);
             this.cbSerialPort.Name = "cbSerialPort";
             this.cbSerialPort.Size = new System.Drawing.Size(238, 33);
@@ -243,7 +255,7 @@
             // lblIdentification
             // 
             this.lblIdentification.AutoSize = true;
-            this.lblIdentification.Location = new System.Drawing.Point(432, 23);
+            this.lblIdentification.Location = new System.Drawing.Point(432, 17);
             this.lblIdentification.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.lblIdentification.Name = "lblIdentification";
             this.lblIdentification.Size = new System.Drawing.Size(139, 25);
@@ -256,7 +268,7 @@
             this.gbLED.Controls.Add(this.rdoLEDFlashesAtHeartbeatRate);
             this.gbLED.Controls.Add(this.rdoLEDAlwaysOn);
             this.gbLED.Controls.Add(this.rdoLEDAlwaysOff);
-            this.gbLED.Location = new System.Drawing.Point(15, 76);
+            this.gbLED.Location = new System.Drawing.Point(6, 6);
             this.gbLED.Name = "gbLED";
             this.gbLED.Size = new System.Drawing.Size(489, 188);
             this.gbLED.TabIndex = 7;
@@ -311,15 +323,6 @@
             this.rdoLEDAlwaysOff.UseVisualStyleBackColor = true;
             this.rdoLEDAlwaysOff.CheckedChanged += new System.EventHandler(this.rdoLEDAlwaysOff_CheckedChanged);
             // 
-            // gbSynchroControl
-            // 
-            this.gbSynchroControl.Location = new System.Drawing.Point(1459, 56);
-            this.gbSynchroControl.Name = "gbSynchroControl";
-            this.gbSynchroControl.Size = new System.Drawing.Size(357, 830);
-            this.gbSynchroControl.TabIndex = 8;
-            this.gbSynchroControl.TabStop = false;
-            this.gbSynchroControl.Text = "Synchro Control";
-            // 
             // gbWatchdog
             // 
             this.gbWatchdog.Controls.Add(this.lblCountdownDesc);
@@ -327,19 +330,20 @@
             this.gbWatchdog.Controls.Add(this.nudWatchdogCountdown);
             this.gbWatchdog.Controls.Add(this.chkWatchdogEnabled);
             this.gbWatchdog.Controls.Add(this.btnDisableWatchdog);
-            this.gbWatchdog.Location = new System.Drawing.Point(15, 362);
+            this.gbWatchdog.Location = new System.Drawing.Point(319, 89);
             this.gbWatchdog.Name = "gbWatchdog";
-            this.gbWatchdog.Size = new System.Drawing.Size(489, 210);
+            this.gbWatchdog.Size = new System.Drawing.Size(372, 210);
             this.gbWatchdog.TabIndex = 9;
             this.gbWatchdog.TabStop = false;
             this.gbWatchdog.Text = "Watchdog Timer";
             // 
             // lblCountdownDesc
             // 
+            this.lblCountdownDesc.AutoSize = true;
             this.lblCountdownDesc.BackColor = System.Drawing.SystemColors.Info;
-            this.lblCountdownDesc.Location = new System.Drawing.Point(288, 117);
+            this.lblCountdownDesc.Location = new System.Drawing.Point(11, 151);
             this.lblCountdownDesc.Name = "lblCountdownDesc";
-            this.lblCountdownDesc.Size = new System.Drawing.Size(193, 60);
+            this.lblCountdownDesc.Size = new System.Drawing.Size(339, 25);
             this.lblCountdownDesc.TabIndex = 7;
             this.lblCountdownDesc.Text = "0=use firmware default countdown";
             // 
@@ -396,26 +400,27 @@
             this.gbPowerDown.Controls.Add(this.nudPowerDownDelay);
             this.gbPowerDown.Controls.Add(this.gbPowerDownLevel);
             this.gbPowerDown.Controls.Add(this.chkPowerDownEnabled);
-            this.gbPowerDown.Location = new System.Drawing.Point(12, 587);
+            this.gbPowerDown.Location = new System.Drawing.Point(3, 431);
             this.gbPowerDown.Name = "gbPowerDown";
-            this.gbPowerDown.Size = new System.Drawing.Size(489, 186);
+            this.gbPowerDown.Size = new System.Drawing.Size(907, 155);
             this.gbPowerDown.TabIndex = 9;
             this.gbPowerDown.TabStop = false;
-            this.gbPowerDown.Text = "Power Down";
+            this.gbPowerDown.Text = "Synchro Power Down Control";
             // 
             // lblDelayDescr
             // 
+            this.lblDelayDescr.AutoSize = true;
             this.lblDelayDescr.BackColor = System.Drawing.SystemColors.Info;
-            this.lblDelayDescr.Location = new System.Drawing.Point(291, 109);
+            this.lblDelayDescr.Location = new System.Drawing.Point(419, 106);
             this.lblDelayDescr.Name = "lblDelayDescr";
-            this.lblDelayDescr.Size = new System.Drawing.Size(193, 60);
+            this.lblDelayDescr.Size = new System.Drawing.Size(323, 25);
             this.lblDelayDescr.TabIndex = 6;
             this.lblDelayDescr.Text = "0=use firmware default of 512ms";
             // 
             // lblPowerDownDelayTime
             // 
             this.lblPowerDownDelayTime.AutoSize = true;
-            this.lblPowerDownDelayTime.Location = new System.Drawing.Point(291, 31);
+            this.lblPowerDownDelayTime.Location = new System.Drawing.Point(291, 65);
             this.lblPowerDownDelayTime.Name = "lblPowerDownDelayTime";
             this.lblPowerDownDelayTime.Size = new System.Drawing.Size(121, 25);
             this.lblPowerDownDelayTime.TabIndex = 5;
@@ -428,7 +433,7 @@
             0,
             0,
             0});
-            this.nudPowerDownDelay.Location = new System.Drawing.Point(292, 65);
+            this.nudPowerDownDelay.Location = new System.Drawing.Point(292, 106);
             this.nudPowerDownDelay.Maximum = new decimal(new int[] {
             2016,
             0,
@@ -496,9 +501,9 @@
             // gbUSBDebug
             // 
             this.gbUSBDebug.Controls.Add(this.chkUSBDebugEnabled);
-            this.gbUSBDebug.Location = new System.Drawing.Point(18, 270);
+            this.gbUSBDebug.Location = new System.Drawing.Point(319, 6);
             this.gbUSBDebug.Name = "gbUSBDebug";
-            this.gbUSBDebug.Size = new System.Drawing.Size(486, 77);
+            this.gbUSBDebug.Size = new System.Drawing.Size(369, 77);
             this.gbUSBDebug.TabIndex = 9;
             this.gbUSBDebug.TabStop = false;
             this.gbUSBDebug.Text = "USB Debug";
@@ -521,7 +526,7 @@
             this.gbDemo.Controls.Add(this.gbDemoSpeedAndStepping);
             this.gbDemo.Controls.Add(this.gbModus);
             this.gbDemo.Controls.Add(this.gbDemoStartAndEndPositions);
-            this.gbDemo.Location = new System.Drawing.Point(528, 587);
+            this.gbDemo.Location = new System.Drawing.Point(3, 3);
             this.gbDemo.Name = "gbDemo";
             this.gbDemo.Size = new System.Drawing.Size(907, 459);
             this.gbDemo.TabIndex = 9;
@@ -775,16 +780,16 @@
             this.gbStatorBaseAngles.Controls.Add(this.lblStatorS2BaseAngle);
             this.gbStatorBaseAngles.Controls.Add(this.nudStatorS1BaseAngle);
             this.gbStatorBaseAngles.Controls.Add(this.lblStatorS1BaseAngle);
-            this.gbStatorBaseAngles.Location = new System.Drawing.Point(522, 91);
+            this.gbStatorBaseAngles.Location = new System.Drawing.Point(3, 3);
             this.gbStatorBaseAngles.Name = "gbStatorBaseAngles";
-            this.gbStatorBaseAngles.Size = new System.Drawing.Size(913, 256);
+            this.gbStatorBaseAngles.Size = new System.Drawing.Size(907, 226);
             this.gbStatorBaseAngles.TabIndex = 10;
             this.gbStatorBaseAngles.TabStop = false;
             this.gbStatorBaseAngles.Text = "Stator Base Angles";
             // 
             // btnUpdateStatorBaseAngles
             // 
-            this.btnUpdateStatorBaseAngles.Location = new System.Drawing.Point(34, 195);
+            this.btnUpdateStatorBaseAngles.Location = new System.Drawing.Point(34, 166);
             this.btnUpdateStatorBaseAngles.Name = "btnUpdateStatorBaseAngles";
             this.btnUpdateStatorBaseAngles.Size = new System.Drawing.Size(150, 44);
             this.btnUpdateStatorBaseAngles.TabIndex = 8;
@@ -876,7 +881,7 @@
             // lblStatorS3BaseAngleLSB
             // 
             this.lblStatorS3BaseAngleLSB.AutoSize = true;
-            this.lblStatorS3BaseAngleLSB.Location = new System.Drawing.Point(649, 126);
+            this.lblStatorS3BaseAngleLSB.Location = new System.Drawing.Point(665, 126);
             this.lblStatorS3BaseAngleLSB.Name = "lblStatorS3BaseAngleLSB";
             this.lblStatorS3BaseAngleLSB.Size = new System.Drawing.Size(58, 25);
             this.lblStatorS3BaseAngleLSB.TabIndex = 15;
@@ -885,7 +890,7 @@
             // lblStatorS2BaseAngleLSB
             // 
             this.lblStatorS2BaseAngleLSB.AutoSize = true;
-            this.lblStatorS2BaseAngleLSB.Location = new System.Drawing.Point(649, 89);
+            this.lblStatorS2BaseAngleLSB.Location = new System.Drawing.Point(665, 89);
             this.lblStatorS2BaseAngleLSB.Name = "lblStatorS2BaseAngleLSB";
             this.lblStatorS2BaseAngleLSB.Size = new System.Drawing.Size(58, 25);
             this.lblStatorS2BaseAngleLSB.TabIndex = 14;
@@ -894,7 +899,7 @@
             // lblStatorS1BaseAngleLSB
             // 
             this.lblStatorS1BaseAngleLSB.AutoSize = true;
-            this.lblStatorS1BaseAngleLSB.Location = new System.Drawing.Point(649, 52);
+            this.lblStatorS1BaseAngleLSB.Location = new System.Drawing.Point(665, 52);
             this.lblStatorS1BaseAngleLSB.Name = "lblStatorS1BaseAngleLSB";
             this.lblStatorS1BaseAngleLSB.Size = new System.Drawing.Size(58, 25);
             this.lblStatorS1BaseAngleLSB.TabIndex = 13;
@@ -981,9 +986,9 @@
             this.gbMovementLimits.Controls.Add(this.lblLimitMax);
             this.gbMovementLimits.Controls.Add(this.nudLimitMin);
             this.gbMovementLimits.Controls.Add(this.lblLimitMin);
-            this.gbMovementLimits.Location = new System.Drawing.Point(528, 362);
+            this.gbMovementLimits.Location = new System.Drawing.Point(3, 235);
             this.gbMovementLimits.Name = "gbMovementLimits";
-            this.gbMovementLimits.Size = new System.Drawing.Size(907, 210);
+            this.gbMovementLimits.Size = new System.Drawing.Size(907, 190);
             this.gbMovementLimits.TabIndex = 10;
             this.gbMovementLimits.TabStop = false;
             this.gbMovementLimits.Text = "Movement Limits";
@@ -1108,21 +1113,90 @@
             this.chkStartDemo.UseVisualStyleBackColor = true;
             this.chkStartDemo.CheckedChanged += new System.EventHandler(this.chkStartDemo_CheckedChanged);
             // 
+            // gbMain
+            // 
+            this.gbMain.Controls.Add(this.tabControl1);
+            this.gbMain.Location = new System.Drawing.Point(3, 51);
+            this.gbMain.Name = "gbMain";
+            this.gbMain.Size = new System.Drawing.Size(950, 710);
+            this.gbMain.TabIndex = 11;
+            this.gbMain.TabStop = false;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabDeviceSetup);
+            this.tabControl1.Controls.Add(this.tabSynchroSetup);
+            this.tabControl1.Controls.Add(this.tabSynchroControl);
+            this.tabControl1.Controls.Add(this.tabDemoMode);
+            this.tabControl1.Controls.Add(this.tabRawData);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(3, 27);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(944, 680);
+            this.tabControl1.TabIndex = 0;
+            // 
+            // tabDeviceSetup
+            // 
+            this.tabDeviceSetup.Controls.Add(this.gbLED);
+            this.tabDeviceSetup.Location = new System.Drawing.Point(4, 34);
+            this.tabDeviceSetup.Name = "tabDeviceSetup";
+            this.tabDeviceSetup.Padding = new System.Windows.Forms.Padding(3);
+            this.tabDeviceSetup.Size = new System.Drawing.Size(936, 642);
+            this.tabDeviceSetup.TabIndex = 0;
+            this.tabDeviceSetup.Text = "Device Setup";
+            this.tabDeviceSetup.UseVisualStyleBackColor = true;
+            // 
+            // tabRawData
+            // 
+            this.tabRawData.Controls.Add(this.gbUSBDebug);
+            this.tabRawData.Controls.Add(this.gbRawDataControl);
+            this.tabRawData.Controls.Add(this.gbWatchdog);
+            this.tabRawData.Location = new System.Drawing.Point(4, 34);
+            this.tabRawData.Name = "tabRawData";
+            this.tabRawData.Size = new System.Drawing.Size(936, 642);
+            this.tabRawData.TabIndex = 4;
+            this.tabRawData.Text = "Raw Data";
+            this.tabRawData.UseVisualStyleBackColor = true;
+            // 
+            // tabSynchroSetup
+            // 
+            this.tabSynchroSetup.Controls.Add(this.gbMovementLimits);
+            this.tabSynchroSetup.Controls.Add(this.gbPowerDown);
+            this.tabSynchroSetup.Controls.Add(this.gbStatorBaseAngles);
+            this.tabSynchroSetup.Location = new System.Drawing.Point(4, 34);
+            this.tabSynchroSetup.Name = "tabSynchroSetup";
+            this.tabSynchroSetup.Size = new System.Drawing.Size(936, 642);
+            this.tabSynchroSetup.TabIndex = 5;
+            this.tabSynchroSetup.Text = "Synchro Setup";
+            this.tabSynchroSetup.UseVisualStyleBackColor = true;
+            // 
+            // tabDemoMode
+            // 
+            this.tabDemoMode.Controls.Add(this.gbDemo);
+            this.tabDemoMode.Location = new System.Drawing.Point(4, 34);
+            this.tabDemoMode.Name = "tabDemoMode";
+            this.tabDemoMode.Size = new System.Drawing.Size(936, 642);
+            this.tabDemoMode.TabIndex = 6;
+            this.tabDemoMode.Text = "Demo Mode";
+            this.tabDemoMode.UseVisualStyleBackColor = true;
+            // 
+            // tabSynchroControl
+            // 
+            this.tabSynchroControl.Location = new System.Drawing.Point(4, 34);
+            this.tabSynchroControl.Name = "tabSynchroControl";
+            this.tabSynchroControl.Size = new System.Drawing.Size(936, 642);
+            this.tabSynchroControl.TabIndex = 7;
+            this.tabSynchroControl.Text = "Synchro Control";
+            this.tabSynchroControl.UseVisualStyleBackColor = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1852, 1477);
-            this.Controls.Add(this.gbMovementLimits);
-            this.Controls.Add(this.gbStatorBaseAngles);
-            this.Controls.Add(this.gbDemo);
-            this.Controls.Add(this.gbUSBDebug);
-            this.Controls.Add(this.gbPowerDown);
-            this.Controls.Add(this.gbWatchdog);
-            this.Controls.Add(this.gbSynchroControl);
-            this.Controls.Add(this.gbLED);
-            this.Controls.Add(this.gbRawDataControl);
+            this.ClientSize = new System.Drawing.Size(958, 761);
+            this.Controls.Add(this.gbMain);
             this.Controls.Add(this.lblSerialPort);
             this.Controls.Add(this.cbSerialPort);
             this.Controls.Add(this.lblIdentification);
@@ -1130,7 +1204,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(1882, 1552);
             this.Name = "frmMain";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1171,6 +1244,12 @@
             this.gbMovementLimits.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudLimitMax)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLimitMin)).EndInit();
+            this.gbMain.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabDeviceSetup.ResumeLayout(false);
+            this.tabRawData.ResumeLayout(false);
+            this.tabSynchroSetup.ResumeLayout(false);
+            this.tabDemoMode.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1198,7 +1277,6 @@
         private System.Windows.Forms.NumericUpDown nudWatchdogCountdown;
         private System.Windows.Forms.CheckBox chkWatchdogEnabled;
         private System.Windows.Forms.Button btnDisableWatchdog;
-        private System.Windows.Forms.GroupBox gbSynchroControl;
         private System.Windows.Forms.GroupBox gbPowerDown;
         private System.Windows.Forms.Label lblPowerDownDelayTime;
         private System.Windows.Forms.NumericUpDown nudPowerDownDelay;
@@ -1262,6 +1340,13 @@
         private System.Windows.Forms.Label lblDemoMovementSpeedDesc;
         private System.Windows.Forms.GroupBox gbDemoSpeedAndStepping;
         private System.Windows.Forms.CheckBox chkStartDemo;
+        private System.Windows.Forms.GroupBox gbMain;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabDeviceSetup;
+        private System.Windows.Forms.TabPage tabSynchroSetup;
+        private System.Windows.Forms.TabPage tabDemoMode;
+        private System.Windows.Forms.TabPage tabSynchroControl;
+        private System.Windows.Forms.TabPage tabRawData;
     }
 }
 

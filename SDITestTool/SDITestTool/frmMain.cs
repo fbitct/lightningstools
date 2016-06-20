@@ -365,7 +365,6 @@ namespace SDITestTool
             gbRawDataControl.Enabled = DeviceIsValid;
             gbStatorBaseAngles.Enabled = DeviceIsValid;
             gbDemo.Enabled = DeviceIsValid;
-            gbSynchroControl.Enabled = DeviceIsValid;
             gbMovementLimits.Enabled = DeviceIsValid;
             rdoPowerDownLevelFull.Enabled = chkPowerDownEnabled.CheckState != CheckState.Indeterminate;
             rdoPowerDownLevelHalf.Enabled = chkPowerDownEnabled.CheckState != CheckState.Indeterminate;
