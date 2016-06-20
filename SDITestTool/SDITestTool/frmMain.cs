@@ -14,8 +14,6 @@ namespace SDITestTool
         private Device _sdiDevice = new Device();
         private ReadOnlyCollection<string> _serialPorts;
 
-        private Thread _splashThread;
-
         public frmMain()
         {
             CheckForIllegalCrossThreadCalls = false;
@@ -77,9 +75,6 @@ namespace SDITestTool
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            _splashThread = new Thread(DoSplash);
-            _splashThread.Start();
-            Application.DoEvents();
             epErrorProvider.BlinkStyle = ErrorBlinkStyle.NeverBlink;
             Text = Application.ProductName + " v" + Application.ProductVersion;
 
@@ -92,15 +87,6 @@ namespace SDITestTool
                 Application.DoEvents();
             }
             ResetErrors();
-
-            try
-            {
-                _splashThread.Abort();
-            }
-            catch (ThreadAbortException)
-            {
-                Thread.ResetAbort();
-            }
             Activate();
         }
 
@@ -192,7 +178,7 @@ namespace SDITestTool
             valid = ValidateHexTextControl(txtDataByte, out data);
             if (valid)
             {
-                if (_sdiDevice != null && !string.IsNullOrEmpty(_sdiDevice.PortName))
+                if (_sdiDevice != null && !string.IsNullOrWhiteSpace(_sdiDevice.PortName))
                 {
                     try
                     {
@@ -212,26 +198,63 @@ namespace SDITestTool
             var valid = ValidateHexTextControl(txtDataByte, out val);
         }
 
-        private void DoSplash()
+        private void rdoLEDAlwaysOff_CheckedChanged(object sender, EventArgs e)
         {
-            var sp = new Splash();
-            try
+            if (rdoLEDAlwaysOff.Checked && _sdiDevice != null && !string.IsNullOrWhiteSpace(_sdiDevice.PortName))
             {
-                sp.ShowDialog();
-                Thread.Sleep(1000);
+                try
+                {
+                    _sdiDevice.ConfigureDiagnosticLEDBehavior(DiagnosticLEDMode.Off);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
             }
-            catch (ThreadAbortException)
+        }
+
+        private void rdoLEDAlwaysON_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdoLEDAlwaysOn.Checked && _sdiDevice != null && !string.IsNullOrWhiteSpace(_sdiDevice.PortName))
             {
-                Thread.ResetAbort();
+                try
+                {
+                    _sdiDevice.ConfigureDiagnosticLEDBehavior(DiagnosticLEDMode.On);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
             }
-            if (sp != null)
+        }
+
+        private void rdoLEDFlashesAtHeartbeatRate_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdoLEDFlashesAtHeartbeatRate.Checked && _sdiDevice != null && !string.IsNullOrWhiteSpace(_sdiDevice.PortName))
             {
-                sp.BackgroundImage = null;
-                sp.Update();
-                sp.Refresh();
-                sp.Visible = false;
-                sp.Hide();
-                sp.Close();
+                try
+                {
+                    _sdiDevice.ConfigureDiagnosticLEDBehavior(DiagnosticLEDMode.Heartbeat);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
+            }
+        }
+
+        private void rdoToggleLEDPerAcceptedCommand_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdoToggleLEDPerAcceptedCommand.Checked && _sdiDevice != null && !string.IsNullOrWhiteSpace(_sdiDevice.PortName))
+            {
+                try
+                {
+                    _sdiDevice.ConfigureDiagnosticLEDBehavior(DiagnosticLEDMode.ToggleOnAcceptedCommand);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
             }
         }
     }

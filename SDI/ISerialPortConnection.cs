@@ -7,7 +7,7 @@ namespace SDI
         string COMPort { get; set; }
         int BytesAvailable { get; }
         event EventHandler<SerialPortDataReceivedEventArgs> DataReceived;
-        void Read(byte[] buffer, int index, int count, int timeout = -1);
+        void Read(byte[] buffer, int index, int count);
         void Write(byte[] buffer, int index, int count);
         void DiscardInputBuffer();
     }

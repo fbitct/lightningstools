@@ -75,7 +75,7 @@
     <Compile Include="DemoMovementSpeeds.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DiagnosticLEDMode.cs" />
-    <Compile Include="CommandSubAddress.cs" />
+    <Compile Include="CommandSubaddress.cs" />
     <Compile Include="DeviceEvents.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="ICommandDispatcher.cs" />

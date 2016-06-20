@@ -66,11 +66,12 @@ namespace SDI
             }
         }
 
-        public void Read(byte[] buffer, int index, int count, int timeout = Timeout.Infinite)
+        public void Read(byte[] buffer, int index, int count)
         {
             lock (_serialPortLock)
             {
                 EnsurePortIsReady();
+                var timeout = _serialPort.ReadTimeout;
                 var startTime = DateTime.Now;
                 var bytesAvailable = 0;
                 while (bytesAvailable < count)
