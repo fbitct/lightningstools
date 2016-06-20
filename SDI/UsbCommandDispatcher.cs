@@ -31,8 +31,8 @@ namespace SDI
                     const int IDENTIFY_STRING_LENGTH = 14;
                     SerialPortConnection.DiscardInputBuffer();
                     SendCommand(CommandSubAddress.IDENTIFY, 0x00);
-                    var readBuffer = new byte[10];
-                    SerialPortConnection.Read(readBuffer, 0, readBuffer.Length);
+                    var readBuffer = new byte[IDENTIFY_STRING_LENGTH];
+                    SerialPortConnection.Read(readBuffer, 0, IDENTIFY_STRING_LENGTH);
                     return Encoding.ASCII.GetString(readBuffer, 0, IDENTIFY_STRING_LENGTH);
                 default:
                     SendCommand(subAddress, data);
