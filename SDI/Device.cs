@@ -122,7 +122,7 @@ namespace SDI
                 throw new ArgumentOutOfRangeException("offset", string.Format(CultureInfo.InvariantCulture, "Must be >=0 and <= {0}", MAX_OFFSET));
             }
             byte lsb = (byte)(offset & LSB_BITMASK);
-            byte msb = (byte)(offset & MSB_BITMASK);
+            byte msb = (byte)((offset & MSB_BITMASK) >>8);
             switch (statorSignal)
             {
                 case StatorSignals.S1:
