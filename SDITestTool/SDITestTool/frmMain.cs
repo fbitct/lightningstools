@@ -5,13 +5,13 @@ using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.Devices;
-using Phcc;
+using SDI;
 
 namespace SDITestTool
 {
     public partial class frmMain : Form
     {
-        private Device _phccDevice = new Device();
+        private Device _sdiDevice = new Device();
         private ReadOnlyCollection<string> _serialPorts;
 
         private Thread _splashThread;
@@ -111,62 +111,49 @@ namespace SDITestTool
             ChangeSerialPort();
         }
 
-        private bool ChangeSerialPort()
+        private void ChangeSerialPort()
         {
-            var isPhcc = false;
-
             var selectedPort = cbSerialPort.Text;
-            if (String.IsNullOrEmpty(selectedPort)) return false;
+            if (String.IsNullOrEmpty(selectedPort)) return;
             try
             {
-                if (_phccDevice != null) DisposePhccDevice();
+                if (_sdiDevice != null) DisposeSDIDevice();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
             }
-            _phccDevice = null;
             try
             {
-                _phccDevice = new Device(selectedPort);
-                GC.SuppressFinalize(_phccDevice.SerialPort.BaseStream);
-                var firmwareVersion = _phccDevice.FirmwareVersion;
-                if (firmwareVersion != null && firmwareVersion.ToLowerInvariant().Trim().StartsWith("phcc"))
+                _sdiDevice = new Device(selectedPort);
+                var identification = _sdiDevice.Identify();
+                if (!string.IsNullOrWhiteSpace(identification))
                 {
-                    isPhcc = true;
-                    lblFirmwareVersion.Text = "PHCC Firmware Version:" + firmwareVersion;
+                    lblIdentification.Text = "Identification:" + identification;
                 }
             }
             catch (Exception g)
             {
-                lblFirmwareVersion.Text = "PHCC Firmware Version:";
+                lblIdentification.Text = "Identification:";
                 Debug.Write(g);
             }
 
             ResetErrors();
-            return isPhcc;
         }
 
        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            DisposePhccDevice();
+            DisposeSDIDevice();
         }
 
-        private void DisposePhccDevice()
+        private void DisposeSDIDevice()
         {
-            if (_phccDevice != null)
+            if (_sdiDevice != null)
             {
                 try
                 {
-                    if (_phccDevice.SerialPort != null && _phccDevice.SerialPort.IsOpen) _phccDevice.SerialPort.Close();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
-                try
-                {
-                    _phccDevice.Dispose();
+                    _sdiDevice.Dispose();
+                    _sdiDevice = null;
                 }
                 catch (Exception ex)
                 {
@@ -178,11 +165,11 @@ namespace SDITestTool
         private void ResetErrors()
         {
             epErrorProvider.Clear();
-            if (String.IsNullOrEmpty(cbSerialPort.Text) || lblFirmwareVersion.Text == "PHCC Firmware Version:")
+            if (String.IsNullOrEmpty(cbSerialPort.Text) || lblIdentification.Text == "Identification:")
             {
                 epErrorProvider.BlinkStyle = ErrorBlinkStyle.NeverBlink;
                 epErrorProvider.SetError(cbSerialPort,
-                                         "No serial port is selected, or no PHCC device is detected on the selected serial port.");
+                                         "No serial port is selected, or no SDI device is detected on the selected serial port.");
             }
         }
 
@@ -191,23 +178,25 @@ namespace SDITestTool
             ResetErrors();
         }
 
-        private void sendDoa()
+        private void txtSubAddr_Leave(object sender, EventArgs e)
         {
-            byte devAddr = 0;
+            byte val = 0;
+            var valid = ValidateHexTextControl(txtSubAddr, out val);
+        }
+        private void btnSend_Click(object sender, EventArgs e)
+        {
             byte subAddr = 0;
             byte data = 0;
-            var valid = ValidateHexTextControl(txtDoaDevAddr, out devAddr);
+            bool valid = ValidateHexTextControl(txtSubAddr, out subAddr);
             if (!valid) return;
-            valid = ValidateHexTextControl(txtDoaSubAddr, out subAddr);
-            if (!valid) return;
-            valid = ValidateHexTextControl(txtDoaDataByte, out data);
+            valid = ValidateHexTextControl(txtDataByte, out data);
             if (valid)
             {
-                if (_phccDevice != null && !String.IsNullOrEmpty(_phccDevice.PortName))
+                if (_sdiDevice != null && !string.IsNullOrEmpty(_sdiDevice.PortName))
                 {
                     try
                     {
-                        _phccDevice.DoaSendRaw(devAddr, subAddr, data);
+                        _sdiDevice.SendCommand((CommandSubaddress)subAddr, data);
                     }
                     catch (Exception ex)
                     {
@@ -217,27 +206,10 @@ namespace SDITestTool
             }
         }
 
-        private void btnSendDoa_Click(object sender, EventArgs e)
-        {
-            sendDoa();
-        }
-
-        private void txtDoaDevAddr_Leave(object sender, EventArgs e)
+        private void txtDataByte_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            var valid = ValidateHexTextControl(txtDoaDevAddr, out val);
-        }
-
-        private void txtDoaSubAddr_Leave(object sender, EventArgs e)
-        {
-            byte val = 0;
-            var valid = ValidateHexTextControl(txtDoaSubAddr, out val);
-        }
-
-        private void txtDoaDataByte_Leave(object sender, EventArgs e)
-        {
-            byte val = 0;
-            var valid = ValidateHexTextControl(txtDoaDataByte, out val);
+            var valid = ValidateHexTextControl(txtDataByte, out val);
         }
 
         private void DoSplash()

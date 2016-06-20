@@ -16,31 +16,31 @@ namespace SDI
         {
             SerialPortConnection = new SerialPortConnection(portName, openPort);
         }
-        public void SendCommand(CommandSubAddress subAddress, byte data)
+
+        public string SendCommand(CommandSubaddress subaddress, byte data)
         {
-            if (SerialPortConnection != null)
+            switch (subaddress)
             {
-                SerialPortConnection.Write(new[] { (byte)subAddress, data }, 0, 2);
-            }
-        }
-        public string SendQuery(CommandSubAddress subAddress, byte data)
-        {
-            switch (subAddress)
-            {
-                case CommandSubAddress.IDENTIFY:
+                case CommandSubaddress.IDENTIFY:
                     const int IDENTIFY_STRING_LENGTH = 14;
                     SerialPortConnection.DiscardInputBuffer();
-                    SendCommand(CommandSubAddress.IDENTIFY, 0x00);
+                    SendCommandInternal(CommandSubaddress.IDENTIFY, 0x00);
                     var readBuffer = new byte[IDENTIFY_STRING_LENGTH];
                     SerialPortConnection.Read(readBuffer, 0, IDENTIFY_STRING_LENGTH);
                     return Encoding.ASCII.GetString(readBuffer, 0, IDENTIFY_STRING_LENGTH);
                 default:
-                    SendCommand(subAddress, data);
+                    SendCommandInternal(subaddress, data);
                     return null;
             }
             
         }
-
+        private void SendCommandInternal(CommandSubaddress subaddress, byte data)
+        {
+            if (SerialPortConnection != null)
+            {
+                SerialPortConnection.Write(new[] { (byte)subaddress, data }, 0, 2);
+            }
+        }
         public void Dispose()
         {
             Dispose(true);

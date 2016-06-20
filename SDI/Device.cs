@@ -40,6 +40,7 @@ namespace SDI
         /// <param name = "openPort">Specifies whether to open the COM port immediately or wait till the first operation that requires doing so.</param>
         public Device(string portName, bool openPort): this()
         {
+            PortName = portName;
             _commandDispatcher = new UsbCommandDispatcher(portName, openPort);
         }
 
@@ -54,6 +55,7 @@ namespace SDI
 
         public Device(string portName, bool openPort, byte doaAddress): this()
         {
+            PortName = portName;
             _commandDispatcher = new PhccCommandDispatcher(portName, doaAddress, openPort);
         }
 
@@ -62,7 +64,7 @@ namespace SDI
         ///   the device transmits data back to the host (PC).
         /// </summary>
         public event EventHandler<DeviceDataReceivedEventArgs> DeviceDataReceived;
-
+        public string PortName { get; internal set; }
         #region Protocol
 
         
@@ -71,16 +73,16 @@ namespace SDI
             switch (quadrant)
             {
                 case Quadrant.One:
-                    SendCommand(CommandSubAddress.SSYNQ1, position);
+                    SendCommand(CommandSubaddress.SSYNQ1, position);
                     break;
                 case Quadrant.Two:
-                    SendCommand(CommandSubAddress.SSYNQ2, position);
+                    SendCommand(CommandSubaddress.SSYNQ2, position);
                     break;
                 case Quadrant.Three:
-                    SendCommand(CommandSubAddress.SSYNQ3, position);
+                    SendCommand(CommandSubaddress.SSYNQ3, position);
                     break;
                 case Quadrant.Four:
-                    SendCommand(CommandSubAddress.SSYNQ4, position);
+                    SendCommand(CommandSubaddress.SSYNQ4, position);
                     break;
                 default:
                     throw new ArgumentException("Uknown quadrant.", "quadrant");
@@ -88,7 +90,7 @@ namespace SDI
         }
         public void MoveIndicatorCoarse(byte position)
         {
-            SendCommand(CommandSubAddress.SYN8BIT, position);
+            SendCommand(CommandSubaddress.SYN8BIT, position);
         }
 
 
@@ -106,7 +108,7 @@ namespace SDI
                     (delayTimeMilliseconds / 32)
                 );
 
-            SendCommand(CommandSubAddress.POWER_DOWN,data);
+            SendCommand(CommandSubaddress.POWER_DOWN,data);
         }
 
         public void SetStatorBaseAngle(StatorSignals statorSignal, short offset)
@@ -124,16 +126,16 @@ namespace SDI
             switch (statorSignal)
             {
                 case StatorSignals.S1:
-                    SendCommand(CommandSubAddress.S1_BASE_ANGLE_LSB, lsb);
-                    SendCommand(CommandSubAddress.S1_BASE_ANGLE_MSB, msb);
+                    SendCommand(CommandSubaddress.S1_BASE_ANGLE_LSB, lsb);
+                    SendCommand(CommandSubaddress.S1_BASE_ANGLE_MSB, msb);
                     break;
                 case StatorSignals.S2:
-                    SendCommand(CommandSubAddress.S2_BASE_ANGLE_LSB, lsb);
-                    SendCommand(CommandSubAddress.S2_BASE_ANGLE_MSB, msb);
+                    SendCommand(CommandSubaddress.S2_BASE_ANGLE_LSB, lsb);
+                    SendCommand(CommandSubaddress.S2_BASE_ANGLE_MSB, msb);
                     break;
                 case StatorSignals.S3:
-                    SendCommand(CommandSubAddress.S3_BASE_ANGLE_LSB, lsb);
-                    SendCommand(CommandSubAddress.S3_BASE_ANGLE_MSB, msb);
+                    SendCommand(CommandSubaddress.S3_BASE_ANGLE_LSB, lsb);
+                    SendCommand(CommandSubaddress.S3_BASE_ANGLE_MSB, msb);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("statorSignal");
@@ -144,13 +146,13 @@ namespace SDI
             switch (statorSignal)
             {
                 case StatorSignals.S1:
-                    SendCommand(CommandSubAddress.S1PWM, amplitude);
+                    SendCommand(CommandSubaddress.S1PWM, amplitude);
                     break;
                 case StatorSignals.S2:
-                    SendCommand(CommandSubAddress.S2PWM, amplitude);
+                    SendCommand(CommandSubaddress.S2PWM, amplitude);
                     break;
                 case StatorSignals.S3:
-                    SendCommand(CommandSubAddress.S3PWM, amplitude);
+                    SendCommand(CommandSubaddress.S3PWM, amplitude);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("statorSignal");
@@ -158,20 +160,20 @@ namespace SDI
         }
         public void SetStatorSignalsPolarityImmediate(StatorSignals statorSignalPolarities)
         {           
-            SendCommand(CommandSubAddress.SXPOL, (byte)statorSignalPolarities);
+            SendCommand(CommandSubaddress.SXPOL, (byte)statorSignalPolarities);
         }
         public void SetStatorSignalAmplitudeDeferred(StatorSignals statorSignal, byte amplitude)
         {
             switch (statorSignal)
             {
                 case StatorSignals.S1:
-                    SendCommand(CommandSubAddress.S1PWMD, amplitude);
+                    SendCommand(CommandSubaddress.S1PWMD, amplitude);
                     break;
                 case StatorSignals.S2:
-                    SendCommand(CommandSubAddress.S2PWMD, amplitude);
+                    SendCommand(CommandSubaddress.S2PWMD, amplitude);
                     break;
                 case StatorSignals.S3:
-                    SendCommand(CommandSubAddress.S3PWMD, amplitude);
+                    SendCommand(CommandSubaddress.S3PWMD, amplitude);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("statorSignal");
@@ -179,16 +181,16 @@ namespace SDI
         }
         public void SetStatorSignalsPolarityAndLoadDeferred(StatorSignals statorSignalPolarities)
         {
-            SendCommand(CommandSubAddress.SXPOLD, (byte)statorSignalPolarities);
+            SendCommand(CommandSubaddress.SXPOLD, (byte)statorSignalPolarities);
         }
 
         public void SetIndicatorMovementLimitMinimum(byte limitMinimum)
         {
-            SendCommand(CommandSubAddress.LIMIT_MIN, limitMinimum);
+            SendCommand(CommandSubaddress.LIMIT_MIN, limitMinimum);
         }
         public void SetIndicatorMovementLimitMaximum(byte limitMaximum)
         {
-            SendCommand(CommandSubAddress.LIMIT_MAX, limitMaximum);
+            SendCommand(CommandSubaddress.LIMIT_MAX, limitMaximum);
         }
 
    
@@ -201,7 +203,7 @@ namespace SDI
             {
                 throw new ArgumentOutOfRangeException("outputChannel");
             }
-            SendCommand(CommandSubAddress.DIG_PWM, (byte)outputChannel);
+            SendCommand(CommandSubaddress.DIG_PWM, (byte)outputChannel);
         }
 
         public void SetOutputChannelValue(OutputChannels outputChannel, byte value)
@@ -209,28 +211,28 @@ namespace SDI
             switch (outputChannel)
             {
                 case OutputChannels.DIG_PWM_1:
-                    SendCommand(CommandSubAddress.DIG_PWM_1, value);
+                    SendCommand(CommandSubaddress.DIG_PWM_1, value);
                     break;
                 case OutputChannels.DIG_PWM_2:
-                    SendCommand(CommandSubAddress.DIG_PWM_2, value);
+                    SendCommand(CommandSubaddress.DIG_PWM_2, value);
                     break;
                 case OutputChannels.DIG_PWM_3:
-                    SendCommand(CommandSubAddress.DIG_PWM_3, value);
+                    SendCommand(CommandSubaddress.DIG_PWM_3, value);
                     break;
                 case OutputChannels.DIG_PWM_4:
-                    SendCommand(CommandSubAddress.DIG_PWM_4, value);
+                    SendCommand(CommandSubaddress.DIG_PWM_4, value);
                     break;
                 case OutputChannels.DIG_PWM_5:
-                    SendCommand(CommandSubAddress.DIG_PWM_5, value);
+                    SendCommand(CommandSubaddress.DIG_PWM_5, value);
                     break;
                 case OutputChannels.DIG_PWM_6:
-                    SendCommand(CommandSubAddress.DIG_PWM_6, value);
+                    SendCommand(CommandSubaddress.DIG_PWM_6, value);
                     break;
                 case OutputChannels.DIG_PWM_7:
-                    SendCommand(CommandSubAddress.DIG_PWM_7, value);
+                    SendCommand(CommandSubaddress.DIG_PWM_7, value);
                     break;
                 case OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM:
-                    SendCommand(CommandSubAddress.ONBOARD_PWM, value);
+                    SendCommand(CommandSubaddress.ONBOARD_PWM, value);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("outputChannel");
@@ -246,7 +248,7 @@ namespace SDI
                 throw new ArgumentOutOfRangeException("limitThreshold", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_LIMIT_THRESHOLD));
             }
             var data = (byte)((byte)UpdateRateControlModes.Limit | limitThreshold);
-            SendCommand(CommandSubAddress.UPDATE_RATE_CONTROL, data);
+            SendCommand(CommandSubaddress.UPDATE_RATE_CONTROL, data);
         }
         public void SetUpdateRateControlMode_Smooth(byte smoothingMinimumThresholdValue, UpdateRateControlSmoothingMode smoothingMode)
         {
@@ -256,7 +258,7 @@ namespace SDI
                 throw new ArgumentOutOfRangeException("smoothingMinimumThresholdValue", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_SMOOTHING_MINIMUM_THRESHOLD));
             }
             var data = (byte)((byte)UpdateRateControlModes.Smooth  | (byte)(smoothingMinimumThresholdValue <<2) | (byte)smoothingMode);
-            SendCommand(CommandSubAddress.UPDATE_RATE_CONTROL, data);
+            SendCommand(CommandSubaddress.UPDATE_RATE_CONTROL, data);
         }
 
         public void SetUpdateRateControlMode_Speed(short stepUpdateDelayMillis)
@@ -268,17 +270,17 @@ namespace SDI
                 throw new ArgumentOutOfRangeException("stepUpdateDelayMillis", string.Format(CultureInfo.InvariantCulture, "Must be >=0 and <= {0}", MAX_STEP_UPDATE_DELAY));
             }
             var data = (byte)((byte)UpdateRateControlModes.Smooth | stepUpdateDelayMillis);
-            SendCommand(CommandSubAddress.UPDATE_RATE_CONTROL, data);
+            SendCommand(CommandSubaddress.UPDATE_RATE_CONTROL, data);
         }
 
         public void SetUpdateRateControlMode_Miscellaneous(bool shortPath)
         {
             var data = (byte)((byte)UpdateRateControlModes.Miscellaneous | (byte)(shortPath ? 1: 0));
-            SendCommand(CommandSubAddress.UPDATE_RATE_CONTROL, data);
+            SendCommand(CommandSubaddress.UPDATE_RATE_CONTROL, data);
         }
         public void ConfigureDiagnosticLEDBehavior(DiagnosticLEDMode mode)
         {
-            SendCommand(CommandSubAddress.DIAG_LED, (byte)mode);
+            SendCommand(CommandSubaddress.DIAG_LED, (byte)mode);
         }
         public void Demo(DemoMovementSpeeds movementSpeed, byte movementStepSize, DemoModus modus, bool start)
         {
@@ -294,25 +296,25 @@ namespace SDI
                            (byte)modus |
                            (byte)(start ? 1 : 0)
                         );
-            SendCommand(CommandSubAddress.DEMO_MODE, data);
+            SendCommand(CommandSubaddress.DEMO_MODE, data);
         }
         public void SetDemoModeStartPosition(byte data)
         {
-            SendCommand(CommandSubAddress.DEMO_MODE_START_POSITION, data);
+            SendCommand(CommandSubaddress.DEMO_MODE_START_POSITION, data);
         }
         public void SetDemoModeEndPosition(byte data)
         {
-            SendCommand(CommandSubAddress.DEMO_MODE_END_POSITION, data);
+            SendCommand(CommandSubaddress.DEMO_MODE_END_POSITION, data);
         }
 
         public string Identify()
         {
-            return SendQuery(CommandSubAddress.IDENTIFY, 0x00);
+            return SendCommand(CommandSubaddress.IDENTIFY, 0x00);
         }
 
         public void DisableWatchdog()
         {
-            SendCommand(CommandSubAddress.DISABLE_WATCHDOG, 0x00);
+            SendCommand(CommandSubaddress.DISABLE_WATCHDOG, 0x00);
         }
         public void Watchdog(bool enable, byte countdown)
         {
@@ -322,23 +324,20 @@ namespace SDI
                 throw new ArgumentOutOfRangeException("countdown", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_COUNTDOWN));
             }
             var data = (byte)((enable ? 1 : 0) << 7) | countdown;
-            SendCommand(CommandSubAddress.WATCHDOG_CONTROL, (byte)data);
+            SendCommand(CommandSubaddress.WATCHDOG_CONTROL, (byte)data);
         }
 
         public void UsbDebug(bool enable)
         {
-            SendCommand(CommandSubAddress.USB_DEBUG, enable ? Convert.ToByte('Y') : Convert.ToByte('N'));
+            SendCommand(CommandSubaddress.USB_DEBUG, enable ? Convert.ToByte('Y') : Convert.ToByte('N'));
         }
        
 
-        private void SendCommand(CommandSubAddress subAddress, byte data)
+        public string SendCommand(CommandSubaddress subaddress, byte data)
         {
-            _commandDispatcher.SendCommand(subAddress, data);
+            return _commandDispatcher.SendCommand(subaddress, data);
         }
-        private string SendQuery (CommandSubAddress subAddress, byte data)
-        {
-            return _commandDispatcher.SendQuery(subAddress, data);
-        }
+
         #endregion
 
 

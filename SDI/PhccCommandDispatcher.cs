@@ -13,17 +13,18 @@ namespace SDI
             _sdiAddressOnDOA = sdiAddressOnDOA;
         }
         
-        public void SendCommand(CommandSubAddress subAddress, byte data)
+
+        public string SendCommand(CommandSubaddress subaddress, byte data)
+        {
+            SendCommandInternal(subaddress, data);
+            return null;
+        }
+        private void SendCommandInternal(CommandSubaddress subaddress, byte data)
         {
             if (_phccDevice != null)
             {
-                _phccDevice.DoaSendRaw(_sdiAddressOnDOA, (byte)subAddress, data);
+                _phccDevice.DoaSendRaw(_sdiAddressOnDOA, (byte)subaddress, data);
             }
-        }
-        public string SendQuery(CommandSubAddress subAddress, byte data)
-        {
-            SendCommand(subAddress, data);
-            return null;
         }
         public void Dispose()
         {

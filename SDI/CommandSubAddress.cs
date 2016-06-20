@@ -5,8 +5,8 @@ namespace SDI
     /// <summary>
     ///   Enumeration of subaddresses of the commands that can be sent to the device
     /// </summary>
-    [ComVisible(false)]
-    internal enum CommandSubAddress : byte
+    [ComVisible(true)]
+    public enum CommandSubaddress : byte
     {
         /// <summary>
         ///   Move indicator in quadrant 1

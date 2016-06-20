@@ -90,7 +90,7 @@ namespace SDI
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        private void InitializeSerialPort()
+        private void InitializeSerialPort(bool useHandshaking=false)
         {
             lock (_serialPortLock)
             {
@@ -101,8 +101,14 @@ namespace SDI
                 _serialPort.DataBits = 8;
                 _serialPort.Parity = Parity.None;
                 _serialPort.StopBits = StopBits.One;
-                //_serialPort.Handshake = Handshake.None;
-                _serialPort.Handshake = Handshake.RequestToSend;
+                if (useHandshaking)
+                {
+                    _serialPort.Handshake = Handshake.RequestToSend;
+                }
+                else
+                {
+                    _serialPort.Handshake = Handshake.None;
+                }
                 _serialPort.ReceivedBytesThreshold = 1;
                 _serialPort.RtsEnable = true;
                 _serialPort.ReadTimeout = 500;
@@ -139,7 +145,7 @@ namespace SDI
         {
             if (DataReceived != null)
             {
-                OnSerialPortDataReceived(this, e);
+                DataReceived(this, new SerialPortDataReceivedEventArgs());
             }
         }
         private void ClosePort()
@@ -148,24 +154,30 @@ namespace SDI
             {
                 if (_serialPort != null)
                 {
+                    try {
+                        _serialPort.DataReceived -= _serialPort_DataReceived;
+                        _serialPort.ErrorReceived -= _serialPort_ErrorReceived;
+                    }
+                    catch { }
                     try
                     {
                         if (_serialPort.IsOpen)
                         {
+                            try
+                            {
+                                GC.ReRegisterForFinalize(_serialPort.BaseStream);
+                            }
+                            catch { }
                             _serialPort.Close();
                         }
                     }
                     catch { }
                     finally
                     {
-                        try
-                        {
-                            GC.ReRegisterForFinalize(_serialPort.BaseStream);
-                        }
-                        catch { }
                         _serialPort.Dispose();
                     }
                     _serialPort = null;
+                    Thread.Sleep(500);
                 }
             }
         }

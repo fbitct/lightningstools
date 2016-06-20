@@ -31,135 +31,124 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.tcTabs = new System.Windows.Forms.TabControl();
+            this.tabRawDataControl = new System.Windows.Forms.TabPage();
+            this.gbRaw = new System.Windows.Forms.GroupBox();
+            this.lblSubAddr = new System.Windows.Forms.Label();
+            this.txtSubAddr = new System.Windows.Forms.TextBox();
+            this.btnSend = new System.Windows.Forms.Button();
+            this.lblDataByte = new System.Windows.Forms.Label();
+            this.txtDataByte = new System.Windows.Forms.TextBox();
             this.lblDeviceAddress = new System.Windows.Forms.Label();
-            this.tabDoaRaw = new System.Windows.Forms.TabPage();
-            this.gbDoa = new System.Windows.Forms.GroupBox();
-            this.lblDoaSubAddr = new System.Windows.Forms.Label();
-            this.txtDoaSubAddr = new System.Windows.Forms.TextBox();
-            this.lblDoaDevAddr = new System.Windows.Forms.Label();
-            this.btnSendDoa = new System.Windows.Forms.Button();
-            this.txtDoaDevAddr = new System.Windows.Forms.TextBox();
-            this.lbDoalDataByte = new System.Windows.Forms.Label();
-            this.txtDoaDataByte = new System.Windows.Forms.TextBox();
             this.epErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.cbSerialPort = new System.Windows.Forms.ComboBox();
             this.lblSerialPort = new System.Windows.Forms.Label();
-            this.lblFirmwareVersion = new System.Windows.Forms.Label();
+            this.lblIdentification = new System.Windows.Forms.Label();
             this.tcTabs.SuspendLayout();
-            this.tabDoaRaw.SuspendLayout();
-            this.gbDoa.SuspendLayout();
-
+            this.tabRawDataControl.SuspendLayout();
+            this.gbRaw.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.epErrorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // tcTabs
             // 
-            this.tcTabs.Controls.Add(this.tabDoaRaw);
+            this.tcTabs.Controls.Add(this.tabRawDataControl);
             this.tcTabs.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tcTabs.Location = new System.Drawing.Point(0, 33);
+            this.tcTabs.Location = new System.Drawing.Point(0, 63);
+            this.tcTabs.Margin = new System.Windows.Forms.Padding(6);
             this.tcTabs.Name = "tcTabs";
             this.tcTabs.SelectedIndex = 0;
-            this.tcTabs.Size = new System.Drawing.Size(926, 563);
+            this.tcTabs.Size = new System.Drawing.Size(1852, 1083);
             this.tcTabs.TabIndex = 0;
             this.tcTabs.SelectedIndexChanged += new System.EventHandler(this.tcTabs_SelectedIndexChanged);
-
             // 
-            // tabDoaRaw
+            // tabRawDataControl
             // 
-            this.tabDoaRaw.Controls.Add(this.gbDoa);
-            this.tabDoaRaw.Location = new System.Drawing.Point(4, 22);
-            this.tabDoaRaw.Name = "tabDoaRaw";
-            this.tabDoaRaw.Size = new System.Drawing.Size(918, 537);
-            this.tabDoaRaw.TabIndex = 6;
-            this.tabDoaRaw.Text = "DOA";
-            this.tabDoaRaw.UseVisualStyleBackColor = true;
+            this.tabRawDataControl.Controls.Add(this.gbRaw);
+            this.tabRawDataControl.Location = new System.Drawing.Point(4, 34);
+            this.tabRawDataControl.Margin = new System.Windows.Forms.Padding(6);
+            this.tabRawDataControl.Name = "tabRawDataControl";
+            this.tabRawDataControl.Size = new System.Drawing.Size(1844, 1045);
+            this.tabRawDataControl.TabIndex = 6;
+            this.tabRawDataControl.Text = "Raw Data Control";
+            this.tabRawDataControl.UseVisualStyleBackColor = true;
             // 
-            // gbDoa
+            // gbRaw
             // 
-            this.gbDoa.Controls.Add(this.lblDoaSubAddr);
-            this.gbDoa.Controls.Add(this.txtDoaSubAddr);
-            this.gbDoa.Controls.Add(this.lblDoaDevAddr);
-            this.gbDoa.Controls.Add(this.btnSendDoa);
-            this.gbDoa.Controls.Add(this.txtDoaDevAddr);
-            this.gbDoa.Controls.Add(this.lbDoalDataByte);
-            this.gbDoa.Controls.Add(this.txtDoaDataByte);
-            this.gbDoa.Location = new System.Drawing.Point(8, 6);
-            this.gbDoa.Name = "gbDoa";
-            this.gbDoa.Size = new System.Drawing.Size(326, 176);
-            this.gbDoa.TabIndex = 0;
-            this.gbDoa.TabStop = false;
-            this.gbDoa.Text = "Digital Output Type A Raw Data Control";
+            this.gbRaw.Controls.Add(this.lblSubAddr);
+            this.gbRaw.Controls.Add(this.txtSubAddr);
+            this.gbRaw.Controls.Add(this.btnSend);
+            this.gbRaw.Controls.Add(this.lblDataByte);
+            this.gbRaw.Controls.Add(this.txtDataByte);
+            this.gbRaw.Location = new System.Drawing.Point(17, 12);
+            this.gbRaw.Margin = new System.Windows.Forms.Padding(6);
+            this.gbRaw.Name = "gbRaw";
+            this.gbRaw.Padding = new System.Windows.Forms.Padding(6);
+            this.gbRaw.Size = new System.Drawing.Size(652, 338);
+            this.gbRaw.TabIndex = 0;
+            this.gbRaw.TabStop = false;
+            this.gbRaw.Text = "Raw Data Control";
             // 
-            // lblDoaSubAddr
+            // lblSubAddr
             // 
-            this.lblDoaSubAddr.AutoSize = true;
-            this.lblDoaSubAddr.Location = new System.Drawing.Point(25, 51);
-            this.lblDoaSubAddr.Name = "lblDoaSubAddr";
-            this.lblDoaSubAddr.Size = new System.Drawing.Size(66, 13);
-            this.lblDoaSubAddr.TabIndex = 2;
-            this.lblDoaSubAddr.Text = "S&ubaddress:";
-            this.lblDoaSubAddr.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblSubAddr.AutoSize = true;
+            this.lblSubAddr.Location = new System.Drawing.Point(50, 98);
+            this.lblSubAddr.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblSubAddr.Name = "lblSubAddr";
+            this.lblSubAddr.Size = new System.Drawing.Size(133, 25);
+            this.lblSubAddr.TabIndex = 2;
+            this.lblSubAddr.Text = "S&ubaddress:";
+            this.lblSubAddr.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtDoaSubAddr
+            // txtSubAddr
             // 
-            this.txtDoaSubAddr.Location = new System.Drawing.Point(97, 48);
-            this.txtDoaSubAddr.MaxLength = 4;
-            this.txtDoaSubAddr.Name = "txtDoaSubAddr";
-            this.txtDoaSubAddr.Size = new System.Drawing.Size(46, 20);
-            this.txtDoaSubAddr.TabIndex = 3;
-            this.txtDoaSubAddr.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtDoaSubAddr.Leave += new System.EventHandler(this.txtDoaSubAddr_Leave);
+            this.txtSubAddr.Location = new System.Drawing.Point(194, 92);
+            this.txtSubAddr.Margin = new System.Windows.Forms.Padding(6);
+            this.txtSubAddr.MaxLength = 4;
+            this.txtSubAddr.Name = "txtSubAddr";
+            this.txtSubAddr.Size = new System.Drawing.Size(88, 31);
+            this.txtSubAddr.TabIndex = 3;
+            this.txtSubAddr.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtSubAddr.Leave += new System.EventHandler(this.txtSubAddr_Leave);
             // 
-            // lblDoaDevAddr
+            // btnSend
             // 
-            this.lblDoaDevAddr.AutoSize = true;
-            this.lblDoaDevAddr.Location = new System.Drawing.Point(6, 25);
-            this.lblDoaDevAddr.Name = "lblDoaDevAddr";
-            this.lblDoaDevAddr.Size = new System.Drawing.Size(85, 13);
-            this.lblDoaDevAddr.TabIndex = 0;
-            this.lblDoaDevAddr.Text = "Device &Address:";
-            this.lblDoaDevAddr.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnSend.Location = new System.Drawing.Point(20, 267);
+            this.btnSend.Margin = new System.Windows.Forms.Padding(6);
+            this.btnSend.Name = "btnSend";
+            this.btnSend.Size = new System.Drawing.Size(150, 44);
+            this.btnSend.TabIndex = 6;
+            this.btnSend.Text = "&Send";
+            this.btnSend.UseVisualStyleBackColor = true;
+            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
-            // btnSendDoa
+            // lblDataByte
             // 
-            this.btnSendDoa.Location = new System.Drawing.Point(10, 139);
-            this.btnSendDoa.Name = "btnSendDoa";
-            this.btnSendDoa.Size = new System.Drawing.Size(75, 23);
-            this.btnSendDoa.TabIndex = 6;
-            this.btnSendDoa.Text = "&Send";
-            this.btnSendDoa.UseVisualStyleBackColor = true;
-            this.btnSendDoa.Click += new System.EventHandler(this.btnSendDoa_Click);
+            this.lblDataByte.AutoSize = true;
+            this.lblDataByte.Location = new System.Drawing.Point(68, 148);
+            this.lblDataByte.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblDataByte.Name = "lblDataByte";
+            this.lblDataByte.Size = new System.Drawing.Size(112, 25);
+            this.lblDataByte.TabIndex = 4;
+            this.lblDataByte.Text = "Data &Byte:";
+            this.lblDataByte.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtDoaDevAddr
+            // txtDataByte
             // 
-            this.txtDoaDevAddr.Location = new System.Drawing.Point(97, 22);
-            this.txtDoaDevAddr.MaxLength = 4;
-            this.txtDoaDevAddr.Name = "txtDoaDevAddr";
-            this.txtDoaDevAddr.Size = new System.Drawing.Size(46, 20);
-            this.txtDoaDevAddr.TabIndex = 1;
-            this.txtDoaDevAddr.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtDoaDevAddr.Leave += new System.EventHandler(this.txtDoaDevAddr_Leave);
+            this.txtDataByte.Location = new System.Drawing.Point(194, 142);
+            this.txtDataByte.Margin = new System.Windows.Forms.Padding(6);
+            this.txtDataByte.MaxLength = 4;
+            this.txtDataByte.Name = "txtDataByte";
+            this.txtDataByte.Size = new System.Drawing.Size(88, 31);
+            this.txtDataByte.TabIndex = 5;
+            this.txtDataByte.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtDataByte.Leave += new System.EventHandler(this.txtDataByte_Leave);
             // 
-            // lbDoalDataByte
+            // lblDeviceAddress
             // 
-            this.lbDoalDataByte.AutoSize = true;
-            this.lbDoalDataByte.Location = new System.Drawing.Point(34, 77);
-            this.lbDoalDataByte.Name = "lbDoalDataByte";
-            this.lbDoalDataByte.Size = new System.Drawing.Size(57, 13);
-            this.lbDoalDataByte.TabIndex = 4;
-            this.lbDoalDataByte.Text = "Data &Byte:";
-            this.lbDoalDataByte.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtDoaDataByte
-            // 
-            this.txtDoaDataByte.Location = new System.Drawing.Point(97, 74);
-            this.txtDoaDataByte.MaxLength = 4;
-            this.txtDoaDataByte.Name = "txtDoaDataByte";
-            this.txtDoaDataByte.Size = new System.Drawing.Size(46, 20);
-            this.txtDoaDataByte.TabIndex = 5;
-            this.txtDoaDataByte.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtDoaDataByte.Leave += new System.EventHandler(this.txtDoaDataByte_Leave);
-
+            this.lblDeviceAddress.Location = new System.Drawing.Point(0, 0);
+            this.lblDeviceAddress.Name = "lblDeviceAddress";
+            this.lblDeviceAddress.Size = new System.Drawing.Size(100, 23);
+            this.lblDeviceAddress.TabIndex = 0;
             // 
             // epErrorProvider
             // 
@@ -168,54 +157,56 @@
             // cbSerialPort
             // 
             this.cbSerialPort.FormattingEnabled = true;
-            this.cbSerialPort.Location = new System.Drawing.Point(73, 6);
+            this.cbSerialPort.Location = new System.Drawing.Point(146, 12);
+            this.cbSerialPort.Margin = new System.Windows.Forms.Padding(6);
             this.cbSerialPort.Name = "cbSerialPort";
-            this.cbSerialPort.Size = new System.Drawing.Size(121, 21);
+            this.cbSerialPort.Size = new System.Drawing.Size(238, 33);
             this.cbSerialPort.TabIndex = 1;
             this.cbSerialPort.SelectedIndexChanged += new System.EventHandler(this.cbSerialPort_SelectedIndexChanged);
             // 
             // lblSerialPort
             // 
             this.lblSerialPort.AutoSize = true;
-            this.lblSerialPort.Location = new System.Drawing.Point(12, 9);
+            this.lblSerialPort.Location = new System.Drawing.Point(24, 17);
+            this.lblSerialPort.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.lblSerialPort.Name = "lblSerialPort";
-            this.lblSerialPort.Size = new System.Drawing.Size(58, 13);
+            this.lblSerialPort.Size = new System.Drawing.Size(118, 25);
             this.lblSerialPort.TabIndex = 2;
             this.lblSerialPort.Text = "Serial &Port:";
             // 
-            // lblFirmwareVersion
+            // lblIdentification
             // 
-            this.lblFirmwareVersion.AutoSize = true;
-            this.lblFirmwareVersion.Location = new System.Drawing.Point(216, 9);
-            this.lblFirmwareVersion.Name = "lblFirmwareVersion";
-            this.lblFirmwareVersion.Size = new System.Drawing.Size(90, 13);
-            this.lblFirmwareVersion.TabIndex = 3;
-            this.lblFirmwareVersion.Text = "PHCC Firmware Version:";
+            this.lblIdentification.AutoSize = true;
+            this.lblIdentification.Location = new System.Drawing.Point(432, 17);
+            this.lblIdentification.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblIdentification.Name = "lblIdentification";
+            this.lblIdentification.Size = new System.Drawing.Size(139, 25);
+            this.lblIdentification.TabIndex = 3;
+            this.lblIdentification.Text = "Identification:";
             // 
             // frmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(926, 596);
-            this.Controls.Add(this.lblFirmwareVersion);
+            this.ClientSize = new System.Drawing.Size(1852, 1146);
+            this.Controls.Add(this.lblIdentification);
             this.Controls.Add(this.lblSerialPort);
             this.Controls.Add(this.cbSerialPort);
             this.Controls.Add(this.tcTabs);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.Name = "frmMain";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SDI Test Tool";
-            this.Load += new System.EventHandler(this.frmMain_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
+            this.Load += new System.EventHandler(this.frmMain_Load);
             this.tcTabs.ResumeLayout(false);
-
-            this.tabDoaRaw.ResumeLayout(false);
-            this.gbDoa.ResumeLayout(false);
-            this.gbDoa.PerformLayout();
-
+            this.tabRawDataControl.ResumeLayout(false);
+            this.gbRaw.ResumeLayout(false);
+            this.gbRaw.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.epErrorProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -229,16 +220,14 @@
         private System.Windows.Forms.ErrorProvider epErrorProvider;
         private System.Windows.Forms.Label lblSerialPort;
         private System.Windows.Forms.ComboBox cbSerialPort;
-        private System.Windows.Forms.TabPage tabDoaRaw;
-        private System.Windows.Forms.Label lblFirmwareVersion;
-        private System.Windows.Forms.GroupBox gbDoa;
-        private System.Windows.Forms.Label lblDoaSubAddr;
-        private System.Windows.Forms.TextBox txtDoaSubAddr;
-        private System.Windows.Forms.Label lblDoaDevAddr;
-        private System.Windows.Forms.Button btnSendDoa;
-        private System.Windows.Forms.TextBox txtDoaDevAddr;
-        private System.Windows.Forms.Label lbDoalDataByte;
-        private System.Windows.Forms.TextBox txtDoaDataByte;
+        private System.Windows.Forms.TabPage tabRawDataControl;
+        private System.Windows.Forms.Label lblIdentification;
+        private System.Windows.Forms.GroupBox gbRaw;
+        private System.Windows.Forms.Label lblSubAddr;
+        private System.Windows.Forms.TextBox txtSubAddr;
+        private System.Windows.Forms.Button btnSend;
+        private System.Windows.Forms.Label lblDataByte;
+        private System.Windows.Forms.TextBox txtDataByte;
 
 
 
