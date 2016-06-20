@@ -33,6 +33,7 @@ namespace SDITestTool
             Text = Application.ProductName + " v" + Application.ProductVersion;
             SetupSerialPorts();
             SetupDefaultDemoParameters();
+            SetupDefaultURCParameters();
             ResetErrors();
             Activate();
         }
@@ -54,6 +55,10 @@ namespace SDITestTool
             cboDemoMovementSpeed.SelectedIndex = 0;
             cboDemoMovementStepSize.SelectedIndex = 0;
             rdoModusStartToEndToStart.Checked = true;
+        }
+        private void SetupDefaultURCParameters()
+        {
+            cboURCSmoothModeSmoothUpdates.SelectedIndex = 0;
         }
 
         private void EnumerateSerialPorts()
@@ -355,9 +360,9 @@ namespace SDITestTool
         }
         private void UpdateUIControlsEnabledOrDisabledState()
         {
-#if (DEBUG)
-            return;
-#endif
+#if (!DEBUG)
+
+
             gbLED.Enabled = DeviceIsValid;
             gbUSBDebug.Enabled = DeviceIsValid;
             gbWatchdog.Enabled = DeviceIsValid;
@@ -366,9 +371,25 @@ namespace SDITestTool
             gbStatorBaseAngles.Enabled = DeviceIsValid;
             gbDemo.Enabled = DeviceIsValid;
             gbMovementLimits.Enabled = DeviceIsValid;
+            gbUpdateRateControl.Enabled = DeviceIsValid;
+#endif
             rdoPowerDownLevelFull.Enabled = chkPowerDownEnabled.CheckState != CheckState.Indeterminate;
             rdoPowerDownLevelHalf.Enabled = chkPowerDownEnabled.CheckState != CheckState.Indeterminate;
             nudPowerDownDelay.Enabled = chkPowerDownEnabled.CheckState != CheckState.Indeterminate;
+
+            lblURCLimitThreshold.Enabled = rdoURCLimitMode.Checked;
+            lblURCLimitThresholdDegrees.Enabled = rdoURCLimitMode.Checked;
+            lblURCLimitThresholdHex.Enabled = rdoURCLimitMode.Checked;
+            nudURCLimitThresholdDecimal.Enabled = rdoURCLimitMode.Checked;
+
+            lblURCSmoothModeThreshold.Enabled = rdoURCSmoothMode.Checked;
+            lblURCSmoothModeThresholdDegrees.Enabled = rdoURCSmoothMode.Checked;
+            lblURCSmoothModeThresholdHex.Enabled = rdoURCSmoothMode.Checked;
+            nudURCSmoothModeThresholdDecimal.Enabled = rdoURCSmoothMode.Checked;
+            lblURCSmoothModeSmoothUpdates.Enabled = rdoURCSmoothMode.Checked;
+            cboURCSmoothModeSmoothUpdates.Enabled = rdoURCSmoothMode.Checked;
+
+
         }
         private bool DeviceIsValid
         {
@@ -662,6 +683,88 @@ namespace SDITestTool
             }
         }
 
-        
+        private void nudURCLimitThresholdDecimal_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateUrcLimitMode();
+        }
+        private void rdoURCLimitMode_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateUrcLimitMode();
+        }
+        private void UpdateUrcLimitMode()
+        {
+            var threshold = (byte)nudURCLimitThresholdDecimal.Value;
+            lblURCLimitThresholdDegrees.Text = string.Format("Degrees:{0}", Decimal.Round((decimal)((threshold+1) * 360.000 / 1024.000), 1).ToString());
+            lblURCLimitThresholdHex.Text = string.Format("Hex:0x{0}", threshold.ToString("X").PadLeft(2, '0'));
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.SetUpdateRateControlMode_Limit(threshold);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+        private void rdoURCSmoothMode_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateUrcSmoothMode();
+        }
+        private void cboSmoothModeSmoothUpdates_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateUrcSmoothMode();
+        }
+        private void nudURCSmoothModeThresholdDecimal_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateUrcSmoothMode();
+        }
+        private UpdateRateControlSmoothingMode SmoothingMode
+        {
+            get
+            {
+                var selectedSmoothingMode = cboURCSmoothModeSmoothUpdates.SelectedItem as string;
+                if (selectedSmoothingMode == "Adaptive")
+                {
+                    return UpdateRateControlSmoothingMode.Adaptive;
+                }
+                else if (selectedSmoothingMode == "2 updates")
+                {
+                    return UpdateRateControlSmoothingMode.TwoStep;
+                }
+                else if (selectedSmoothingMode == "4 updates")
+                {
+                    return UpdateRateControlSmoothingMode.FourStep;
+                }
+                else if (selectedSmoothingMode == "8 updates")
+                {
+                    return UpdateRateControlSmoothingMode.EightStep;
+                }
+                return UpdateRateControlSmoothingMode.Adaptive;
+            }
+        }
+        private void UpdateUrcSmoothMode()
+        {
+            var threshold = (byte)nudURCSmoothModeThresholdDecimal.Value;
+            var thresholdRaw = (byte)((threshold - 4) / 4);
+            lblURCSmoothModeThresholdDegrees.Text = string.Format("Degrees:{0}", Decimal.Round((decimal)(threshold * 360.000 / 1024.000), 1).ToString());
+            lblURCSmoothModeThresholdHex.Text = string.Format("Hex:0x{0}", thresholdRaw.ToString("X").PadLeft(2, '0'));
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.SetUpdateRateControlMode_Smooth(threshold, SmoothingMode );
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+
     }
 }
