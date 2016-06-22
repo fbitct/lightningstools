@@ -3,18 +3,18 @@
 namespace SDI
 {
     /// <summary>
-    ///   User defined output channel modes
+    ///   Polarity
     /// </summary>
     [ComVisible(true)]
-    public enum OutputChannelMode : byte
+    public enum Polarity : byte
     {
         /// <summary>
-        ///  Digital
+        ///  Negative
         /// </summary>
-        Digital = 0,
+        Negative = 0,
         /// <summary>
-        ///  PWM
+        ///  Positive
         /// </summary>
-        PWM = 1,
+        Positive = 1,
     }
 }

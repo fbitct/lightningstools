@@ -94,7 +94,7 @@ namespace SDI
         }
 
 
-        public void ConfigurePowerDown(PowerDownState enabled, PowerDownLevel level, short delayTimeMilliseconds)
+        public void ConfigurePowerDown(PowerDownState powerDownState, PowerDownLevel powerDownLevel, short delayTimeMilliseconds)
         {
             const uint MAX_POWER_DOWN_DELAY = 2016;
             if (delayTimeMilliseconds <0 || delayTimeMilliseconds > MAX_POWER_DOWN_DELAY)
@@ -103,8 +103,8 @@ namespace SDI
             };
             var data =(byte)
                 (
-                    (byte)enabled |
-                    (byte)level |
+                    (byte)powerDownState |
+                    (byte)powerDownLevel |
                     (delayTimeMilliseconds / 32)
                 );
 
@@ -158,8 +158,12 @@ namespace SDI
                     throw new ArgumentOutOfRangeException("statorSignal");
             }
         }
-        public void SetStatorSignalsPolarityImmediate(StatorSignals statorSignalPolarities)
-        {           
+        public void SetStatorSignalsPolarityImmediate(Polarity s1, Polarity s2, Polarity s3 )
+        {
+            StatorSignals statorSignalPolarities = StatorSignals.Unknown;
+            if (s1 == Polarity.Positive) statorSignalPolarities |= StatorSignals.S1;
+            if (s2 == Polarity.Positive) statorSignalPolarities |= StatorSignals.S2;
+            if (s3 == Polarity.Positive) statorSignalPolarities |= StatorSignals.S3;
             SendCommand(CommandSubaddress.SXPOL, (byte)statorSignalPolarities);
         }
         public void SetStatorSignalAmplitudeDeferred(StatorSignals statorSignal, byte amplitude)
@@ -179,8 +183,12 @@ namespace SDI
                     throw new ArgumentOutOfRangeException("statorSignal");
             }
         }
-        public void SetStatorSignalsPolarityAndLoadDeferred(StatorSignals statorSignalPolarities)
+        public void SetStatorSignalsPolarityAndLoadDeferred(Polarity s1, Polarity s2, Polarity s3)
         {
+            StatorSignals statorSignalPolarities = StatorSignals.Unknown;
+            if (s1 == Polarity.Positive) statorSignalPolarities |= StatorSignals.S1;
+            if (s2 == Polarity.Positive) statorSignalPolarities |= StatorSignals.S2;
+            if (s3 == Polarity.Positive) statorSignalPolarities |= StatorSignals.S3;
             SendCommand(CommandSubaddress.SXPOLD, (byte)statorSignalPolarities);
         }
 
@@ -194,16 +202,17 @@ namespace SDI
         }
 
    
-        public void ConfigureOutputChannels(OutputChannels outputChannel)
+        public void ConfigureOutputChannels(OutputChannelMode digPwm1, OutputChannelMode digPwm2, OutputChannelMode digPwm3, OutputChannelMode digPwm4, OutputChannelMode digPwm5, OutputChannelMode digPwm6, OutputChannelMode digPwm7)
         {
-            if (
-                (outputChannel & OutputChannels.Unknown) == OutputChannels.Unknown ||
-                (outputChannel & OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM) == OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM
-               )
-            {
-                throw new ArgumentOutOfRangeException("outputChannel");
-            }
-            SendCommand(CommandSubaddress.DIG_PWM, (byte)outputChannel);
+            var outputChannelConfigurations = OutputChannels.Unknown;
+            if (digPwm1 == OutputChannelMode.PWM) outputChannelConfigurations |= OutputChannels.DIG_PWM_1;
+            if (digPwm2 == OutputChannelMode.PWM) outputChannelConfigurations |= OutputChannels.DIG_PWM_2;
+            if (digPwm3 == OutputChannelMode.PWM) outputChannelConfigurations |= OutputChannels.DIG_PWM_3;
+            if (digPwm4 == OutputChannelMode.PWM) outputChannelConfigurations |= OutputChannels.DIG_PWM_4;
+            if (digPwm5 == OutputChannelMode.PWM) outputChannelConfigurations |= OutputChannels.DIG_PWM_5;
+            if (digPwm6 == OutputChannelMode.PWM) outputChannelConfigurations |= OutputChannels.DIG_PWM_6;
+            if (digPwm7 == OutputChannelMode.PWM) outputChannelConfigurations |= OutputChannels.DIG_PWM_7;
+            SendCommand(CommandSubaddress.DIG_PWM, (byte)outputChannelConfigurations);
         }
 
         public void SetOutputChannelValue(OutputChannels outputChannel, byte value)
@@ -235,7 +244,7 @@ namespace SDI
                     SendCommand(CommandSubaddress.ONBOARD_PWM, value);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("outputChannel");
+                    throw new ArgumentOutOfRangeException("outputChannelConfigurations");
             }
             
         }

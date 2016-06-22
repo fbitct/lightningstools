@@ -85,6 +85,7 @@
     <Compile Include="ICommandDispatcher.cs" />
     <Compile Include="ISerialPortConnection.cs" />
     <Compile Include="PhccCommandDispatcher.cs" />
+    <Compile Include="Polarity.cs" />
     <Compile Include="PowerDownBits.cs" />
     <Compile Include="PowerDownLevel.cs" />
     <Compile Include="PowerDownState.cs" />

@@ -116,7 +116,7 @@
             this.lblLimitMin = new System.Windows.Forms.Label();
             this.gbMain = new System.Windows.Forms.GroupBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabDeviceSetup = new System.Windows.Forms.TabPage();
+            this.tabDiagnosticLED = new System.Windows.Forms.TabPage();
             this.tabSynchroSetup = new System.Windows.Forms.TabPage();
             this.gbUpdateRateControl = new System.Windows.Forms.GroupBox();
             this.nudUpdateRateControlSpeed = new System.Windows.Forms.NumericUpDown();
@@ -137,39 +137,84 @@
             this.rdoURCLimitMode = new System.Windows.Forms.RadioButton();
             this.nudURCLimitThresholdDecimal = new System.Windows.Forms.NumericUpDown();
             this.tabSynchroControl = new System.Windows.Forms.TabPage();
-            this.gbIndicatorMovementControl = new System.Windows.Forms.GroupBox();
-            this.tabDemoMode = new System.Windows.Forms.TabPage();
-            this.tabRawData = new System.Windows.Forms.TabPage();
-            this.lblMoveIndicatorToPositionHex = new System.Windows.Forms.Label();
-            this.lblMoveIndicatorToPositionDegrees = new System.Windows.Forms.Label();
-            this.nudMoveIndicatorToPositionDecimal = new System.Windows.Forms.NumericUpDown();
-            this.lblMoveIndicatorToPosition = new System.Windows.Forms.Label();
-            this.cboMoveIndicatorInQuadrant = new System.Windows.Forms.ComboBox();
-            this.lblMoveIndicatorInQuadrant = new System.Windows.Forms.Label();
+            this.gbSetStatorAmplitudeAndPolarityImmediate = new System.Windows.Forms.GroupBox();
+            this.btnUpdateStatorAmplitudesAndPolarities = new System.Windows.Forms.Button();
+            this.lblStatorAmplitudeAndPolarityUpdateMode = new System.Windows.Forms.Label();
+            this.rdoStatorAmplitudeAndPolarityDeferredUpdates = new System.Windows.Forms.RadioButton();
+            this.rdoStatorAmplitudeAndPolarityImmediateUpdates = new System.Windows.Forms.RadioButton();
+            this.lblStators = new System.Windows.Forms.Label();
+            this.lblS3AmplitudeDecimal = new System.Windows.Forms.Label();
+            this.lblS2AmplitudeDecimal = new System.Windows.Forms.Label();
+            this.lblS1AmplitudeDecimal = new System.Windows.Forms.Label();
+            this.lblPolarities = new System.Windows.Forms.Label();
+            this.lblAmplitudes = new System.Windows.Forms.Label();
+            this.chkS3Polarity = new System.Windows.Forms.CheckBox();
+            this.chkS2Polarity = new System.Windows.Forms.CheckBox();
+            this.chkS1Polarity = new System.Windows.Forms.CheckBox();
+            this.lblS3AmplitudeHex = new System.Windows.Forms.Label();
+            this.nudS3AmplitudeDecimal = new System.Windows.Forms.NumericUpDown();
+            this.lblS3AmplitudePolarity = new System.Windows.Forms.Label();
+            this.lblS2AmplitudeHex = new System.Windows.Forms.Label();
+            this.nudS2AmplitudeDecimal = new System.Windows.Forms.NumericUpDown();
+            this.lblS2AmplitudePolarity = new System.Windows.Forms.Label();
+            this.lblS1AmplitudeHex = new System.Windows.Forms.Label();
+            this.nudS1AmplitudeDecimal = new System.Windows.Forms.NumericUpDown();
+            this.lblS1AmplitudePolarity = new System.Windows.Forms.Label();
             this.gbMoveIndicatorCoarseResolution = new System.Windows.Forms.GroupBox();
             this.lblMoveIndicatorCoarseResolutionHex = new System.Windows.Forms.Label();
             this.lblMoveIndicatorCoarseResolutionDegrees = new System.Windows.Forms.Label();
             this.nudMoveIndicatorCoarseResolutionDecimal = new System.Windows.Forms.NumericUpDown();
             this.lblMoveIndicatorCoarseResolutionPositionDecimal = new System.Windows.Forms.Label();
-            this.gbSetStatorAmplitudeAndPolarityImmediate = new System.Windows.Forms.GroupBox();
-            this.lblS1AmplitudeImmediateHex = new System.Windows.Forms.Label();
-            this.nudS1AmplitudeImmediateDecimal = new System.Windows.Forms.NumericUpDown();
-            this.lblS1AmplitudePolarityImmediate = new System.Windows.Forms.Label();
-            this.lblS2AmplitudeImmediateHex = new System.Windows.Forms.Label();
-            this.nudS2AmplitudeImmediateDecimal = new System.Windows.Forms.NumericUpDown();
-            this.lblS2AmplitudePolarityImmediate = new System.Windows.Forms.Label();
-            this.lblS3AmplitudeImmediateHex = new System.Windows.Forms.Label();
-            this.nudS3AmplitudeImmediateDecimal = new System.Windows.Forms.NumericUpDown();
-            this.lblS3AmplitudePolarityImmediate = new System.Windows.Forms.Label();
-            this.chkS1PolarityImmediate = new System.Windows.Forms.CheckBox();
-            this.chkS2PolarityImmediate = new System.Windows.Forms.CheckBox();
-            this.chkS3PolarityImmediate = new System.Windows.Forms.CheckBox();
-            this.lblImmediateAmplitudes = new System.Windows.Forms.Label();
-            this.lblImmediatePolarity = new System.Windows.Forms.Label();
-            this.lblS1AmplitudeImmediateDecimal = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lblStatorImmediate = new System.Windows.Forms.Label();
+            this.gbIndicatorMovementControl = new System.Windows.Forms.GroupBox();
+            this.lblMoveIndicatorInQuadrant = new System.Windows.Forms.Label();
+            this.cboMoveIndicatorInQuadrant = new System.Windows.Forms.ComboBox();
+            this.lblMoveIndicatorToPositionHex = new System.Windows.Forms.Label();
+            this.lblMoveIndicatorToPositionDegrees = new System.Windows.Forms.Label();
+            this.nudMoveIndicatorToPositionDecimal = new System.Windows.Forms.NumericUpDown();
+            this.lblMoveIndicatorToPosition = new System.Windows.Forms.Label();
+            this.tabDemoMode = new System.Windows.Forms.TabPage();
+            this.tabRawData = new System.Windows.Forms.TabPage();
+            this.tabDigitalAndPWMOutputs = new System.Windows.Forms.TabPage();
+            this.gbDigitalAndPWMOutputs = new System.Windows.Forms.GroupBox();
+            this.lblDIG_PWM_1 = new System.Windows.Forms.Label();
+            this.lblChannels = new System.Windows.Forms.Label();
+            this.lblDigitalOrPWM = new System.Windows.Forms.Label();
+            this.cboDIG_PWM_1_Mode = new System.Windows.Forms.ComboBox();
+            this.lblDigitalAndPWMChannelValues = new System.Windows.Forms.Label();
+            this.cboDIG_PWM_1_Value = new System.Windows.Forms.ComboBox();
+            this.lblDutyCycle = new System.Windows.Forms.Label();
+            this.nudDIG_PWM_1_DutyCycle = new System.Windows.Forms.NumericUpDown();
+            this.lblDIG_PWM_1_Hex = new System.Windows.Forms.Label();
+            this.lblDIG_PWM_2_Hex = new System.Windows.Forms.Label();
+            this.nudDIG_PWM_2_DutyCycle = new System.Windows.Forms.NumericUpDown();
+            this.cboDIG_PWM_2_Value = new System.Windows.Forms.ComboBox();
+            this.cboDIG_PWM_2_Mode = new System.Windows.Forms.ComboBox();
+            this.lblDIG_PWM_2 = new System.Windows.Forms.Label();
+            this.lblDIG_PWM_3_Hex = new System.Windows.Forms.Label();
+            this.nudDIG_PWM_3_DutyCycle = new System.Windows.Forms.NumericUpDown();
+            this.cboDIG_PWM_3_Value = new System.Windows.Forms.ComboBox();
+            this.cboDIG_PWM_3_Mode = new System.Windows.Forms.ComboBox();
+            this.lblDIG_PWM_3 = new System.Windows.Forms.Label();
+            this.lblDIG_PWM_4_Hex = new System.Windows.Forms.Label();
+            this.nudDIG_PWM_4_DutyCycle = new System.Windows.Forms.NumericUpDown();
+            this.cboDIG_PWM_4_Value = new System.Windows.Forms.ComboBox();
+            this.cboDIG_PWM_4_Mode = new System.Windows.Forms.ComboBox();
+            this.lblDIG_PWM_4 = new System.Windows.Forms.Label();
+            this.lblDIG_PWM_5_Hex = new System.Windows.Forms.Label();
+            this.nudDIG_PWM_5_DutyCycle = new System.Windows.Forms.NumericUpDown();
+            this.cboDIG_PWM_5_Value = new System.Windows.Forms.ComboBox();
+            this.cboDIG_PWM_5_Mode = new System.Windows.Forms.ComboBox();
+            this.lblDIG_PWM_5 = new System.Windows.Forms.Label();
+            this.lblDIG_PWM_6_Hex = new System.Windows.Forms.Label();
+            this.nudDIG_PWM_6_DutyCycle = new System.Windows.Forms.NumericUpDown();
+            this.cboDIG_PWM_6_Value = new System.Windows.Forms.ComboBox();
+            this.cboDIG_PWM_6_Mode = new System.Windows.Forms.ComboBox();
+            this.lblDIG_PWM_6 = new System.Windows.Forms.Label();
+            this.lblDIG_PWM_7_Hex = new System.Windows.Forms.Label();
+            this.nudDIG_PWM_7_DutyCycle = new System.Windows.Forms.NumericUpDown();
+            this.cboDIG_PWM_7_Value = new System.Windows.Forms.ComboBox();
+            this.cboDIG_PWM_7_Mode = new System.Windows.Forms.ComboBox();
+            this.lblDIG_PWM_7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.epErrorProvider)).BeginInit();
             this.gbRawDataControl.SuspendLayout();
             this.gbLED.SuspendLayout();
@@ -194,7 +239,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudLimitMin)).BeginInit();
             this.gbMain.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            this.tabDeviceSetup.SuspendLayout();
+            this.tabDiagnosticLED.SuspendLayout();
             this.tabSynchroSetup.SuspendLayout();
             this.gbUpdateRateControl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudUpdateRateControlSpeed)).BeginInit();
@@ -202,16 +247,25 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudURCSmoothModeThresholdDecimal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudURCLimitThresholdDecimal)).BeginInit();
             this.tabSynchroControl.SuspendLayout();
-            this.gbIndicatorMovementControl.SuspendLayout();
-            this.tabDemoMode.SuspendLayout();
-            this.tabRawData.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorToPositionDecimal)).BeginInit();
+            this.gbSetStatorAmplitudeAndPolarityImmediate.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS3AmplitudeDecimal)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS2AmplitudeDecimal)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS1AmplitudeDecimal)).BeginInit();
             this.gbMoveIndicatorCoarseResolution.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorCoarseResolutionDecimal)).BeginInit();
-            this.gbSetStatorAmplitudeAndPolarityImmediate.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudS1AmplitudeImmediateDecimal)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudS2AmplitudeImmediateDecimal)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudS3AmplitudeImmediateDecimal)).BeginInit();
+            this.gbIndicatorMovementControl.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorToPositionDecimal)).BeginInit();
+            this.tabDemoMode.SuspendLayout();
+            this.tabRawData.SuspendLayout();
+            this.tabDigitalAndPWMOutputs.SuspendLayout();
+            this.gbDigitalAndPWMOutputs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_1_DutyCycle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_2_DutyCycle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_3_DutyCycle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_4_DutyCycle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_5_DutyCycle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_6_DutyCycle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_7_DutyCycle)).BeginInit();
             this.SuspendLayout();
             // 
             // lblDeviceAddress
@@ -1183,34 +1237,35 @@
             this.gbMain.Controls.Add(this.tabControl1);
             this.gbMain.Location = new System.Drawing.Point(3, 51);
             this.gbMain.Name = "gbMain";
-            this.gbMain.Size = new System.Drawing.Size(1022, 948);
+            this.gbMain.Size = new System.Drawing.Size(1060, 948);
             this.gbMain.TabIndex = 11;
             this.gbMain.TabStop = false;
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabDeviceSetup);
             this.tabControl1.Controls.Add(this.tabSynchroSetup);
             this.tabControl1.Controls.Add(this.tabSynchroControl);
             this.tabControl1.Controls.Add(this.tabDemoMode);
+            this.tabControl1.Controls.Add(this.tabDigitalAndPWMOutputs);
             this.tabControl1.Controls.Add(this.tabRawData);
+            this.tabControl1.Controls.Add(this.tabDiagnosticLED);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(3, 27);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1016, 918);
+            this.tabControl1.Size = new System.Drawing.Size(1054, 918);
             this.tabControl1.TabIndex = 0;
             // 
-            // tabDeviceSetup
+            // tabDiagnosticLED
             // 
-            this.tabDeviceSetup.Controls.Add(this.gbLED);
-            this.tabDeviceSetup.Location = new System.Drawing.Point(4, 34);
-            this.tabDeviceSetup.Name = "tabDeviceSetup";
-            this.tabDeviceSetup.Padding = new System.Windows.Forms.Padding(3);
-            this.tabDeviceSetup.Size = new System.Drawing.Size(1008, 880);
-            this.tabDeviceSetup.TabIndex = 0;
-            this.tabDeviceSetup.Text = "Device Setup";
-            this.tabDeviceSetup.UseVisualStyleBackColor = true;
+            this.tabDiagnosticLED.Controls.Add(this.gbLED);
+            this.tabDiagnosticLED.Location = new System.Drawing.Point(4, 34);
+            this.tabDiagnosticLED.Name = "tabDiagnosticLED";
+            this.tabDiagnosticLED.Padding = new System.Windows.Forms.Padding(3);
+            this.tabDiagnosticLED.Size = new System.Drawing.Size(1046, 880);
+            this.tabDiagnosticLED.TabIndex = 0;
+            this.tabDiagnosticLED.Text = "Diagnostic LED";
+            this.tabDiagnosticLED.UseVisualStyleBackColor = true;
             // 
             // tabSynchroSetup
             // 
@@ -1220,7 +1275,7 @@
             this.tabSynchroSetup.Controls.Add(this.gbStatorBaseAngles);
             this.tabSynchroSetup.Location = new System.Drawing.Point(4, 34);
             this.tabSynchroSetup.Name = "tabSynchroSetup";
-            this.tabSynchroSetup.Size = new System.Drawing.Size(1008, 880);
+            this.tabSynchroSetup.Size = new System.Drawing.Size(1046, 880);
             this.tabSynchroSetup.TabIndex = 5;
             this.tabSynchroSetup.Text = "Synchro Setup";
             this.tabSynchroSetup.UseVisualStyleBackColor = true;
@@ -1472,112 +1527,269 @@
             this.tabSynchroControl.Controls.Add(this.gbIndicatorMovementControl);
             this.tabSynchroControl.Location = new System.Drawing.Point(4, 34);
             this.tabSynchroControl.Name = "tabSynchroControl";
-            this.tabSynchroControl.Size = new System.Drawing.Size(1008, 880);
+            this.tabSynchroControl.Size = new System.Drawing.Size(1046, 880);
             this.tabSynchroControl.TabIndex = 7;
             this.tabSynchroControl.Text = "Synchro Control";
             this.tabSynchroControl.UseVisualStyleBackColor = true;
             // 
-            // gbIndicatorMovementControl
+            // gbSetStatorAmplitudeAndPolarityImmediate
             // 
-            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorInQuadrant);
-            this.gbIndicatorMovementControl.Controls.Add(this.cboMoveIndicatorInQuadrant);
-            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorToPositionHex);
-            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorToPositionDegrees);
-            this.gbIndicatorMovementControl.Controls.Add(this.nudMoveIndicatorToPositionDecimal);
-            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorToPosition);
-            this.gbIndicatorMovementControl.Location = new System.Drawing.Point(14, 13);
-            this.gbIndicatorMovementControl.Name = "gbIndicatorMovementControl";
-            this.gbIndicatorMovementControl.Size = new System.Drawing.Size(798, 79);
-            this.gbIndicatorMovementControl.TabIndex = 0;
-            this.gbIndicatorMovementControl.TabStop = false;
-            this.gbIndicatorMovementControl.Text = "Move Indicator Within Quadrants";
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.btnUpdateStatorAmplitudesAndPolarities);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblStatorAmplitudeAndPolarityUpdateMode);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.rdoStatorAmplitudeAndPolarityDeferredUpdates);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.rdoStatorAmplitudeAndPolarityImmediateUpdates);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblStators);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS3AmplitudeDecimal);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS2AmplitudeDecimal);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS1AmplitudeDecimal);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblPolarities);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblAmplitudes);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.chkS3Polarity);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.chkS2Polarity);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.chkS1Polarity);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS3AmplitudeHex);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.nudS3AmplitudeDecimal);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS3AmplitudePolarity);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS2AmplitudeHex);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.nudS2AmplitudeDecimal);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS2AmplitudePolarity);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS1AmplitudeHex);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.nudS1AmplitudeDecimal);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS1AmplitudePolarity);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Location = new System.Drawing.Point(14, 183);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Name = "gbSetStatorAmplitudeAndPolarityImmediate";
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Size = new System.Drawing.Size(798, 275);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.TabIndex = 43;
+            this.gbSetStatorAmplitudeAndPolarityImmediate.TabStop = false;
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Text = "Set Stator Amplitude/Polarity";
             // 
-            // tabDemoMode
+            // btnUpdateStatorAmplitudesAndPolarities
             // 
-            this.tabDemoMode.Controls.Add(this.gbDemo);
-            this.tabDemoMode.Location = new System.Drawing.Point(4, 34);
-            this.tabDemoMode.Name = "tabDemoMode";
-            this.tabDemoMode.Size = new System.Drawing.Size(1008, 880);
-            this.tabDemoMode.TabIndex = 6;
-            this.tabDemoMode.Text = "Demo Mode";
-            this.tabDemoMode.UseVisualStyleBackColor = true;
+            this.btnUpdateStatorAmplitudesAndPolarities.Location = new System.Drawing.Point(528, 215);
+            this.btnUpdateStatorAmplitudesAndPolarities.Name = "btnUpdateStatorAmplitudesAndPolarities";
+            this.btnUpdateStatorAmplitudesAndPolarities.Size = new System.Drawing.Size(113, 33);
+            this.btnUpdateStatorAmplitudesAndPolarities.TabIndex = 54;
+            this.btnUpdateStatorAmplitudesAndPolarities.Text = "&Update";
+            this.btnUpdateStatorAmplitudesAndPolarities.UseVisualStyleBackColor = true;
+            this.btnUpdateStatorAmplitudesAndPolarities.Click += new System.EventHandler(this.btnUpdateStatorAmplitudesAndPolarities_Click);
             // 
-            // tabRawData
+            // lblStatorAmplitudeAndPolarityUpdateMode
             // 
-            this.tabRawData.Controls.Add(this.gbUSBDebug);
-            this.tabRawData.Controls.Add(this.gbRawDataControl);
-            this.tabRawData.Controls.Add(this.gbWatchdog);
-            this.tabRawData.Location = new System.Drawing.Point(4, 34);
-            this.tabRawData.Name = "tabRawData";
-            this.tabRawData.Size = new System.Drawing.Size(1008, 880);
-            this.tabRawData.TabIndex = 4;
-            this.tabRawData.Text = "Raw Data";
-            this.tabRawData.UseVisualStyleBackColor = true;
+            this.lblStatorAmplitudeAndPolarityUpdateMode.AutoSize = true;
+            this.lblStatorAmplitudeAndPolarityUpdateMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStatorAmplitudeAndPolarityUpdateMode.Location = new System.Drawing.Point(58, 219);
+            this.lblStatorAmplitudeAndPolarityUpdateMode.Name = "lblStatorAmplitudeAndPolarityUpdateMode";
+            this.lblStatorAmplitudeAndPolarityUpdateMode.Size = new System.Drawing.Size(159, 25);
+            this.lblStatorAmplitudeAndPolarityUpdateMode.TabIndex = 53;
+            this.lblStatorAmplitudeAndPolarityUpdateMode.Text = "Update Mode:";
             // 
-            // lblMoveIndicatorToPositionHex
+            // rdoStatorAmplitudeAndPolarityDeferredUpdates
             // 
-            this.lblMoveIndicatorToPositionHex.AutoSize = true;
-            this.lblMoveIndicatorToPositionHex.Location = new System.Drawing.Point(655, 36);
-            this.lblMoveIndicatorToPositionHex.Name = "lblMoveIndicatorToPositionHex";
-            this.lblMoveIndicatorToPositionHex.Size = new System.Drawing.Size(56, 25);
-            this.lblMoveIndicatorToPositionHex.TabIndex = 26;
-            this.lblMoveIndicatorToPositionHex.Text = "Hex:";
+            this.rdoStatorAmplitudeAndPolarityDeferredUpdates.AutoSize = true;
+            this.rdoStatorAmplitudeAndPolarityDeferredUpdates.Checked = true;
+            this.rdoStatorAmplitudeAndPolarityDeferredUpdates.Location = new System.Drawing.Point(228, 217);
+            this.rdoStatorAmplitudeAndPolarityDeferredUpdates.Name = "rdoStatorAmplitudeAndPolarityDeferredUpdates";
+            this.rdoStatorAmplitudeAndPolarityDeferredUpdates.Size = new System.Drawing.Size(126, 29);
+            this.rdoStatorAmplitudeAndPolarityDeferredUpdates.TabIndex = 45;
+            this.rdoStatorAmplitudeAndPolarityDeferredUpdates.TabStop = true;
+            this.rdoStatorAmplitudeAndPolarityDeferredUpdates.Text = "Deferred";
+            this.rdoStatorAmplitudeAndPolarityDeferredUpdates.UseVisualStyleBackColor = true;
+            this.rdoStatorAmplitudeAndPolarityDeferredUpdates.CheckedChanged += new System.EventHandler(this.rdoStatorAmplitudeAndPolarityDeferredUpdates_CheckedChanged);
             // 
-            // lblMoveIndicatorToPositionDegrees
+            // rdoStatorAmplitudeAndPolarityImmediateUpdates
             // 
-            this.lblMoveIndicatorToPositionDegrees.AutoSize = true;
-            this.lblMoveIndicatorToPositionDegrees.Location = new System.Drawing.Point(485, 36);
-            this.lblMoveIndicatorToPositionDegrees.Name = "lblMoveIndicatorToPositionDegrees";
-            this.lblMoveIndicatorToPositionDegrees.Size = new System.Drawing.Size(99, 25);
-            this.lblMoveIndicatorToPositionDegrees.TabIndex = 25;
-            this.lblMoveIndicatorToPositionDegrees.Text = "Degrees:";
+            this.rdoStatorAmplitudeAndPolarityImmediateUpdates.AutoSize = true;
+            this.rdoStatorAmplitudeAndPolarityImmediateUpdates.Location = new System.Drawing.Point(360, 217);
+            this.rdoStatorAmplitudeAndPolarityImmediateUpdates.Name = "rdoStatorAmplitudeAndPolarityImmediateUpdates";
+            this.rdoStatorAmplitudeAndPolarityImmediateUpdates.Size = new System.Drawing.Size(141, 29);
+            this.rdoStatorAmplitudeAndPolarityImmediateUpdates.TabIndex = 44;
+            this.rdoStatorAmplitudeAndPolarityImmediateUpdates.Text = "Immediate";
+            this.rdoStatorAmplitudeAndPolarityImmediateUpdates.UseVisualStyleBackColor = true;
             // 
-            // nudMoveIndicatorToPositionDecimal
+            // lblStators
             // 
-            this.nudMoveIndicatorToPositionDecimal.Location = new System.Drawing.Point(383, 33);
-            this.nudMoveIndicatorToPositionDecimal.Maximum = new decimal(new int[] {
+            this.lblStators.AutoSize = true;
+            this.lblStators.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStators.Location = new System.Drawing.Point(64, 37);
+            this.lblStators.Name = "lblStators";
+            this.lblStators.Size = new System.Drawing.Size(75, 25);
+            this.lblStators.TabIndex = 52;
+            this.lblStators.Text = "Stator";
+            // 
+            // lblS3AmplitudeDecimal
+            // 
+            this.lblS3AmplitudeDecimal.AutoSize = true;
+            this.lblS3AmplitudeDecimal.Location = new System.Drawing.Point(272, 161);
+            this.lblS3AmplitudeDecimal.Name = "lblS3AmplitudeDecimal";
+            this.lblS3AmplitudeDecimal.Size = new System.Drawing.Size(106, 25);
+            this.lblS3AmplitudeDecimal.TabIndex = 51;
+            this.lblS3AmplitudeDecimal.Text = "(decimal):";
+            // 
+            // lblS2AmplitudeDecimal
+            // 
+            this.lblS2AmplitudeDecimal.AutoSize = true;
+            this.lblS2AmplitudeDecimal.Location = new System.Drawing.Point(272, 121);
+            this.lblS2AmplitudeDecimal.Name = "lblS2AmplitudeDecimal";
+            this.lblS2AmplitudeDecimal.Size = new System.Drawing.Size(106, 25);
+            this.lblS2AmplitudeDecimal.TabIndex = 50;
+            this.lblS2AmplitudeDecimal.Text = "(decimal):";
+            // 
+            // lblS1AmplitudeDecimal
+            // 
+            this.lblS1AmplitudeDecimal.AutoSize = true;
+            this.lblS1AmplitudeDecimal.Location = new System.Drawing.Point(272, 81);
+            this.lblS1AmplitudeDecimal.Name = "lblS1AmplitudeDecimal";
+            this.lblS1AmplitudeDecimal.Size = new System.Drawing.Size(106, 25);
+            this.lblS1AmplitudeDecimal.TabIndex = 49;
+            this.lblS1AmplitudeDecimal.Text = "(decimal):";
+            // 
+            // lblPolarities
+            // 
+            this.lblPolarities.AutoSize = true;
+            this.lblPolarities.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPolarities.Location = new System.Drawing.Point(158, 37);
+            this.lblPolarities.Name = "lblPolarities";
+            this.lblPolarities.Size = new System.Drawing.Size(92, 25);
+            this.lblPolarities.TabIndex = 48;
+            this.lblPolarities.Text = "Polarity";
+            // 
+            // lblAmplitudes
+            // 
+            this.lblAmplitudes.AutoSize = true;
+            this.lblAmplitudes.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAmplitudes.Location = new System.Drawing.Point(272, 37);
+            this.lblAmplitudes.Name = "lblAmplitudes";
+            this.lblAmplitudes.Size = new System.Drawing.Size(116, 25);
+            this.lblAmplitudes.TabIndex = 47;
+            this.lblAmplitudes.Text = "Amplitude";
+            // 
+            // chkS3Polarity
+            // 
+            this.chkS3Polarity.AutoSize = true;
+            this.chkS3Polarity.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkS3Polarity.Location = new System.Drawing.Point(189, 158);
+            this.chkS3Polarity.Name = "chkS3Polarity";
+            this.chkS3Polarity.Size = new System.Drawing.Size(43, 30);
+            this.chkS3Polarity.TabIndex = 46;
+            this.chkS3Polarity.Text = " ";
+            this.chkS3Polarity.UseVisualStyleBackColor = true;
+            this.chkS3Polarity.CheckedChanged += new System.EventHandler(this.chkS3Polarity_CheckedChanged);
+            // 
+            // chkS2Polarity
+            // 
+            this.chkS2Polarity.AutoSize = true;
+            this.chkS2Polarity.Location = new System.Drawing.Point(189, 120);
+            this.chkS2Polarity.Name = "chkS2Polarity";
+            this.chkS2Polarity.Size = new System.Drawing.Size(28, 27);
+            this.chkS2Polarity.TabIndex = 45;
+            this.chkS2Polarity.UseVisualStyleBackColor = true;
+            this.chkS2Polarity.CheckedChanged += new System.EventHandler(this.chkS2Polarity_CheckedChanged);
+            // 
+            // chkS1Polarity
+            // 
+            this.chkS1Polarity.AutoSize = true;
+            this.chkS1Polarity.Location = new System.Drawing.Point(189, 80);
+            this.chkS1Polarity.Name = "chkS1Polarity";
+            this.chkS1Polarity.Size = new System.Drawing.Size(28, 27);
+            this.chkS1Polarity.TabIndex = 44;
+            this.chkS1Polarity.UseVisualStyleBackColor = true;
+            this.chkS1Polarity.CheckedChanged += new System.EventHandler(this.chkS1Polarity_CheckedChanged);
+            // 
+            // lblS3AmplitudeHex
+            // 
+            this.lblS3AmplitudeHex.AutoSize = true;
+            this.lblS3AmplitudeHex.Location = new System.Drawing.Point(656, 161);
+            this.lblS3AmplitudeHex.Name = "lblS3AmplitudeHex";
+            this.lblS3AmplitudeHex.Size = new System.Drawing.Size(56, 25);
+            this.lblS3AmplitudeHex.TabIndex = 32;
+            this.lblS3AmplitudeHex.Text = "Hex:";
+            // 
+            // nudS3AmplitudeDecimal
+            // 
+            this.nudS3AmplitudeDecimal.Location = new System.Drawing.Point(384, 158);
+            this.nudS3AmplitudeDecimal.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.nudMoveIndicatorToPositionDecimal.Name = "nudMoveIndicatorToPositionDecimal";
-            this.nudMoveIndicatorToPositionDecimal.Size = new System.Drawing.Size(95, 31);
-            this.nudMoveIndicatorToPositionDecimal.TabIndex = 24;
-            this.nudMoveIndicatorToPositionDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.nudMoveIndicatorToPositionDecimal.ValueChanged += new System.EventHandler(this.nudMoveIndicatorToPosition_ValueChanged);
+            this.nudS3AmplitudeDecimal.Name = "nudS3AmplitudeDecimal";
+            this.nudS3AmplitudeDecimal.Size = new System.Drawing.Size(95, 31);
+            this.nudS3AmplitudeDecimal.TabIndex = 31;
+            this.nudS3AmplitudeDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudS3AmplitudeDecimal.ValueChanged += new System.EventHandler(this.nudS3AmplitudeDecimal_ValueChanged);
             // 
-            // lblMoveIndicatorToPosition
+            // lblS3AmplitudePolarity
             // 
-            this.lblMoveIndicatorToPosition.AutoSize = true;
-            this.lblMoveIndicatorToPosition.Location = new System.Drawing.Point(189, 36);
-            this.lblMoveIndicatorToPosition.Name = "lblMoveIndicatorToPosition";
-            this.lblMoveIndicatorToPosition.Size = new System.Drawing.Size(189, 25);
-            this.lblMoveIndicatorToPosition.TabIndex = 23;
-            this.lblMoveIndicatorToPosition.Text = "Position (decimal):";
+            this.lblS3AmplitudePolarity.AutoSize = true;
+            this.lblS3AmplitudePolarity.Location = new System.Drawing.Point(100, 161);
+            this.lblS3AmplitudePolarity.Name = "lblS3AmplitudePolarity";
+            this.lblS3AmplitudePolarity.Size = new System.Drawing.Size(38, 25);
+            this.lblS3AmplitudePolarity.TabIndex = 30;
+            this.lblS3AmplitudePolarity.Text = "S3";
             // 
-            // cboMoveIndicatorInQuadrant
+            // lblS2AmplitudeHex
             // 
-            this.cboMoveIndicatorInQuadrant.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboMoveIndicatorInQuadrant.FormattingEnabled = true;
-            this.cboMoveIndicatorInQuadrant.Items.AddRange(new object[] {
-            "1",
-            "2",
-            "3",
-            "4"});
-            this.cboMoveIndicatorInQuadrant.Location = new System.Drawing.Point(126, 33);
-            this.cboMoveIndicatorInQuadrant.Name = "cboMoveIndicatorInQuadrant";
-            this.cboMoveIndicatorInQuadrant.Size = new System.Drawing.Size(54, 33);
-            this.cboMoveIndicatorInQuadrant.TabIndex = 40;
-            this.cboMoveIndicatorInQuadrant.SelectedIndexChanged += new System.EventHandler(this.cboMoveIndicatorInQuadrant_SelectedIndexChanged);
+            this.lblS2AmplitudeHex.AutoSize = true;
+            this.lblS2AmplitudeHex.Location = new System.Drawing.Point(656, 121);
+            this.lblS2AmplitudeHex.Name = "lblS2AmplitudeHex";
+            this.lblS2AmplitudeHex.Size = new System.Drawing.Size(56, 25);
+            this.lblS2AmplitudeHex.TabIndex = 29;
+            this.lblS2AmplitudeHex.Text = "Hex:";
             // 
-            // lblMoveIndicatorInQuadrant
+            // nudS2AmplitudeDecimal
             // 
-            this.lblMoveIndicatorInQuadrant.AutoSize = true;
-            this.lblMoveIndicatorInQuadrant.Location = new System.Drawing.Point(10, 36);
-            this.lblMoveIndicatorInQuadrant.Name = "lblMoveIndicatorInQuadrant";
-            this.lblMoveIndicatorInQuadrant.Size = new System.Drawing.Size(107, 25);
-            this.lblMoveIndicatorInQuadrant.TabIndex = 41;
-            this.lblMoveIndicatorInQuadrant.Text = "Quadrant:";
+            this.nudS2AmplitudeDecimal.Location = new System.Drawing.Point(384, 118);
+            this.nudS2AmplitudeDecimal.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudS2AmplitudeDecimal.Name = "nudS2AmplitudeDecimal";
+            this.nudS2AmplitudeDecimal.Size = new System.Drawing.Size(95, 31);
+            this.nudS2AmplitudeDecimal.TabIndex = 28;
+            this.nudS2AmplitudeDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudS2AmplitudeDecimal.ValueChanged += new System.EventHandler(this.nudS2AmplitudeDecimal_ValueChanged);
+            // 
+            // lblS2AmplitudePolarity
+            // 
+            this.lblS2AmplitudePolarity.AutoSize = true;
+            this.lblS2AmplitudePolarity.Location = new System.Drawing.Point(101, 121);
+            this.lblS2AmplitudePolarity.Name = "lblS2AmplitudePolarity";
+            this.lblS2AmplitudePolarity.Size = new System.Drawing.Size(38, 25);
+            this.lblS2AmplitudePolarity.TabIndex = 27;
+            this.lblS2AmplitudePolarity.Text = "S2";
+            // 
+            // lblS1AmplitudeHex
+            // 
+            this.lblS1AmplitudeHex.AutoSize = true;
+            this.lblS1AmplitudeHex.Location = new System.Drawing.Point(656, 81);
+            this.lblS1AmplitudeHex.Name = "lblS1AmplitudeHex";
+            this.lblS1AmplitudeHex.Size = new System.Drawing.Size(56, 25);
+            this.lblS1AmplitudeHex.TabIndex = 26;
+            this.lblS1AmplitudeHex.Text = "Hex:";
+            // 
+            // nudS1AmplitudeDecimal
+            // 
+            this.nudS1AmplitudeDecimal.Location = new System.Drawing.Point(384, 78);
+            this.nudS1AmplitudeDecimal.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudS1AmplitudeDecimal.Name = "nudS1AmplitudeDecimal";
+            this.nudS1AmplitudeDecimal.Size = new System.Drawing.Size(95, 31);
+            this.nudS1AmplitudeDecimal.TabIndex = 24;
+            this.nudS1AmplitudeDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudS1AmplitudeDecimal.ValueChanged += new System.EventHandler(this.nudS1AmplitudeDecimal_ValueChanged);
+            // 
+            // lblS1AmplitudePolarity
+            // 
+            this.lblS1AmplitudePolarity.AutoSize = true;
+            this.lblS1AmplitudePolarity.Location = new System.Drawing.Point(101, 81);
+            this.lblS1AmplitudePolarity.Name = "lblS1AmplitudePolarity";
+            this.lblS1AmplitudePolarity.Size = new System.Drawing.Size(38, 25);
+            this.lblS1AmplitudePolarity.TabIndex = 23;
+            this.lblS1AmplitudePolarity.Text = "S1";
             // 
             // gbMoveIndicatorCoarseResolution
             // 
@@ -1633,224 +1845,626 @@
             this.lblMoveIndicatorCoarseResolutionPositionDecimal.TabIndex = 23;
             this.lblMoveIndicatorCoarseResolutionPositionDecimal.Text = "Position (decimal):";
             // 
-            // gbSetStatorAmplitudeAndPolarityImmediate
+            // gbIndicatorMovementControl
             // 
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblStatorImmediate);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.label2);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.label1);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS1AmplitudeImmediateDecimal);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblImmediatePolarity);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblImmediateAmplitudes);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.chkS3PolarityImmediate);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.chkS2PolarityImmediate);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.chkS1PolarityImmediate);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS3AmplitudeImmediateHex);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.nudS3AmplitudeImmediateDecimal);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS3AmplitudePolarityImmediate);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS2AmplitudeImmediateHex);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.nudS2AmplitudeImmediateDecimal);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS2AmplitudePolarityImmediate);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS1AmplitudeImmediateHex);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.nudS1AmplitudeImmediateDecimal);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS1AmplitudePolarityImmediate);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Location = new System.Drawing.Point(14, 183);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Name = "gbSetStatorAmplitudeAndPolarityImmediate";
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Size = new System.Drawing.Size(798, 206);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.TabIndex = 43;
-            this.gbSetStatorAmplitudeAndPolarityImmediate.TabStop = false;
-            this.gbSetStatorAmplitudeAndPolarityImmediate.Text = "Set Stator Amplitude/Polarity (with Immediate effect)";
+            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorInQuadrant);
+            this.gbIndicatorMovementControl.Controls.Add(this.cboMoveIndicatorInQuadrant);
+            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorToPositionHex);
+            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorToPositionDegrees);
+            this.gbIndicatorMovementControl.Controls.Add(this.nudMoveIndicatorToPositionDecimal);
+            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorToPosition);
+            this.gbIndicatorMovementControl.Location = new System.Drawing.Point(14, 13);
+            this.gbIndicatorMovementControl.Name = "gbIndicatorMovementControl";
+            this.gbIndicatorMovementControl.Size = new System.Drawing.Size(798, 79);
+            this.gbIndicatorMovementControl.TabIndex = 0;
+            this.gbIndicatorMovementControl.TabStop = false;
+            this.gbIndicatorMovementControl.Text = "Move Indicator Within Quadrants";
             // 
-            // lblS1AmplitudeImmediateHex
+            // lblMoveIndicatorInQuadrant
             // 
-            this.lblS1AmplitudeImmediateHex.AutoSize = true;
-            this.lblS1AmplitudeImmediateHex.Location = new System.Drawing.Point(656, 83);
-            this.lblS1AmplitudeImmediateHex.Name = "lblS1AmplitudeImmediateHex";
-            this.lblS1AmplitudeImmediateHex.Size = new System.Drawing.Size(56, 25);
-            this.lblS1AmplitudeImmediateHex.TabIndex = 26;
-            this.lblS1AmplitudeImmediateHex.Text = "Hex:";
+            this.lblMoveIndicatorInQuadrant.AutoSize = true;
+            this.lblMoveIndicatorInQuadrant.Location = new System.Drawing.Point(10, 36);
+            this.lblMoveIndicatorInQuadrant.Name = "lblMoveIndicatorInQuadrant";
+            this.lblMoveIndicatorInQuadrant.Size = new System.Drawing.Size(107, 25);
+            this.lblMoveIndicatorInQuadrant.TabIndex = 41;
+            this.lblMoveIndicatorInQuadrant.Text = "Quadrant:";
             // 
-            // nudS1AmplitudeImmediateDecimal
+            // cboMoveIndicatorInQuadrant
             // 
-            this.nudS1AmplitudeImmediateDecimal.Location = new System.Drawing.Point(384, 80);
-            this.nudS1AmplitudeImmediateDecimal.Maximum = new decimal(new int[] {
+            this.cboMoveIndicatorInQuadrant.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboMoveIndicatorInQuadrant.FormattingEnabled = true;
+            this.cboMoveIndicatorInQuadrant.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4"});
+            this.cboMoveIndicatorInQuadrant.Location = new System.Drawing.Point(126, 33);
+            this.cboMoveIndicatorInQuadrant.Name = "cboMoveIndicatorInQuadrant";
+            this.cboMoveIndicatorInQuadrant.Size = new System.Drawing.Size(54, 33);
+            this.cboMoveIndicatorInQuadrant.TabIndex = 40;
+            this.cboMoveIndicatorInQuadrant.SelectedIndexChanged += new System.EventHandler(this.cboMoveIndicatorInQuadrant_SelectedIndexChanged);
+            // 
+            // lblMoveIndicatorToPositionHex
+            // 
+            this.lblMoveIndicatorToPositionHex.AutoSize = true;
+            this.lblMoveIndicatorToPositionHex.Location = new System.Drawing.Point(655, 36);
+            this.lblMoveIndicatorToPositionHex.Name = "lblMoveIndicatorToPositionHex";
+            this.lblMoveIndicatorToPositionHex.Size = new System.Drawing.Size(56, 25);
+            this.lblMoveIndicatorToPositionHex.TabIndex = 26;
+            this.lblMoveIndicatorToPositionHex.Text = "Hex:";
+            // 
+            // lblMoveIndicatorToPositionDegrees
+            // 
+            this.lblMoveIndicatorToPositionDegrees.AutoSize = true;
+            this.lblMoveIndicatorToPositionDegrees.Location = new System.Drawing.Point(485, 36);
+            this.lblMoveIndicatorToPositionDegrees.Name = "lblMoveIndicatorToPositionDegrees";
+            this.lblMoveIndicatorToPositionDegrees.Size = new System.Drawing.Size(99, 25);
+            this.lblMoveIndicatorToPositionDegrees.TabIndex = 25;
+            this.lblMoveIndicatorToPositionDegrees.Text = "Degrees:";
+            // 
+            // nudMoveIndicatorToPositionDecimal
+            // 
+            this.nudMoveIndicatorToPositionDecimal.Location = new System.Drawing.Point(383, 33);
+            this.nudMoveIndicatorToPositionDecimal.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.nudS1AmplitudeImmediateDecimal.Name = "nudS1AmplitudeImmediateDecimal";
-            this.nudS1AmplitudeImmediateDecimal.Size = new System.Drawing.Size(95, 31);
-            this.nudS1AmplitudeImmediateDecimal.TabIndex = 24;
-            this.nudS1AmplitudeImmediateDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.nudS1AmplitudeImmediateDecimal.ValueChanged += new System.EventHandler(this.nudS1AmplitudeImmediateDecimal_ValueChanged);
+            this.nudMoveIndicatorToPositionDecimal.Name = "nudMoveIndicatorToPositionDecimal";
+            this.nudMoveIndicatorToPositionDecimal.Size = new System.Drawing.Size(95, 31);
+            this.nudMoveIndicatorToPositionDecimal.TabIndex = 24;
+            this.nudMoveIndicatorToPositionDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudMoveIndicatorToPositionDecimal.ValueChanged += new System.EventHandler(this.nudMoveIndicatorToPosition_ValueChanged);
             // 
-            // lblS1AmplitudePolarityImmediate
+            // lblMoveIndicatorToPosition
             // 
-            this.lblS1AmplitudePolarityImmediate.AutoSize = true;
-            this.lblS1AmplitudePolarityImmediate.Location = new System.Drawing.Point(101, 83);
-            this.lblS1AmplitudePolarityImmediate.Name = "lblS1AmplitudePolarityImmediate";
-            this.lblS1AmplitudePolarityImmediate.Size = new System.Drawing.Size(38, 25);
-            this.lblS1AmplitudePolarityImmediate.TabIndex = 23;
-            this.lblS1AmplitudePolarityImmediate.Text = "S1";
+            this.lblMoveIndicatorToPosition.AutoSize = true;
+            this.lblMoveIndicatorToPosition.Location = new System.Drawing.Point(189, 36);
+            this.lblMoveIndicatorToPosition.Name = "lblMoveIndicatorToPosition";
+            this.lblMoveIndicatorToPosition.Size = new System.Drawing.Size(189, 25);
+            this.lblMoveIndicatorToPosition.TabIndex = 23;
+            this.lblMoveIndicatorToPosition.Text = "Position (decimal):";
             // 
-            // lblS2AmplitudeImmediateHex
+            // tabDemoMode
             // 
-            this.lblS2AmplitudeImmediateHex.AutoSize = true;
-            this.lblS2AmplitudeImmediateHex.Location = new System.Drawing.Point(656, 123);
-            this.lblS2AmplitudeImmediateHex.Name = "lblS2AmplitudeImmediateHex";
-            this.lblS2AmplitudeImmediateHex.Size = new System.Drawing.Size(56, 25);
-            this.lblS2AmplitudeImmediateHex.TabIndex = 29;
-            this.lblS2AmplitudeImmediateHex.Text = "Hex:";
+            this.tabDemoMode.Controls.Add(this.gbDemo);
+            this.tabDemoMode.Location = new System.Drawing.Point(4, 34);
+            this.tabDemoMode.Name = "tabDemoMode";
+            this.tabDemoMode.Size = new System.Drawing.Size(1046, 880);
+            this.tabDemoMode.TabIndex = 6;
+            this.tabDemoMode.Text = "Demo Mode";
+            this.tabDemoMode.UseVisualStyleBackColor = true;
             // 
-            // nudS2AmplitudeImmediateDecimal
+            // tabRawData
             // 
-            this.nudS2AmplitudeImmediateDecimal.Location = new System.Drawing.Point(384, 120);
-            this.nudS2AmplitudeImmediateDecimal.Maximum = new decimal(new int[] {
+            this.tabRawData.Controls.Add(this.gbUSBDebug);
+            this.tabRawData.Controls.Add(this.gbRawDataControl);
+            this.tabRawData.Controls.Add(this.gbWatchdog);
+            this.tabRawData.Location = new System.Drawing.Point(4, 34);
+            this.tabRawData.Name = "tabRawData";
+            this.tabRawData.Size = new System.Drawing.Size(1046, 880);
+            this.tabRawData.TabIndex = 4;
+            this.tabRawData.Text = "Raw Data";
+            this.tabRawData.UseVisualStyleBackColor = true;
+            // 
+            // tabDigitalAndPWMOutputs
+            // 
+            this.tabDigitalAndPWMOutputs.Controls.Add(this.gbDigitalAndPWMOutputs);
+            this.tabDigitalAndPWMOutputs.Location = new System.Drawing.Point(4, 34);
+            this.tabDigitalAndPWMOutputs.Name = "tabDigitalAndPWMOutputs";
+            this.tabDigitalAndPWMOutputs.Padding = new System.Windows.Forms.Padding(3);
+            this.tabDigitalAndPWMOutputs.Size = new System.Drawing.Size(1046, 880);
+            this.tabDigitalAndPWMOutputs.TabIndex = 8;
+            this.tabDigitalAndPWMOutputs.Text = "Digital and PWM Outputs";
+            this.tabDigitalAndPWMOutputs.UseVisualStyleBackColor = true;
+            // 
+            // gbDigitalAndPWMOutputs
+            // 
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_7_Hex);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.nudDIG_PWM_7_DutyCycle);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_7_Value);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_7_Mode);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_7);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_6_Hex);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.nudDIG_PWM_6_DutyCycle);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_6_Value);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_6_Mode);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_6);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_5_Hex);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.nudDIG_PWM_5_DutyCycle);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_5_Value);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_5_Mode);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_5);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_4_Hex);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.nudDIG_PWM_4_DutyCycle);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_4_Value);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_4_Mode);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_4);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_3_Hex);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.nudDIG_PWM_3_DutyCycle);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_3_Value);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_3_Mode);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_3);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_2_Hex);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.nudDIG_PWM_2_DutyCycle);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_2_Value);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_2_Mode);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_2);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_1_Hex);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.nudDIG_PWM_1_DutyCycle);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDutyCycle);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_1_Value);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDigitalAndPWMChannelValues);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_1_Mode);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDigitalOrPWM);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblChannels);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_1);
+            this.gbDigitalAndPWMOutputs.Location = new System.Drawing.Point(6, 6);
+            this.gbDigitalAndPWMOutputs.Name = "gbDigitalAndPWMOutputs";
+            this.gbDigitalAndPWMOutputs.Size = new System.Drawing.Size(806, 418);
+            this.gbDigitalAndPWMOutputs.TabIndex = 0;
+            this.gbDigitalAndPWMOutputs.TabStop = false;
+            this.gbDigitalAndPWMOutputs.Text = "Digital and PWM Outputs";
+            // 
+            // lblDIG_PWM_1
+            // 
+            this.lblDIG_PWM_1.AutoSize = true;
+            this.lblDIG_PWM_1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDIG_PWM_1.Location = new System.Drawing.Point(6, 97);
+            this.lblDIG_PWM_1.Name = "lblDIG_PWM_1";
+            this.lblDIG_PWM_1.Size = new System.Drawing.Size(145, 25);
+            this.lblDIG_PWM_1.TabIndex = 0;
+            this.lblDIG_PWM_1.Text = "DIG_PWM_1";
+            // 
+            // lblChannels
+            // 
+            this.lblChannels.AutoSize = true;
+            this.lblChannels.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblChannels.Location = new System.Drawing.Point(6, 38);
+            this.lblChannels.Name = "lblChannels";
+            this.lblChannels.Size = new System.Drawing.Size(99, 25);
+            this.lblChannels.TabIndex = 1;
+            this.lblChannels.Text = "Channel";
+            // 
+            // lblDigitalOrPWM
+            // 
+            this.lblDigitalOrPWM.AutoSize = true;
+            this.lblDigitalOrPWM.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDigitalOrPWM.Location = new System.Drawing.Point(184, 38);
+            this.lblDigitalOrPWM.Name = "lblDigitalOrPWM";
+            this.lblDigitalOrPWM.Size = new System.Drawing.Size(70, 25);
+            this.lblDigitalOrPWM.TabIndex = 2;
+            this.lblDigitalOrPWM.Text = "Mode";
+            // 
+            // cboDIG_PWM_1_Mode
+            // 
+            this.cboDIG_PWM_1_Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_1_Mode.FormattingEnabled = true;
+            this.cboDIG_PWM_1_Mode.Items.AddRange(new object[] {
+            "Digital",
+            "PWM"});
+            this.cboDIG_PWM_1_Mode.Location = new System.Drawing.Point(189, 93);
+            this.cboDIG_PWM_1_Mode.Name = "cboDIG_PWM_1_Mode";
+            this.cboDIG_PWM_1_Mode.Size = new System.Drawing.Size(114, 33);
+            this.cboDIG_PWM_1_Mode.TabIndex = 40;
+            this.cboDIG_PWM_1_Mode.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_1_Mode_SelectedIndexChanged);
+            // 
+            // lblDigitalAndPWMChannelValues
+            // 
+            this.lblDigitalAndPWMChannelValues.AutoSize = true;
+            this.lblDigitalAndPWMChannelValues.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDigitalAndPWMChannelValues.Location = new System.Drawing.Point(320, 38);
+            this.lblDigitalAndPWMChannelValues.Name = "lblDigitalAndPWMChannelValues";
+            this.lblDigitalAndPWMChannelValues.Size = new System.Drawing.Size(72, 25);
+            this.lblDigitalAndPWMChannelValues.TabIndex = 41;
+            this.lblDigitalAndPWMChannelValues.Text = "Value";
+            // 
+            // cboDIG_PWM_1_Value
+            // 
+            this.cboDIG_PWM_1_Value.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_1_Value.FormattingEnabled = true;
+            this.cboDIG_PWM_1_Value.Items.AddRange(new object[] {
+            "OFF",
+            "ON"});
+            this.cboDIG_PWM_1_Value.Location = new System.Drawing.Point(325, 93);
+            this.cboDIG_PWM_1_Value.Name = "cboDIG_PWM_1_Value";
+            this.cboDIG_PWM_1_Value.Size = new System.Drawing.Size(112, 33);
+            this.cboDIG_PWM_1_Value.TabIndex = 42;
+            this.cboDIG_PWM_1_Value.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_1_Value_SelectedIndexChanged);
+            // 
+            // lblDutyCycle
+            // 
+            this.lblDutyCycle.AutoSize = true;
+            this.lblDutyCycle.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDutyCycle.Location = new System.Drawing.Point(459, 38);
+            this.lblDutyCycle.Name = "lblDutyCycle";
+            this.lblDutyCycle.Size = new System.Drawing.Size(126, 25);
+            this.lblDutyCycle.TabIndex = 43;
+            this.lblDutyCycle.Text = "Duty Cycle";
+            // 
+            // nudDIG_PWM_1_DutyCycle
+            // 
+            this.nudDIG_PWM_1_DutyCycle.Location = new System.Drawing.Point(464, 94);
+            this.nudDIG_PWM_1_DutyCycle.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.nudS2AmplitudeImmediateDecimal.Name = "nudS2AmplitudeImmediateDecimal";
-            this.nudS2AmplitudeImmediateDecimal.Size = new System.Drawing.Size(95, 31);
-            this.nudS2AmplitudeImmediateDecimal.TabIndex = 28;
-            this.nudS2AmplitudeImmediateDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.nudS2AmplitudeImmediateDecimal.ValueChanged += new System.EventHandler(this.nudS2AmplitudeImmediateDecimal_ValueChanged);
+            this.nudDIG_PWM_1_DutyCycle.Name = "nudDIG_PWM_1_DutyCycle";
+            this.nudDIG_PWM_1_DutyCycle.Size = new System.Drawing.Size(121, 31);
+            this.nudDIG_PWM_1_DutyCycle.TabIndex = 44;
+            this.nudDIG_PWM_1_DutyCycle.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudDIG_PWM_1_DutyCycle.ValueChanged += new System.EventHandler(this.nudDIG_PWM_1_DutyCycle_ValueChanged);
             // 
-            // lblS2AmplitudePolarityImmediate
+            // lblDIG_PWM_1_Hex
             // 
-            this.lblS2AmplitudePolarityImmediate.AutoSize = true;
-            this.lblS2AmplitudePolarityImmediate.Location = new System.Drawing.Point(101, 123);
-            this.lblS2AmplitudePolarityImmediate.Name = "lblS2AmplitudePolarityImmediate";
-            this.lblS2AmplitudePolarityImmediate.Size = new System.Drawing.Size(38, 25);
-            this.lblS2AmplitudePolarityImmediate.TabIndex = 27;
-            this.lblS2AmplitudePolarityImmediate.Text = "S2";
+            this.lblDIG_PWM_1_Hex.AutoSize = true;
+            this.lblDIG_PWM_1_Hex.Location = new System.Drawing.Point(645, 97);
+            this.lblDIG_PWM_1_Hex.Name = "lblDIG_PWM_1_Hex";
+            this.lblDIG_PWM_1_Hex.Size = new System.Drawing.Size(56, 25);
+            this.lblDIG_PWM_1_Hex.TabIndex = 45;
+            this.lblDIG_PWM_1_Hex.Text = "Hex:";
             // 
-            // lblS3AmplitudeImmediateHex
+            // lblDIG_PWM_2_Hex
             // 
-            this.lblS3AmplitudeImmediateHex.AutoSize = true;
-            this.lblS3AmplitudeImmediateHex.Location = new System.Drawing.Point(656, 163);
-            this.lblS3AmplitudeImmediateHex.Name = "lblS3AmplitudeImmediateHex";
-            this.lblS3AmplitudeImmediateHex.Size = new System.Drawing.Size(56, 25);
-            this.lblS3AmplitudeImmediateHex.TabIndex = 32;
-            this.lblS3AmplitudeImmediateHex.Text = "Hex:";
+            this.lblDIG_PWM_2_Hex.AutoSize = true;
+            this.lblDIG_PWM_2_Hex.Location = new System.Drawing.Point(645, 142);
+            this.lblDIG_PWM_2_Hex.Name = "lblDIG_PWM_2_Hex";
+            this.lblDIG_PWM_2_Hex.Size = new System.Drawing.Size(56, 25);
+            this.lblDIG_PWM_2_Hex.TabIndex = 50;
+            this.lblDIG_PWM_2_Hex.Text = "Hex:";
             // 
-            // nudS3AmplitudeImmediateDecimal
+            // nudDIG_PWM_2_DutyCycle
             // 
-            this.nudS3AmplitudeImmediateDecimal.Location = new System.Drawing.Point(384, 160);
-            this.nudS3AmplitudeImmediateDecimal.Maximum = new decimal(new int[] {
+            this.nudDIG_PWM_2_DutyCycle.Location = new System.Drawing.Point(464, 139);
+            this.nudDIG_PWM_2_DutyCycle.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
-            this.nudS3AmplitudeImmediateDecimal.Name = "nudS3AmplitudeImmediateDecimal";
-            this.nudS3AmplitudeImmediateDecimal.Size = new System.Drawing.Size(95, 31);
-            this.nudS3AmplitudeImmediateDecimal.TabIndex = 31;
-            this.nudS3AmplitudeImmediateDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.nudS3AmplitudeImmediateDecimal.ValueChanged += new System.EventHandler(this.nudS3AmplitudeImmediateDecimal_ValueChanged);
+            this.nudDIG_PWM_2_DutyCycle.Name = "nudDIG_PWM_2_DutyCycle";
+            this.nudDIG_PWM_2_DutyCycle.Size = new System.Drawing.Size(121, 31);
+            this.nudDIG_PWM_2_DutyCycle.TabIndex = 49;
+            this.nudDIG_PWM_2_DutyCycle.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudDIG_PWM_2_DutyCycle.ValueChanged += new System.EventHandler(this.nudDIG_PWM_2_DutyCycle_ValueChanged);
             // 
-            // lblS3AmplitudePolarityImmediate
+            // cboDIG_PWM_2_Value
             // 
-            this.lblS3AmplitudePolarityImmediate.AutoSize = true;
-            this.lblS3AmplitudePolarityImmediate.Location = new System.Drawing.Point(100, 163);
-            this.lblS3AmplitudePolarityImmediate.Name = "lblS3AmplitudePolarityImmediate";
-            this.lblS3AmplitudePolarityImmediate.Size = new System.Drawing.Size(38, 25);
-            this.lblS3AmplitudePolarityImmediate.TabIndex = 30;
-            this.lblS3AmplitudePolarityImmediate.Text = "S3";
+            this.cboDIG_PWM_2_Value.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_2_Value.FormattingEnabled = true;
+            this.cboDIG_PWM_2_Value.Items.AddRange(new object[] {
+            "OFF",
+            "ON"});
+            this.cboDIG_PWM_2_Value.Location = new System.Drawing.Point(325, 138);
+            this.cboDIG_PWM_2_Value.Name = "cboDIG_PWM_2_Value";
+            this.cboDIG_PWM_2_Value.Size = new System.Drawing.Size(112, 33);
+            this.cboDIG_PWM_2_Value.TabIndex = 48;
+            this.cboDIG_PWM_2_Value.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_2_Value_SelectedIndexChanged);
             // 
-            // chkS1PolarityImmediate
+            // cboDIG_PWM_2_Mode
             // 
-            this.chkS1PolarityImmediate.AutoSize = true;
-            this.chkS1PolarityImmediate.Location = new System.Drawing.Point(189, 82);
-            this.chkS1PolarityImmediate.Name = "chkS1PolarityImmediate";
-            this.chkS1PolarityImmediate.Size = new System.Drawing.Size(28, 27);
-            this.chkS1PolarityImmediate.TabIndex = 44;
-            this.chkS1PolarityImmediate.UseVisualStyleBackColor = true;
-            this.chkS1PolarityImmediate.CheckedChanged += new System.EventHandler(this.chkS1PolarityImmediate_CheckedChanged);
+            this.cboDIG_PWM_2_Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_2_Mode.FormattingEnabled = true;
+            this.cboDIG_PWM_2_Mode.Items.AddRange(new object[] {
+            "Digital",
+            "PWM"});
+            this.cboDIG_PWM_2_Mode.Location = new System.Drawing.Point(189, 138);
+            this.cboDIG_PWM_2_Mode.Name = "cboDIG_PWM_2_Mode";
+            this.cboDIG_PWM_2_Mode.Size = new System.Drawing.Size(114, 33);
+            this.cboDIG_PWM_2_Mode.TabIndex = 47;
+            this.cboDIG_PWM_2_Mode.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_2_Mode_SelectedIndexChanged);
             // 
-            // chkS2PolarityImmediate
+            // lblDIG_PWM_2
             // 
-            this.chkS2PolarityImmediate.AutoSize = true;
-            this.chkS2PolarityImmediate.Location = new System.Drawing.Point(189, 122);
-            this.chkS2PolarityImmediate.Name = "chkS2PolarityImmediate";
-            this.chkS2PolarityImmediate.Size = new System.Drawing.Size(28, 27);
-            this.chkS2PolarityImmediate.TabIndex = 45;
-            this.chkS2PolarityImmediate.UseVisualStyleBackColor = true;
-            this.chkS2PolarityImmediate.CheckedChanged += new System.EventHandler(this.chkS2PolarityImmediate_CheckedChanged);
+            this.lblDIG_PWM_2.AutoSize = true;
+            this.lblDIG_PWM_2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDIG_PWM_2.Location = new System.Drawing.Point(6, 142);
+            this.lblDIG_PWM_2.Name = "lblDIG_PWM_2";
+            this.lblDIG_PWM_2.Size = new System.Drawing.Size(145, 25);
+            this.lblDIG_PWM_2.TabIndex = 46;
+            this.lblDIG_PWM_2.Text = "DIG_PWM_2";
             // 
-            // chkS3PolarityImmediate
+            // lblDIG_PWM_3_Hex
             // 
-            this.chkS3PolarityImmediate.AutoSize = true;
-            this.chkS3PolarityImmediate.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.chkS3PolarityImmediate.Location = new System.Drawing.Point(189, 160);
-            this.chkS3PolarityImmediate.Name = "chkS3PolarityImmediate";
-            this.chkS3PolarityImmediate.Size = new System.Drawing.Size(43, 30);
-            this.chkS3PolarityImmediate.TabIndex = 46;
-            this.chkS3PolarityImmediate.Text = " ";
-            this.chkS3PolarityImmediate.UseVisualStyleBackColor = true;
-            this.chkS3PolarityImmediate.CheckedChanged += new System.EventHandler(this.chkS3PolarityImmediate_CheckedChanged);
+            this.lblDIG_PWM_3_Hex.AutoSize = true;
+            this.lblDIG_PWM_3_Hex.Location = new System.Drawing.Point(645, 187);
+            this.lblDIG_PWM_3_Hex.Name = "lblDIG_PWM_3_Hex";
+            this.lblDIG_PWM_3_Hex.Size = new System.Drawing.Size(56, 25);
+            this.lblDIG_PWM_3_Hex.TabIndex = 55;
+            this.lblDIG_PWM_3_Hex.Text = "Hex:";
             // 
-            // lblImmediateAmplitudes
+            // nudDIG_PWM_3_DutyCycle
             // 
-            this.lblImmediateAmplitudes.AutoSize = true;
-            this.lblImmediateAmplitudes.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblImmediateAmplitudes.Location = new System.Drawing.Point(272, 39);
-            this.lblImmediateAmplitudes.Name = "lblImmediateAmplitudes";
-            this.lblImmediateAmplitudes.Size = new System.Drawing.Size(116, 25);
-            this.lblImmediateAmplitudes.TabIndex = 47;
-            this.lblImmediateAmplitudes.Text = "Amplitude";
+            this.nudDIG_PWM_3_DutyCycle.Location = new System.Drawing.Point(464, 184);
+            this.nudDIG_PWM_3_DutyCycle.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudDIG_PWM_3_DutyCycle.Name = "nudDIG_PWM_3_DutyCycle";
+            this.nudDIG_PWM_3_DutyCycle.Size = new System.Drawing.Size(121, 31);
+            this.nudDIG_PWM_3_DutyCycle.TabIndex = 54;
+            this.nudDIG_PWM_3_DutyCycle.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudDIG_PWM_3_DutyCycle.ValueChanged += new System.EventHandler(this.nudDIG_PWM_3_DutyCycle_ValueChanged);
             // 
-            // lblImmediatePolarity
+            // cboDIG_PWM_3_Value
             // 
-            this.lblImmediatePolarity.AutoSize = true;
-            this.lblImmediatePolarity.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblImmediatePolarity.Location = new System.Drawing.Point(158, 39);
-            this.lblImmediatePolarity.Name = "lblImmediatePolarity";
-            this.lblImmediatePolarity.Size = new System.Drawing.Size(92, 25);
-            this.lblImmediatePolarity.TabIndex = 48;
-            this.lblImmediatePolarity.Text = "Polarity";
+            this.cboDIG_PWM_3_Value.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_3_Value.FormattingEnabled = true;
+            this.cboDIG_PWM_3_Value.Items.AddRange(new object[] {
+            "OFF",
+            "ON"});
+            this.cboDIG_PWM_3_Value.Location = new System.Drawing.Point(325, 183);
+            this.cboDIG_PWM_3_Value.Name = "cboDIG_PWM_3_Value";
+            this.cboDIG_PWM_3_Value.Size = new System.Drawing.Size(112, 33);
+            this.cboDIG_PWM_3_Value.TabIndex = 53;
+            this.cboDIG_PWM_3_Value.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_3_Value_SelectedIndexChanged);
             // 
-            // lblS1AmplitudeImmediateDecimal
+            // cboDIG_PWM_3_Mode
             // 
-            this.lblS1AmplitudeImmediateDecimal.AutoSize = true;
-            this.lblS1AmplitudeImmediateDecimal.Location = new System.Drawing.Point(272, 83);
-            this.lblS1AmplitudeImmediateDecimal.Name = "lblS1AmplitudeImmediateDecimal";
-            this.lblS1AmplitudeImmediateDecimal.Size = new System.Drawing.Size(106, 25);
-            this.lblS1AmplitudeImmediateDecimal.TabIndex = 49;
-            this.lblS1AmplitudeImmediateDecimal.Text = "(decimal):";
+            this.cboDIG_PWM_3_Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_3_Mode.FormattingEnabled = true;
+            this.cboDIG_PWM_3_Mode.Items.AddRange(new object[] {
+            "Digital",
+            "PWM"});
+            this.cboDIG_PWM_3_Mode.Location = new System.Drawing.Point(189, 183);
+            this.cboDIG_PWM_3_Mode.Name = "cboDIG_PWM_3_Mode";
+            this.cboDIG_PWM_3_Mode.Size = new System.Drawing.Size(114, 33);
+            this.cboDIG_PWM_3_Mode.TabIndex = 52;
+            this.cboDIG_PWM_3_Mode.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_3_Mode_SelectedIndexChanged);
             // 
-            // label1
+            // lblDIG_PWM_3
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(272, 123);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(106, 25);
-            this.label1.TabIndex = 50;
-            this.label1.Text = "(decimal):";
+            this.lblDIG_PWM_3.AutoSize = true;
+            this.lblDIG_PWM_3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDIG_PWM_3.Location = new System.Drawing.Point(6, 187);
+            this.lblDIG_PWM_3.Name = "lblDIG_PWM_3";
+            this.lblDIG_PWM_3.Size = new System.Drawing.Size(145, 25);
+            this.lblDIG_PWM_3.TabIndex = 51;
+            this.lblDIG_PWM_3.Text = "DIG_PWM_3";
             // 
-            // label2
+            // lblDIG_PWM_4_Hex
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(272, 163);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(106, 25);
-            this.label2.TabIndex = 51;
-            this.label2.Text = "(decimal):";
+            this.lblDIG_PWM_4_Hex.AutoSize = true;
+            this.lblDIG_PWM_4_Hex.Location = new System.Drawing.Point(645, 232);
+            this.lblDIG_PWM_4_Hex.Name = "lblDIG_PWM_4_Hex";
+            this.lblDIG_PWM_4_Hex.Size = new System.Drawing.Size(56, 25);
+            this.lblDIG_PWM_4_Hex.TabIndex = 60;
+            this.lblDIG_PWM_4_Hex.Text = "Hex:";
             // 
-            // lblStatorImmediate
+            // nudDIG_PWM_4_DutyCycle
             // 
-            this.lblStatorImmediate.AutoSize = true;
-            this.lblStatorImmediate.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStatorImmediate.Location = new System.Drawing.Point(64, 39);
-            this.lblStatorImmediate.Name = "lblStatorImmediate";
-            this.lblStatorImmediate.Size = new System.Drawing.Size(75, 25);
-            this.lblStatorImmediate.TabIndex = 52;
-            this.lblStatorImmediate.Text = "Stator";
+            this.nudDIG_PWM_4_DutyCycle.Location = new System.Drawing.Point(464, 229);
+            this.nudDIG_PWM_4_DutyCycle.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudDIG_PWM_4_DutyCycle.Name = "nudDIG_PWM_4_DutyCycle";
+            this.nudDIG_PWM_4_DutyCycle.Size = new System.Drawing.Size(121, 31);
+            this.nudDIG_PWM_4_DutyCycle.TabIndex = 59;
+            this.nudDIG_PWM_4_DutyCycle.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudDIG_PWM_4_DutyCycle.ValueChanged += new System.EventHandler(this.nudDIG_PWM_4_DutyCycle_ValueChanged);
+            // 
+            // cboDIG_PWM_4_Value
+            // 
+            this.cboDIG_PWM_4_Value.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_4_Value.FormattingEnabled = true;
+            this.cboDIG_PWM_4_Value.Items.AddRange(new object[] {
+            "OFF",
+            "ON"});
+            this.cboDIG_PWM_4_Value.Location = new System.Drawing.Point(325, 228);
+            this.cboDIG_PWM_4_Value.Name = "cboDIG_PWM_4_Value";
+            this.cboDIG_PWM_4_Value.Size = new System.Drawing.Size(112, 33);
+            this.cboDIG_PWM_4_Value.TabIndex = 58;
+            this.cboDIG_PWM_4_Value.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_4_Value_SelectedIndexChanged);
+            // 
+            // cboDIG_PWM_4_Mode
+            // 
+            this.cboDIG_PWM_4_Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_4_Mode.FormattingEnabled = true;
+            this.cboDIG_PWM_4_Mode.Items.AddRange(new object[] {
+            "Digital",
+            "PWM"});
+            this.cboDIG_PWM_4_Mode.Location = new System.Drawing.Point(189, 228);
+            this.cboDIG_PWM_4_Mode.Name = "cboDIG_PWM_4_Mode";
+            this.cboDIG_PWM_4_Mode.Size = new System.Drawing.Size(114, 33);
+            this.cboDIG_PWM_4_Mode.TabIndex = 57;
+            this.cboDIG_PWM_4_Mode.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_4_Mode_SelectedIndexChanged);
+            // 
+            // lblDIG_PWM_4
+            // 
+            this.lblDIG_PWM_4.AutoSize = true;
+            this.lblDIG_PWM_4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDIG_PWM_4.Location = new System.Drawing.Point(6, 232);
+            this.lblDIG_PWM_4.Name = "lblDIG_PWM_4";
+            this.lblDIG_PWM_4.Size = new System.Drawing.Size(145, 25);
+            this.lblDIG_PWM_4.TabIndex = 56;
+            this.lblDIG_PWM_4.Text = "DIG_PWM_4";
+            // 
+            // lblDIG_PWM_5_Hex
+            // 
+            this.lblDIG_PWM_5_Hex.AutoSize = true;
+            this.lblDIG_PWM_5_Hex.Location = new System.Drawing.Point(645, 277);
+            this.lblDIG_PWM_5_Hex.Name = "lblDIG_PWM_5_Hex";
+            this.lblDIG_PWM_5_Hex.Size = new System.Drawing.Size(56, 25);
+            this.lblDIG_PWM_5_Hex.TabIndex = 65;
+            this.lblDIG_PWM_5_Hex.Text = "Hex:";
+            // 
+            // nudDIG_PWM_5_DutyCycle
+            // 
+            this.nudDIG_PWM_5_DutyCycle.Location = new System.Drawing.Point(464, 274);
+            this.nudDIG_PWM_5_DutyCycle.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudDIG_PWM_5_DutyCycle.Name = "nudDIG_PWM_5_DutyCycle";
+            this.nudDIG_PWM_5_DutyCycle.Size = new System.Drawing.Size(121, 31);
+            this.nudDIG_PWM_5_DutyCycle.TabIndex = 64;
+            this.nudDIG_PWM_5_DutyCycle.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudDIG_PWM_5_DutyCycle.ValueChanged += new System.EventHandler(this.nudDIG_PWM_5_DutyCycle_ValueChanged);
+            // 
+            // cboDIG_PWM_5_Value
+            // 
+            this.cboDIG_PWM_5_Value.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_5_Value.FormattingEnabled = true;
+            this.cboDIG_PWM_5_Value.Items.AddRange(new object[] {
+            "OFF",
+            "ON"});
+            this.cboDIG_PWM_5_Value.Location = new System.Drawing.Point(325, 273);
+            this.cboDIG_PWM_5_Value.Name = "cboDIG_PWM_5_Value";
+            this.cboDIG_PWM_5_Value.Size = new System.Drawing.Size(112, 33);
+            this.cboDIG_PWM_5_Value.TabIndex = 63;
+            this.cboDIG_PWM_5_Value.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_5_Value_SelectedIndexChanged);
+            // 
+            // cboDIG_PWM_5_Mode
+            // 
+            this.cboDIG_PWM_5_Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_5_Mode.FormattingEnabled = true;
+            this.cboDIG_PWM_5_Mode.Items.AddRange(new object[] {
+            "Digital",
+            "PWM"});
+            this.cboDIG_PWM_5_Mode.Location = new System.Drawing.Point(189, 273);
+            this.cboDIG_PWM_5_Mode.Name = "cboDIG_PWM_5_Mode";
+            this.cboDIG_PWM_5_Mode.Size = new System.Drawing.Size(114, 33);
+            this.cboDIG_PWM_5_Mode.TabIndex = 62;
+            this.cboDIG_PWM_5_Mode.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_5_Mode_SelectedIndexChanged);
+            // 
+            // lblDIG_PWM_5
+            // 
+            this.lblDIG_PWM_5.AutoSize = true;
+            this.lblDIG_PWM_5.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDIG_PWM_5.Location = new System.Drawing.Point(6, 277);
+            this.lblDIG_PWM_5.Name = "lblDIG_PWM_5";
+            this.lblDIG_PWM_5.Size = new System.Drawing.Size(145, 25);
+            this.lblDIG_PWM_5.TabIndex = 61;
+            this.lblDIG_PWM_5.Text = "DIG_PWM_5";
+            // 
+            // lblDIG_PWM_6_Hex
+            // 
+            this.lblDIG_PWM_6_Hex.AutoSize = true;
+            this.lblDIG_PWM_6_Hex.Location = new System.Drawing.Point(645, 322);
+            this.lblDIG_PWM_6_Hex.Name = "lblDIG_PWM_6_Hex";
+            this.lblDIG_PWM_6_Hex.Size = new System.Drawing.Size(56, 25);
+            this.lblDIG_PWM_6_Hex.TabIndex = 70;
+            this.lblDIG_PWM_6_Hex.Text = "Hex:";
+            // 
+            // nudDIG_PWM_6_DutyCycle
+            // 
+            this.nudDIG_PWM_6_DutyCycle.Location = new System.Drawing.Point(464, 319);
+            this.nudDIG_PWM_6_DutyCycle.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudDIG_PWM_6_DutyCycle.Name = "nudDIG_PWM_6_DutyCycle";
+            this.nudDIG_PWM_6_DutyCycle.Size = new System.Drawing.Size(121, 31);
+            this.nudDIG_PWM_6_DutyCycle.TabIndex = 69;
+            this.nudDIG_PWM_6_DutyCycle.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudDIG_PWM_6_DutyCycle.ValueChanged += new System.EventHandler(this.nudDIG_PWM_6_DutyCycle_ValueChanged);
+            // 
+            // cboDIG_PWM_6_Value
+            // 
+            this.cboDIG_PWM_6_Value.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_6_Value.FormattingEnabled = true;
+            this.cboDIG_PWM_6_Value.Items.AddRange(new object[] {
+            "OFF",
+            "ON"});
+            this.cboDIG_PWM_6_Value.Location = new System.Drawing.Point(325, 318);
+            this.cboDIG_PWM_6_Value.Name = "cboDIG_PWM_6_Value";
+            this.cboDIG_PWM_6_Value.Size = new System.Drawing.Size(112, 33);
+            this.cboDIG_PWM_6_Value.TabIndex = 68;
+            this.cboDIG_PWM_6_Value.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_6_Value_SelectedIndexChanged);
+            // 
+            // cboDIG_PWM_6_Mode
+            // 
+            this.cboDIG_PWM_6_Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_6_Mode.FormattingEnabled = true;
+            this.cboDIG_PWM_6_Mode.Items.AddRange(new object[] {
+            "Digital",
+            "PWM"});
+            this.cboDIG_PWM_6_Mode.Location = new System.Drawing.Point(189, 318);
+            this.cboDIG_PWM_6_Mode.Name = "cboDIG_PWM_6_Mode";
+            this.cboDIG_PWM_6_Mode.Size = new System.Drawing.Size(114, 33);
+            this.cboDIG_PWM_6_Mode.TabIndex = 67;
+            this.cboDIG_PWM_6_Mode.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_6_Mode_SelectedIndexChanged);
+            // 
+            // lblDIG_PWM_6
+            // 
+            this.lblDIG_PWM_6.AutoSize = true;
+            this.lblDIG_PWM_6.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDIG_PWM_6.Location = new System.Drawing.Point(6, 322);
+            this.lblDIG_PWM_6.Name = "lblDIG_PWM_6";
+            this.lblDIG_PWM_6.Size = new System.Drawing.Size(145, 25);
+            this.lblDIG_PWM_6.TabIndex = 66;
+            this.lblDIG_PWM_6.Text = "DIG_PWM_6";
+            // 
+            // lblDIG_PWM_7_Hex
+            // 
+            this.lblDIG_PWM_7_Hex.AutoSize = true;
+            this.lblDIG_PWM_7_Hex.Location = new System.Drawing.Point(645, 367);
+            this.lblDIG_PWM_7_Hex.Name = "lblDIG_PWM_7_Hex";
+            this.lblDIG_PWM_7_Hex.Size = new System.Drawing.Size(56, 25);
+            this.lblDIG_PWM_7_Hex.TabIndex = 75;
+            this.lblDIG_PWM_7_Hex.Text = "Hex:";
+            // 
+            // nudDIG_PWM_7_DutyCycle
+            // 
+            this.nudDIG_PWM_7_DutyCycle.Location = new System.Drawing.Point(464, 364);
+            this.nudDIG_PWM_7_DutyCycle.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudDIG_PWM_7_DutyCycle.Name = "nudDIG_PWM_7_DutyCycle";
+            this.nudDIG_PWM_7_DutyCycle.Size = new System.Drawing.Size(121, 31);
+            this.nudDIG_PWM_7_DutyCycle.TabIndex = 74;
+            this.nudDIG_PWM_7_DutyCycle.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudDIG_PWM_7_DutyCycle.ValueChanged += new System.EventHandler(this.nudDIG_PWM_7_DutyCycle_ValueChanged);
+            // 
+            // cboDIG_PWM_7_Value
+            // 
+            this.cboDIG_PWM_7_Value.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_7_Value.FormattingEnabled = true;
+            this.cboDIG_PWM_7_Value.Items.AddRange(new object[] {
+            "OFF",
+            "ON"});
+            this.cboDIG_PWM_7_Value.Location = new System.Drawing.Point(325, 363);
+            this.cboDIG_PWM_7_Value.Name = "cboDIG_PWM_7_Value";
+            this.cboDIG_PWM_7_Value.Size = new System.Drawing.Size(112, 33);
+            this.cboDIG_PWM_7_Value.TabIndex = 73;
+            this.cboDIG_PWM_7_Value.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_7_Value_SelectedIndexChanged);
+            // 
+            // cboDIG_PWM_7_Mode
+            // 
+            this.cboDIG_PWM_7_Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboDIG_PWM_7_Mode.FormattingEnabled = true;
+            this.cboDIG_PWM_7_Mode.Items.AddRange(new object[] {
+            "Digital",
+            "PWM"});
+            this.cboDIG_PWM_7_Mode.Location = new System.Drawing.Point(189, 363);
+            this.cboDIG_PWM_7_Mode.Name = "cboDIG_PWM_7_Mode";
+            this.cboDIG_PWM_7_Mode.Size = new System.Drawing.Size(114, 33);
+            this.cboDIG_PWM_7_Mode.TabIndex = 72;
+            this.cboDIG_PWM_7_Mode.SelectedIndexChanged += new System.EventHandler(this.cboDIG_PWM_7_Mode_SelectedIndexChanged);
+            // 
+            // lblDIG_PWM_7
+            // 
+            this.lblDIG_PWM_7.AutoSize = true;
+            this.lblDIG_PWM_7.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDIG_PWM_7.Location = new System.Drawing.Point(6, 367);
+            this.lblDIG_PWM_7.Name = "lblDIG_PWM_7";
+            this.lblDIG_PWM_7.Size = new System.Drawing.Size(145, 25);
+            this.lblDIG_PWM_7.TabIndex = 71;
+            this.lblDIG_PWM_7.Text = "DIG_PWM_7";
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1026, 997);
+            this.ClientSize = new System.Drawing.Size(1067, 997);
             this.Controls.Add(this.gbMain);
             this.Controls.Add(this.lblSerialPort);
             this.Controls.Add(this.cbSerialPort);
@@ -1901,7 +2515,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudLimitMin)).EndInit();
             this.gbMain.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
-            this.tabDeviceSetup.ResumeLayout(false);
+            this.tabDiagnosticLED.ResumeLayout(false);
             this.tabSynchroSetup.ResumeLayout(false);
             this.gbUpdateRateControl.ResumeLayout(false);
             this.gbUpdateRateControl.PerformLayout();
@@ -1911,19 +2525,29 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudURCSmoothModeThresholdDecimal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudURCLimitThresholdDecimal)).EndInit();
             this.tabSynchroControl.ResumeLayout(false);
-            this.gbIndicatorMovementControl.ResumeLayout(false);
-            this.gbIndicatorMovementControl.PerformLayout();
-            this.tabDemoMode.ResumeLayout(false);
-            this.tabRawData.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorToPositionDecimal)).EndInit();
+            this.gbSetStatorAmplitudeAndPolarityImmediate.ResumeLayout(false);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS3AmplitudeDecimal)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS2AmplitudeDecimal)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS1AmplitudeDecimal)).EndInit();
             this.gbMoveIndicatorCoarseResolution.ResumeLayout(false);
             this.gbMoveIndicatorCoarseResolution.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorCoarseResolutionDecimal)).EndInit();
-            this.gbSetStatorAmplitudeAndPolarityImmediate.ResumeLayout(false);
-            this.gbSetStatorAmplitudeAndPolarityImmediate.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudS1AmplitudeImmediateDecimal)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudS2AmplitudeImmediateDecimal)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudS3AmplitudeImmediateDecimal)).EndInit();
+            this.gbIndicatorMovementControl.ResumeLayout(false);
+            this.gbIndicatorMovementControl.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorToPositionDecimal)).EndInit();
+            this.tabDemoMode.ResumeLayout(false);
+            this.tabRawData.ResumeLayout(false);
+            this.tabDigitalAndPWMOutputs.ResumeLayout(false);
+            this.gbDigitalAndPWMOutputs.ResumeLayout(false);
+            this.gbDigitalAndPWMOutputs.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_1_DutyCycle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_2_DutyCycle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_3_DutyCycle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_4_DutyCycle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_5_DutyCycle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_6_DutyCycle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_7_DutyCycle)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2016,7 +2640,7 @@
         private System.Windows.Forms.CheckBox chkStartDemo;
         private System.Windows.Forms.GroupBox gbMain;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabDeviceSetup;
+        private System.Windows.Forms.TabPage tabDiagnosticLED;
         private System.Windows.Forms.TabPage tabSynchroSetup;
         private System.Windows.Forms.TabPage tabDemoMode;
         private System.Windows.Forms.TabPage tabSynchroControl;
@@ -2052,24 +2676,69 @@
         private System.Windows.Forms.NumericUpDown nudMoveIndicatorCoarseResolutionDecimal;
         private System.Windows.Forms.Label lblMoveIndicatorCoarseResolutionPositionDecimal;
         private System.Windows.Forms.GroupBox gbSetStatorAmplitudeAndPolarityImmediate;
-        private System.Windows.Forms.Label lblS3AmplitudeImmediateHex;
-        private System.Windows.Forms.NumericUpDown nudS3AmplitudeImmediateDecimal;
-        private System.Windows.Forms.Label lblS3AmplitudePolarityImmediate;
-        private System.Windows.Forms.Label lblS2AmplitudeImmediateHex;
-        private System.Windows.Forms.NumericUpDown nudS2AmplitudeImmediateDecimal;
-        private System.Windows.Forms.Label lblS2AmplitudePolarityImmediate;
-        private System.Windows.Forms.Label lblS1AmplitudeImmediateHex;
-        private System.Windows.Forms.NumericUpDown nudS1AmplitudeImmediateDecimal;
-        private System.Windows.Forms.Label lblS1AmplitudePolarityImmediate;
-        private System.Windows.Forms.CheckBox chkS3PolarityImmediate;
-        private System.Windows.Forms.CheckBox chkS2PolarityImmediate;
-        private System.Windows.Forms.CheckBox chkS1PolarityImmediate;
-        private System.Windows.Forms.Label lblImmediatePolarity;
-        private System.Windows.Forms.Label lblImmediateAmplitudes;
-        private System.Windows.Forms.Label lblStatorImmediate;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label lblS1AmplitudeImmediateDecimal;
+        private System.Windows.Forms.Label lblS3AmplitudeHex;
+        private System.Windows.Forms.NumericUpDown nudS3AmplitudeDecimal;
+        private System.Windows.Forms.Label lblS3AmplitudePolarity;
+        private System.Windows.Forms.Label lblS2AmplitudeHex;
+        private System.Windows.Forms.NumericUpDown nudS2AmplitudeDecimal;
+        private System.Windows.Forms.Label lblS2AmplitudePolarity;
+        private System.Windows.Forms.Label lblS1AmplitudeHex;
+        private System.Windows.Forms.NumericUpDown nudS1AmplitudeDecimal;
+        private System.Windows.Forms.Label lblS1AmplitudePolarity;
+        private System.Windows.Forms.CheckBox chkS3Polarity;
+        private System.Windows.Forms.CheckBox chkS2Polarity;
+        private System.Windows.Forms.CheckBox chkS1Polarity;
+        private System.Windows.Forms.Label lblPolarities;
+        private System.Windows.Forms.Label lblAmplitudes;
+        private System.Windows.Forms.Label lblStators;
+        private System.Windows.Forms.Label lblS3AmplitudeDecimal;
+        private System.Windows.Forms.Label lblS2AmplitudeDecimal;
+        private System.Windows.Forms.Label lblS1AmplitudeDecimal;
+        private System.Windows.Forms.Button btnUpdateStatorAmplitudesAndPolarities;
+        private System.Windows.Forms.Label lblStatorAmplitudeAndPolarityUpdateMode;
+        private System.Windows.Forms.RadioButton rdoStatorAmplitudeAndPolarityDeferredUpdates;
+        private System.Windows.Forms.RadioButton rdoStatorAmplitudeAndPolarityImmediateUpdates;
+        private System.Windows.Forms.TabPage tabDigitalAndPWMOutputs;
+        private System.Windows.Forms.GroupBox gbDigitalAndPWMOutputs;
+        private System.Windows.Forms.NumericUpDown nudDIG_PWM_1_DutyCycle;
+        private System.Windows.Forms.Label lblDutyCycle;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_1_Value;
+        private System.Windows.Forms.Label lblDigitalAndPWMChannelValues;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_1_Mode;
+        private System.Windows.Forms.Label lblDigitalOrPWM;
+        private System.Windows.Forms.Label lblChannels;
+        private System.Windows.Forms.Label lblDIG_PWM_1;
+        private System.Windows.Forms.Label lblDIG_PWM_1_Hex;
+        private System.Windows.Forms.Label lblDIG_PWM_3_Hex;
+        private System.Windows.Forms.NumericUpDown nudDIG_PWM_3_DutyCycle;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_3_Value;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_3_Mode;
+        private System.Windows.Forms.Label lblDIG_PWM_3;
+        private System.Windows.Forms.Label lblDIG_PWM_2_Hex;
+        private System.Windows.Forms.NumericUpDown nudDIG_PWM_2_DutyCycle;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_2_Value;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_2_Mode;
+        private System.Windows.Forms.Label lblDIG_PWM_2;
+        private System.Windows.Forms.Label lblDIG_PWM_4_Hex;
+        private System.Windows.Forms.NumericUpDown nudDIG_PWM_4_DutyCycle;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_4_Value;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_4_Mode;
+        private System.Windows.Forms.Label lblDIG_PWM_4;
+        private System.Windows.Forms.Label lblDIG_PWM_5_Hex;
+        private System.Windows.Forms.NumericUpDown nudDIG_PWM_5_DutyCycle;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_5_Value;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_5_Mode;
+        private System.Windows.Forms.Label lblDIG_PWM_5;
+        private System.Windows.Forms.Label lblDIG_PWM_6_Hex;
+        private System.Windows.Forms.NumericUpDown nudDIG_PWM_6_DutyCycle;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_6_Value;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_6_Mode;
+        private System.Windows.Forms.Label lblDIG_PWM_6;
+        private System.Windows.Forms.Label lblDIG_PWM_7_Hex;
+        private System.Windows.Forms.NumericUpDown nudDIG_PWM_7_DutyCycle;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_7_Value;
+        private System.Windows.Forms.ComboBox cboDIG_PWM_7_Mode;
+        private System.Windows.Forms.Label lblDIG_PWM_7;
     }
 }
 

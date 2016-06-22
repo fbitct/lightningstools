@@ -35,6 +35,7 @@ namespace SDITestTool
             SetupDefaultDemoParameters();
             SetupDefaultURCParameters();
             SetupDefaultMoveIndicatorInQuadrantParameters();
+            SetupDefaultDigitalAndPWMOutputsParameters();
             ResetErrors();
             Activate();
         }
@@ -64,6 +65,36 @@ namespace SDITestTool
         private void SetupDefaultMoveIndicatorInQuadrantParameters()
         {
             cboMoveIndicatorInQuadrant.SelectedIndex = 0;
+        }
+        private void SetupDefaultDigitalAndPWMOutputsParameters()
+        {
+            cboDIG_PWM_1_Mode.SelectedIndex = 0;
+            cboDIG_PWM_1_Value.SelectedIndex = 0;
+            nudDIG_PWM_1_DutyCycle.Value = 0;
+
+            cboDIG_PWM_2_Mode.SelectedIndex = 0;
+            cboDIG_PWM_2_Value.SelectedIndex = 0;
+            nudDIG_PWM_2_DutyCycle.Value = 0;
+
+            cboDIG_PWM_3_Mode.SelectedIndex = 0;
+            cboDIG_PWM_3_Value.SelectedIndex = 0;
+            nudDIG_PWM_3_DutyCycle.Value = 0;
+
+            cboDIG_PWM_4_Mode.SelectedIndex = 0;
+            cboDIG_PWM_4_Value.SelectedIndex = 0;
+            nudDIG_PWM_4_DutyCycle.Value = 0;
+
+            cboDIG_PWM_5_Mode.SelectedIndex = 0;
+            cboDIG_PWM_5_Value.SelectedIndex = 0;
+            nudDIG_PWM_5_DutyCycle.Value = 0;
+
+            cboDIG_PWM_6_Mode.SelectedIndex = 0;
+            cboDIG_PWM_6_Value.SelectedIndex = 0;
+            nudDIG_PWM_6_DutyCycle.Value = 0;
+
+            cboDIG_PWM_7_Mode.SelectedIndex = 0;
+            cboDIG_PWM_7_Value.SelectedIndex = 0;
+            nudDIG_PWM_7_DutyCycle.Value = 0;
         }
         private void EnumerateSerialPorts()
         {
@@ -403,7 +434,28 @@ namespace SDITestTool
 #if (!DEBUG)
             chkUpdateRateControlShortestPath.Enabled = IsPitch;
 #endif
+            btnUpdateStatorAmplitudesAndPolarities.Enabled = rdoStatorAmplitudeAndPolarityDeferredUpdates.Checked;
 
+            cboDIG_PWM_1_Value.Enabled = (cboDIG_PWM_1_Mode.SelectedIndex == 0);
+            nudDIG_PWM_1_DutyCycle.Enabled = (cboDIG_PWM_1_Mode.SelectedIndex == 1);
+
+            cboDIG_PWM_2_Value.Enabled = (cboDIG_PWM_2_Mode.SelectedIndex == 0);
+            nudDIG_PWM_2_DutyCycle.Enabled = (cboDIG_PWM_2_Mode.SelectedIndex == 1);
+
+            cboDIG_PWM_3_Value.Enabled = (cboDIG_PWM_3_Mode.SelectedIndex == 0);
+            nudDIG_PWM_3_DutyCycle.Enabled = (cboDIG_PWM_3_Mode.SelectedIndex == 1);
+
+            cboDIG_PWM_4_Value.Enabled = (cboDIG_PWM_4_Mode.SelectedIndex == 0);
+            nudDIG_PWM_4_DutyCycle.Enabled = (cboDIG_PWM_4_Mode.SelectedIndex == 1);
+
+            cboDIG_PWM_5_Value.Enabled = (cboDIG_PWM_5_Mode.SelectedIndex == 0);
+            nudDIG_PWM_5_DutyCycle.Enabled = (cboDIG_PWM_5_Mode.SelectedIndex == 1);
+
+            cboDIG_PWM_6_Value.Enabled = (cboDIG_PWM_6_Mode.SelectedIndex == 0);
+            nudDIG_PWM_6_DutyCycle.Enabled = (cboDIG_PWM_6_Mode.SelectedIndex == 1);
+
+            cboDIG_PWM_7_Value.Enabled = (cboDIG_PWM_7_Mode.SelectedIndex == 0);
+            nudDIG_PWM_7_DutyCycle.Enabled = (cboDIG_PWM_7_Mode.SelectedIndex == 1);
         }
         private bool DeviceIsValid
         {
@@ -882,10 +934,40 @@ namespace SDITestTool
             UpdateUIControlsEnabledOrDisabledState();
         }
 
-        private void nudS1AmplitudeImmediateDecimal_ValueChanged(object sender, EventArgs e)
+        private void nudS1AmplitudeDecimal_ValueChanged(object sender, EventArgs e)
         {
-            var amplitude = (byte)nudS1AmplitudeImmediateDecimal.Value;
-            lblS1AmplitudeImmediateHex.Text = string.Format("Hex:0x{0}", amplitude.ToString("X").PadLeft(2, '0'));
+            var amplitude = (byte)nudS1AmplitudeDecimal.Value;
+            lblS1AmplitudeHex.Text = string.Format("Hex:0x{0}", amplitude.ToString("X").PadLeft(2, '0'));
+
+            if (rdoStatorAmplitudeAndPolarityImmediateUpdates.Checked)
+            {
+                UpdateS1AmplitudeImmediate(amplitude);
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+        private void nudS2AmplitudeDecimal_ValueChanged(object sender, EventArgs e)
+        {
+            var amplitude = (byte)nudS2AmplitudeDecimal.Value;
+            lblS2AmplitudeHex.Text = string.Format("Hex:0x{0}", amplitude.ToString("X").PadLeft(2, '0'));
+            if (rdoStatorAmplitudeAndPolarityImmediateUpdates.Checked)
+            {
+                UpdateS2AmplitudeImmediate(amplitude);
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+        private void nudS3AmplitudeDecimal_ValueChanged(object sender, EventArgs e)
+        {
+            var amplitude = (byte)nudS3AmplitudeDecimal.Value;
+            lblS3AmplitudeHex.Text = string.Format("Hex:0x{0}", amplitude.ToString("X").PadLeft(2, '0'));
+            if (rdoStatorAmplitudeAndPolarityImmediateUpdates.Checked)
+            {
+                UpdateS3AmplitudeImmediate(amplitude);
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void UpdateS1AmplitudeImmediate(byte amplitude)
+        {
             if (DeviceIsValid)
             {
                 try
@@ -897,13 +979,10 @@ namespace SDITestTool
                     _log.Debug(ex);
                 }
             }
-            UpdateUIControlsEnabledOrDisabledState();
         }
 
-        private void nudS2AmplitudeImmediateDecimal_ValueChanged(object sender, EventArgs e)
+        private void UpdateS2AmplitudeImmediate(byte amplitude)
         {
-            var amplitude = (byte)nudS2AmplitudeImmediateDecimal.Value;
-            lblS2AmplitudeImmediateHex.Text = string.Format("Hex:0x{0}", amplitude.ToString("X").PadLeft(2, '0'));
             if (DeviceIsValid)
             {
                 try
@@ -915,13 +994,10 @@ namespace SDITestTool
                     _log.Debug(ex);
                 }
             }
-            UpdateUIControlsEnabledOrDisabledState();
         }
 
-        private void nudS3AmplitudeImmediateDecimal_ValueChanged(object sender, EventArgs e)
+        private void UpdateS3AmplitudeImmediate(byte amplitude)
         {
-            var amplitude = (byte)nudS3AmplitudeImmediateDecimal.Value;
-            lblS3AmplitudeImmediateHex.Text = string.Format("Hex:0x{0}", amplitude.ToString("X").PadLeft(2, '0'));
             if (DeviceIsValid)
             {
                 try
@@ -933,25 +1009,19 @@ namespace SDITestTool
                     _log.Debug(ex);
                 }
             }
-            UpdateUIControlsEnabledOrDisabledState();
         }
 
-        private void UpdatePolarityImmediate()
+        private void UpdateStatorPolaritiesImmediate()
         {
-            var s1Polarity = chkS1PolarityImmediate.Checked;
-            var s2Polarity = chkS2PolarityImmediate.Checked;
-            var s3Polarity = chkS3PolarityImmediate.Checked;
-            var polarities = StatorSignals.Unknown;
+            var s1Polarity = chkS1Polarity.Checked ? Polarity.Positive : Polarity.Negative;
+            var s2Polarity = chkS2Polarity.Checked ? Polarity.Positive : Polarity.Negative;
+            var s3Polarity = chkS3Polarity.Checked ? Polarity.Positive : Polarity.Negative;
 
-            if (s1Polarity) polarities |= StatorSignals.S1;
-            if (s2Polarity) polarities |= StatorSignals.S2;
-            if (s3Polarity) polarities |= StatorSignals.S3;
-            
             if (DeviceIsValid)
             {
                 try
                 {
-                    _sdiDevice.SetStatorSignalsPolarityImmediate(polarities);
+                    _sdiDevice.SetStatorSignalsPolarityImmediate(s1Polarity, s2Polarity, s3Polarity);
                 }
                 catch (Exception ex)
                 {
@@ -960,20 +1030,249 @@ namespace SDITestTool
             }
             UpdateUIControlsEnabledOrDisabledState();
         }
-
-        private void chkS1PolarityImmediate_CheckedChanged(object sender, EventArgs e)
+        private void UpdateStatorAmplitudesDeferred()
         {
-            UpdatePolarityImmediate();
+            var s1Amplitude = (byte)nudS1AmplitudeDecimal.Value;
+            var s2Amplitude = (byte)nudS2AmplitudeDecimal.Value;
+            var s3Amplitude = (byte)nudS3AmplitudeDecimal.Value;
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.SetStatorSignalAmplitudeDeferred(StatorSignals.S1, s1Amplitude);
+                    _sdiDevice.SetStatorSignalAmplitudeDeferred(StatorSignals.S2, s2Amplitude);
+                    _sdiDevice.SetStatorSignalAmplitudeDeferred(StatorSignals.S3, s3Amplitude);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+        }
+        private void UpdateStatorPolaritiesDeferredAndLoad()
+        {
+
+            var s1Polarity = chkS1Polarity.Checked ? Polarity.Positive : Polarity.Negative;
+            var s2Polarity = chkS2Polarity.Checked ? Polarity.Positive : Polarity.Negative;
+            var s3Polarity = chkS3Polarity.Checked ? Polarity.Positive : Polarity.Negative;
+
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.SetStatorSignalsPolarityAndLoadDeferred(s1Polarity, s2Polarity, s3Polarity);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
         }
 
-        private void chkS2PolarityImmediate_CheckedChanged(object sender, EventArgs e)
+        private void chkS1Polarity_CheckedChanged(object sender, EventArgs e)
         {
-            UpdatePolarityImmediate();
+            if (rdoStatorAmplitudeAndPolarityImmediateUpdates.Checked)
+            {
+                UpdateStatorPolaritiesImmediate();
+            }
+            UpdateUIControlsEnabledOrDisabledState();
         }
 
-        private void chkS3PolarityImmediate_CheckedChanged(object sender, EventArgs e)
+        private void chkS2Polarity_CheckedChanged(object sender, EventArgs e)
         {
-            UpdatePolarityImmediate();
+            if (rdoStatorAmplitudeAndPolarityImmediateUpdates.Checked)
+            {
+                UpdateStatorPolaritiesImmediate();
+            }
+            UpdateUIControlsEnabledOrDisabledState();
         }
+
+        private void chkS3Polarity_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdoStatorAmplitudeAndPolarityImmediateUpdates.Checked)
+            {
+                UpdateStatorPolaritiesImmediate();
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void rdoStatorAmplitudeAndPolarityDeferredUpdates_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void btnUpdateStatorAmplitudesAndPolarities_Click(object sender, EventArgs e)
+        {
+            UpdateStatorAmplitudesDeferred();
+            UpdateStatorPolaritiesDeferredAndLoad();
+        }
+        private void UpdateDigitalAndPWMOutputChannelModes()
+        {
+            if (DeviceIsValid)
+            {
+
+                var digPwm1Mode = cboDIG_PWM_1_Mode.SelectedItem as string == "PWM" ? OutputChannelMode.PWM : OutputChannelMode.Digital;
+                var digPwm2Mode = cboDIG_PWM_2_Mode.SelectedItem as string == "PWM" ? OutputChannelMode.PWM : OutputChannelMode.Digital;
+                var digPwm3Mode = cboDIG_PWM_3_Mode.SelectedItem as string == "PWM" ? OutputChannelMode.PWM : OutputChannelMode.Digital;
+                var digPwm4Mode = cboDIG_PWM_4_Mode.SelectedItem as string == "PWM" ? OutputChannelMode.PWM : OutputChannelMode.Digital;
+                var digPwm5Mode = cboDIG_PWM_5_Mode.SelectedItem as string == "PWM" ? OutputChannelMode.PWM : OutputChannelMode.Digital;
+                var digPwm6Mode = cboDIG_PWM_6_Mode.SelectedItem as string == "PWM" ? OutputChannelMode.PWM : OutputChannelMode.Digital;
+                var digPwm7Mode = cboDIG_PWM_7_Mode.SelectedItem as string == "PWM" ? OutputChannelMode.PWM : OutputChannelMode.Digital;
+
+                try
+                {
+                    _sdiDevice.ConfigureOutputChannels(digPwm1Mode, digPwm2Mode, digPwm3Mode, digPwm4Mode, digPwm5Mode, digPwm6Mode, digPwm7Mode);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+        }
+
+        private void cboDIG_PWM_1_Mode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateDigitalAndPWMOutputChannelModes();
+            UpdateChannelDigitalValue(cboDIG_PWM_1_Value, lblDIG_PWM_1_Hex, nudDIG_PWM_1_DutyCycle, OutputChannels.DIG_PWM_1);
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+        private void cboDIG_PWM_2_Mode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateDigitalAndPWMOutputChannelModes();
+            UpdateChannelDigitalValue(cboDIG_PWM_2_Value, lblDIG_PWM_2_Hex, nudDIG_PWM_2_DutyCycle, OutputChannels.DIG_PWM_2);
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+        private void cboDIG_PWM_3_Mode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateDigitalAndPWMOutputChannelModes();
+            UpdateChannelDigitalValue(cboDIG_PWM_3_Value, lblDIG_PWM_3_Hex, nudDIG_PWM_3_DutyCycle, OutputChannels.DIG_PWM_3);
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+        private void cboDIG_PWM_4_Mode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateDigitalAndPWMOutputChannelModes();
+            UpdateChannelDigitalValue(cboDIG_PWM_4_Value, lblDIG_PWM_4_Hex, nudDIG_PWM_4_DutyCycle, OutputChannels.DIG_PWM_4);
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+        private void cboDIG_PWM_5_Mode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateDigitalAndPWMOutputChannelModes();
+            UpdateChannelDigitalValue(cboDIG_PWM_5_Value, lblDIG_PWM_5_Hex, nudDIG_PWM_5_DutyCycle, OutputChannels.DIG_PWM_5);
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+        private void cboDIG_PWM_6_Mode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateDigitalAndPWMOutputChannelModes();
+            UpdateChannelDigitalValue(cboDIG_PWM_6_Value, lblDIG_PWM_6_Hex, nudDIG_PWM_6_DutyCycle, OutputChannels.DIG_PWM_6);
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+        private void cboDIG_PWM_7_Mode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateDigitalAndPWMOutputChannelModes();
+            UpdateChannelDigitalValue(cboDIG_PWM_7_Value, lblDIG_PWM_7_Hex, nudDIG_PWM_7_DutyCycle, OutputChannels.DIG_PWM_7);
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void cboDIG_PWM_1_Value_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDigitalValue(cboDIG_PWM_1_Value, lblDIG_PWM_1_Hex, nudDIG_PWM_1_DutyCycle, OutputChannels.DIG_PWM_1);
+        }
+        private void cboDIG_PWM_2_Value_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDigitalValue(cboDIG_PWM_2_Value, lblDIG_PWM_2_Hex, nudDIG_PWM_2_DutyCycle, OutputChannels.DIG_PWM_2);
+        }
+        private void cboDIG_PWM_3_Value_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDigitalValue(cboDIG_PWM_3_Value, lblDIG_PWM_3_Hex, nudDIG_PWM_3_DutyCycle, OutputChannels.DIG_PWM_3);
+        }
+        private void cboDIG_PWM_4_Value_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDigitalValue(cboDIG_PWM_4_Value, lblDIG_PWM_4_Hex, nudDIG_PWM_4_DutyCycle, OutputChannels.DIG_PWM_4);
+        }
+        private void cboDIG_PWM_5_Value_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDigitalValue(cboDIG_PWM_5_Value, lblDIG_PWM_5_Hex, nudDIG_PWM_5_DutyCycle, OutputChannels.DIG_PWM_5);
+        }
+        private void cboDIG_PWM_6_Value_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDigitalValue(cboDIG_PWM_6_Value, lblDIG_PWM_6_Hex, nudDIG_PWM_6_DutyCycle, OutputChannels.DIG_PWM_6);
+        }
+        private void cboDIG_PWM_7_Value_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDigitalValue(cboDIG_PWM_7_Value, lblDIG_PWM_7_Hex, nudDIG_PWM_7_DutyCycle, OutputChannels.DIG_PWM_7);
+        }
+
+        private void nudDIG_PWM_1_DutyCycle_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDutyCycle(nudDIG_PWM_1_DutyCycle, lblDIG_PWM_1_Hex, cboDIG_PWM_1_Value, OutputChannels.DIG_PWM_1);
+        }
+        private void nudDIG_PWM_2_DutyCycle_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDutyCycle(nudDIG_PWM_2_DutyCycle, lblDIG_PWM_2_Hex, cboDIG_PWM_2_Value, OutputChannels.DIG_PWM_2);
+        }
+        private void nudDIG_PWM_3_DutyCycle_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDutyCycle(nudDIG_PWM_3_DutyCycle, lblDIG_PWM_3_Hex, cboDIG_PWM_3_Value, OutputChannels.DIG_PWM_3);
+        }
+        private void nudDIG_PWM_4_DutyCycle_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDutyCycle(nudDIG_PWM_4_DutyCycle, lblDIG_PWM_4_Hex, cboDIG_PWM_4_Value, OutputChannels.DIG_PWM_4);
+        }
+        private void nudDIG_PWM_5_DutyCycle_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDutyCycle(nudDIG_PWM_5_DutyCycle, lblDIG_PWM_5_Hex, cboDIG_PWM_5_Value, OutputChannels.DIG_PWM_5);
+        }
+        private void nudDIG_PWM_6_DutyCycle_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDutyCycle(nudDIG_PWM_6_DutyCycle, lblDIG_PWM_6_Hex, cboDIG_PWM_6_Value, OutputChannels.DIG_PWM_6);
+        }
+        private void nudDIG_PWM_7_DutyCycle_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDutyCycle(nudDIG_PWM_7_DutyCycle, lblDIG_PWM_7_Hex, cboDIG_PWM_7_Value, OutputChannels.DIG_PWM_7);
+        }
+
+        private void UpdateChannelDigitalValue(ComboBox digitalValueComboBox, Label hexValueLabel, NumericUpDown dutyCycleNumericUpDownControl,OutputChannels outputChannel)
+        {
+            byte value = (digitalValueComboBox.SelectedItem as string) == "ON" ? (byte)0xFF : (byte)0x00;
+            hexValueLabel.Text = string.Format("Hex:0x{0}", value.ToString("X").PadLeft(2, '0'));
+            if (dutyCycleNumericUpDownControl.Value != value)
+            {
+                dutyCycleNumericUpDownControl.Value = value;
+            }
+            UpdateOutputChannelValue(outputChannel, value);
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+        private void UpdateChannelDutyCycle(NumericUpDown dutyCycleNumericUpDownControl, Label hexValueLabel, ComboBox digitalValueComboBox, OutputChannels outputChannel )
+        {
+            byte value = (byte)dutyCycleNumericUpDownControl.Value;
+            hexValueLabel.Text = string.Format("Hex:0x{0}", value.ToString("X").PadLeft(2, '0'));
+
+            if (value == 0xFF && digitalValueComboBox.SelectedIndex != 1)
+            {
+                digitalValueComboBox.SelectedIndex = 1;
+            }
+            else if (value == 0x00 && digitalValueComboBox.SelectedIndex != 0)
+            {
+                digitalValueComboBox.SelectedIndex = 0;
+            }
+            else
+            {
+                UpdateOutputChannelValue(outputChannel, value);
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+        private void UpdateOutputChannelValue(OutputChannels channel, byte value)
+        {
+            try
+            {
+                _sdiDevice.SetOutputChannelValue(channel, value);
+            }
+            catch (Exception ex)
+            {
+                _log.Debug(ex);
+            }
+        }
+
+
     }
 }
