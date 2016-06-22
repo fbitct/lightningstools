@@ -137,9 +137,20 @@
             this.rdoURCLimitMode = new System.Windows.Forms.RadioButton();
             this.nudURCLimitThresholdDecimal = new System.Windows.Forms.NumericUpDown();
             this.tabSynchroControl = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.gbIndicatorMovementControl = new System.Windows.Forms.GroupBox();
             this.tabDemoMode = new System.Windows.Forms.TabPage();
             this.tabRawData = new System.Windows.Forms.TabPage();
+            this.lblMoveIndicatorToPositionHex = new System.Windows.Forms.Label();
+            this.lblMoveIndicatorToPositionDegrees = new System.Windows.Forms.Label();
+            this.nudMoveIndicatorToPositionDecimal = new System.Windows.Forms.NumericUpDown();
+            this.lblMoveIndicatorToPosition = new System.Windows.Forms.Label();
+            this.cboMoveIndicatorInQuadrant = new System.Windows.Forms.ComboBox();
+            this.lblMoveIndicatorInQuadrant = new System.Windows.Forms.Label();
+            this.gbMoveIndicatorCoarseResolution = new System.Windows.Forms.GroupBox();
+            this.lblMoveIndicatorCoarseResolutionHex = new System.Windows.Forms.Label();
+            this.lblMoveIndicatorCoarseResolutionDegrees = new System.Windows.Forms.Label();
+            this.nudMoveIndicatorCoarseResolutionDecimal = new System.Windows.Forms.NumericUpDown();
+            this.lblMoveIndicatorCoarseResolutionPositionDecimal = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.epErrorProvider)).BeginInit();
             this.gbRawDataControl.SuspendLayout();
             this.gbLED.SuspendLayout();
@@ -172,8 +183,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudURCSmoothModeThresholdDecimal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudURCLimitThresholdDecimal)).BeginInit();
             this.tabSynchroControl.SuspendLayout();
+            this.gbIndicatorMovementControl.SuspendLayout();
             this.tabDemoMode.SuspendLayout();
             this.tabRawData.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorToPositionDecimal)).BeginInit();
+            this.gbMoveIndicatorCoarseResolution.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorCoarseResolutionDecimal)).BeginInit();
             this.SuspendLayout();
             // 
             // lblDeviceAddress
@@ -1429,7 +1444,8 @@
             // 
             // tabSynchroControl
             // 
-            this.tabSynchroControl.Controls.Add(this.groupBox1);
+            this.tabSynchroControl.Controls.Add(this.gbMoveIndicatorCoarseResolution);
+            this.tabSynchroControl.Controls.Add(this.gbIndicatorMovementControl);
             this.tabSynchroControl.Location = new System.Drawing.Point(4, 34);
             this.tabSynchroControl.Name = "tabSynchroControl";
             this.tabSynchroControl.Size = new System.Drawing.Size(1008, 880);
@@ -1437,14 +1453,20 @@
             this.tabSynchroControl.Text = "Synchro Control";
             this.tabSynchroControl.UseVisualStyleBackColor = true;
             // 
-            // groupBox1
+            // gbIndicatorMovementControl
             // 
-            this.groupBox1.Location = new System.Drawing.Point(14, 13);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(670, 334);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "groupBox1";
+            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorInQuadrant);
+            this.gbIndicatorMovementControl.Controls.Add(this.cboMoveIndicatorInQuadrant);
+            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorToPositionHex);
+            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorToPositionDegrees);
+            this.gbIndicatorMovementControl.Controls.Add(this.nudMoveIndicatorToPositionDecimal);
+            this.gbIndicatorMovementControl.Controls.Add(this.lblMoveIndicatorToPosition);
+            this.gbIndicatorMovementControl.Location = new System.Drawing.Point(14, 13);
+            this.gbIndicatorMovementControl.Name = "gbIndicatorMovementControl";
+            this.gbIndicatorMovementControl.Size = new System.Drawing.Size(798, 79);
+            this.gbIndicatorMovementControl.TabIndex = 0;
+            this.gbIndicatorMovementControl.TabStop = false;
+            this.gbIndicatorMovementControl.Text = "Move Indicator Within Quadrants";
             // 
             // tabDemoMode
             // 
@@ -1467,6 +1489,125 @@
             this.tabRawData.TabIndex = 4;
             this.tabRawData.Text = "Raw Data";
             this.tabRawData.UseVisualStyleBackColor = true;
+            // 
+            // lblMoveIndicatorToPositionHex
+            // 
+            this.lblMoveIndicatorToPositionHex.AutoSize = true;
+            this.lblMoveIndicatorToPositionHex.Location = new System.Drawing.Point(655, 36);
+            this.lblMoveIndicatorToPositionHex.Name = "lblMoveIndicatorToPositionHex";
+            this.lblMoveIndicatorToPositionHex.Size = new System.Drawing.Size(56, 25);
+            this.lblMoveIndicatorToPositionHex.TabIndex = 26;
+            this.lblMoveIndicatorToPositionHex.Text = "Hex:";
+            // 
+            // lblMoveIndicatorToPositionDegrees
+            // 
+            this.lblMoveIndicatorToPositionDegrees.AutoSize = true;
+            this.lblMoveIndicatorToPositionDegrees.Location = new System.Drawing.Point(485, 36);
+            this.lblMoveIndicatorToPositionDegrees.Name = "lblMoveIndicatorToPositionDegrees";
+            this.lblMoveIndicatorToPositionDegrees.Size = new System.Drawing.Size(99, 25);
+            this.lblMoveIndicatorToPositionDegrees.TabIndex = 25;
+            this.lblMoveIndicatorToPositionDegrees.Text = "Degrees:";
+            // 
+            // nudMoveIndicatorToPositionDecimal
+            // 
+            this.nudMoveIndicatorToPositionDecimal.Location = new System.Drawing.Point(383, 33);
+            this.nudMoveIndicatorToPositionDecimal.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudMoveIndicatorToPositionDecimal.Name = "nudMoveIndicatorToPositionDecimal";
+            this.nudMoveIndicatorToPositionDecimal.Size = new System.Drawing.Size(95, 31);
+            this.nudMoveIndicatorToPositionDecimal.TabIndex = 24;
+            this.nudMoveIndicatorToPositionDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudMoveIndicatorToPositionDecimal.ValueChanged += new System.EventHandler(this.nudMoveIndicatorToPosition_ValueChanged);
+            // 
+            // lblMoveIndicatorToPosition
+            // 
+            this.lblMoveIndicatorToPosition.AutoSize = true;
+            this.lblMoveIndicatorToPosition.Location = new System.Drawing.Point(189, 36);
+            this.lblMoveIndicatorToPosition.Name = "lblMoveIndicatorToPosition";
+            this.lblMoveIndicatorToPosition.Size = new System.Drawing.Size(189, 25);
+            this.lblMoveIndicatorToPosition.TabIndex = 23;
+            this.lblMoveIndicatorToPosition.Text = "Position (decimal):";
+            // 
+            // cboMoveIndicatorInQuadrant
+            // 
+            this.cboMoveIndicatorInQuadrant.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboMoveIndicatorInQuadrant.FormattingEnabled = true;
+            this.cboMoveIndicatorInQuadrant.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4"});
+            this.cboMoveIndicatorInQuadrant.Location = new System.Drawing.Point(126, 33);
+            this.cboMoveIndicatorInQuadrant.Name = "cboMoveIndicatorInQuadrant";
+            this.cboMoveIndicatorInQuadrant.Size = new System.Drawing.Size(54, 33);
+            this.cboMoveIndicatorInQuadrant.TabIndex = 40;
+            this.cboMoveIndicatorInQuadrant.SelectedIndexChanged += new System.EventHandler(this.cboMoveIndicatorInQuadrant_SelectedIndexChanged);
+            // 
+            // lblMoveIndicatorInQuadrant
+            // 
+            this.lblMoveIndicatorInQuadrant.AutoSize = true;
+            this.lblMoveIndicatorInQuadrant.Location = new System.Drawing.Point(10, 36);
+            this.lblMoveIndicatorInQuadrant.Name = "lblMoveIndicatorInQuadrant";
+            this.lblMoveIndicatorInQuadrant.Size = new System.Drawing.Size(107, 25);
+            this.lblMoveIndicatorInQuadrant.TabIndex = 41;
+            this.lblMoveIndicatorInQuadrant.Text = "Quadrant:";
+            // 
+            // gbMoveIndicatorCoarseResolution
+            // 
+            this.gbMoveIndicatorCoarseResolution.Controls.Add(this.lblMoveIndicatorCoarseResolutionHex);
+            this.gbMoveIndicatorCoarseResolution.Controls.Add(this.lblMoveIndicatorCoarseResolutionDegrees);
+            this.gbMoveIndicatorCoarseResolution.Controls.Add(this.nudMoveIndicatorCoarseResolutionDecimal);
+            this.gbMoveIndicatorCoarseResolution.Controls.Add(this.lblMoveIndicatorCoarseResolutionPositionDecimal);
+            this.gbMoveIndicatorCoarseResolution.Location = new System.Drawing.Point(14, 98);
+            this.gbMoveIndicatorCoarseResolution.Name = "gbMoveIndicatorCoarseResolution";
+            this.gbMoveIndicatorCoarseResolution.Size = new System.Drawing.Size(798, 79);
+            this.gbMoveIndicatorCoarseResolution.TabIndex = 42;
+            this.gbMoveIndicatorCoarseResolution.TabStop = false;
+            this.gbMoveIndicatorCoarseResolution.Text = "Move Indicator (Coarse Resolution)";
+            // 
+            // lblMoveIndicatorCoarseResolutionHex
+            // 
+            this.lblMoveIndicatorCoarseResolutionHex.AutoSize = true;
+            this.lblMoveIndicatorCoarseResolutionHex.Location = new System.Drawing.Point(655, 36);
+            this.lblMoveIndicatorCoarseResolutionHex.Name = "lblMoveIndicatorCoarseResolutionHex";
+            this.lblMoveIndicatorCoarseResolutionHex.Size = new System.Drawing.Size(56, 25);
+            this.lblMoveIndicatorCoarseResolutionHex.TabIndex = 26;
+            this.lblMoveIndicatorCoarseResolutionHex.Text = "Hex:";
+            // 
+            // lblMoveIndicatorCoarseResolutionDegrees
+            // 
+            this.lblMoveIndicatorCoarseResolutionDegrees.AutoSize = true;
+            this.lblMoveIndicatorCoarseResolutionDegrees.Location = new System.Drawing.Point(485, 36);
+            this.lblMoveIndicatorCoarseResolutionDegrees.Name = "lblMoveIndicatorCoarseResolutionDegrees";
+            this.lblMoveIndicatorCoarseResolutionDegrees.Size = new System.Drawing.Size(99, 25);
+            this.lblMoveIndicatorCoarseResolutionDegrees.TabIndex = 25;
+            this.lblMoveIndicatorCoarseResolutionDegrees.Text = "Degrees:";
+            // 
+            // nudMoveIndicatorCoarseResolutionDecimal
+            // 
+            this.nudMoveIndicatorCoarseResolutionDecimal.Location = new System.Drawing.Point(383, 33);
+            this.nudMoveIndicatorCoarseResolutionDecimal.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudMoveIndicatorCoarseResolutionDecimal.Name = "nudMoveIndicatorCoarseResolutionDecimal";
+            this.nudMoveIndicatorCoarseResolutionDecimal.Size = new System.Drawing.Size(95, 31);
+            this.nudMoveIndicatorCoarseResolutionDecimal.TabIndex = 24;
+            this.nudMoveIndicatorCoarseResolutionDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudMoveIndicatorCoarseResolutionDecimal.ValueChanged += new System.EventHandler(this.nudMoveIndicatorCoarseResolutionDecimal_ValueChanged);
+            // 
+            // lblMoveIndicatorCoarseResolutionPositionDecimal
+            // 
+            this.lblMoveIndicatorCoarseResolutionPositionDecimal.AutoSize = true;
+            this.lblMoveIndicatorCoarseResolutionPositionDecimal.Location = new System.Drawing.Point(189, 36);
+            this.lblMoveIndicatorCoarseResolutionPositionDecimal.Name = "lblMoveIndicatorCoarseResolutionPositionDecimal";
+            this.lblMoveIndicatorCoarseResolutionPositionDecimal.Size = new System.Drawing.Size(189, 25);
+            this.lblMoveIndicatorCoarseResolutionPositionDecimal.TabIndex = 23;
+            this.lblMoveIndicatorCoarseResolutionPositionDecimal.Text = "Position (decimal):";
             // 
             // frmMain
             // 
@@ -1534,8 +1675,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudURCSmoothModeThresholdDecimal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudURCLimitThresholdDecimal)).EndInit();
             this.tabSynchroControl.ResumeLayout(false);
+            this.gbIndicatorMovementControl.ResumeLayout(false);
+            this.gbIndicatorMovementControl.PerformLayout();
             this.tabDemoMode.ResumeLayout(false);
             this.tabRawData.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorToPositionDecimal)).EndInit();
+            this.gbMoveIndicatorCoarseResolution.ResumeLayout(false);
+            this.gbMoveIndicatorCoarseResolution.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorCoarseResolutionDecimal)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1640,7 +1787,7 @@
         private System.Windows.Forms.Label lblURCLimitThresholdDegrees;
         private System.Windows.Forms.RadioButton rdoURCLimitMode;
         private System.Windows.Forms.NumericUpDown nudURCLimitThresholdDecimal;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gbIndicatorMovementControl;
         private System.Windows.Forms.Label lblURCSmoothModeThreshold;
         private System.Windows.Forms.Label lblURCSmoothModeThresholdHex;
         private System.Windows.Forms.Label lblURCSmoothModeThresholdDegrees;
@@ -1652,6 +1799,17 @@
         private System.Windows.Forms.Label lblUpdateRateControlSpeedDesc;
         private System.Windows.Forms.Label lblUpdateRateControlSpeed;
         private System.Windows.Forms.NumericUpDown nudUpdateRateControlSpeed;
+        private System.Windows.Forms.Label lblMoveIndicatorInQuadrant;
+        private System.Windows.Forms.ComboBox cboMoveIndicatorInQuadrant;
+        private System.Windows.Forms.Label lblMoveIndicatorToPositionHex;
+        private System.Windows.Forms.Label lblMoveIndicatorToPositionDegrees;
+        private System.Windows.Forms.NumericUpDown nudMoveIndicatorToPositionDecimal;
+        private System.Windows.Forms.Label lblMoveIndicatorToPosition;
+        private System.Windows.Forms.GroupBox gbMoveIndicatorCoarseResolution;
+        private System.Windows.Forms.Label lblMoveIndicatorCoarseResolutionHex;
+        private System.Windows.Forms.Label lblMoveIndicatorCoarseResolutionDegrees;
+        private System.Windows.Forms.NumericUpDown nudMoveIndicatorCoarseResolutionDecimal;
+        private System.Windows.Forms.Label lblMoveIndicatorCoarseResolutionPositionDecimal;
     }
 }
 

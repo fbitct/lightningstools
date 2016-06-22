@@ -34,6 +34,7 @@ namespace SDITestTool
             SetupSerialPorts();
             SetupDefaultDemoParameters();
             SetupDefaultURCParameters();
+            SetupDefaultMoveIndicatorInQuadrantParameters();
             ResetErrors();
             Activate();
         }
@@ -60,7 +61,10 @@ namespace SDITestTool
         {
             cboURCSmoothModeSmoothUpdates.SelectedIndex = 0;
         }
-
+        private void SetupDefaultMoveIndicatorInQuadrantParameters()
+        {
+            cboMoveIndicatorInQuadrant.SelectedIndex = 0;
+        }
         private void EnumerateSerialPorts()
         {
             var ports = new Ports();
@@ -821,6 +825,54 @@ namespace SDITestTool
                 try
                 {
                     _sdiDevice.UsbDebug(chkUSBDebugEnabled.Checked);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void nudMoveIndicatorToPosition_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateMoveIndicatorInQuadrant();
+        }
+
+        private void cboMoveIndicatorInQuadrant_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateMoveIndicatorInQuadrant();
+        }
+        private void UpdateMoveIndicatorInQuadrant()
+        {
+            var position = (byte)nudMoveIndicatorToPositionDecimal.Value;
+            var quadrant = (Quadrant)byte.Parse((string)cboMoveIndicatorInQuadrant.SelectedItem);
+            lblMoveIndicatorToPositionDegrees.Text = string.Format("Degrees:{0}", Decimal.Round((decimal)(position * 90.000 / 255), 1).ToString());
+            lblMoveIndicatorToPositionHex.Text = string.Format("Hex:0x{0}", position.ToString("X").PadLeft(2, '0'));
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.MoveIndicatorFine(quadrant, position);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void nudMoveIndicatorCoarseResolutionDecimal_ValueChanged(object sender, EventArgs e)
+        {
+            var position = (byte)nudMoveIndicatorCoarseResolutionDecimal.Value;
+            lblMoveIndicatorCoarseResolutionDegrees.Text = string.Format("Degrees:{0}", Decimal.Round((decimal)(position * 359.000 / 255), 1).ToString());
+            lblMoveIndicatorCoarseResolutionHex.Text = string.Format("Hex:0x{0}", position.ToString("X").PadLeft(2, '0'));
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.MoveIndicatorCoarse(position);
                 }
                 catch (Exception ex)
                 {
