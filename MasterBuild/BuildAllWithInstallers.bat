@@ -4,6 +4,10 @@ IF NOT "%ProgFiles86Root%"=="" GOTO start
 SET ProgFiles86Root=%ProgramFiles%
 
 :start
+"%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Release" ..\ADITestTool\ADITestTool\ADITestTool.sln
+IF ERRORLEVEL 1 GOTO END
+"%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Debug" ..\ADITestTool\ADITestTool\ADITestTool.sln
+IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Release" ..\AnalogDevices\AnalogDevices.sln
 IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Debug" ..\AnalogDevices\AnalogDevices.sln

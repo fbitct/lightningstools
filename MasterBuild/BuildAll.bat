@@ -4,6 +4,10 @@ IF NOT "%ProgFiles86Root%"=="" GOTO start
 SET ProgFiles86Root=%ProgramFiles%
 
 :start
+"%ProgFiles86Root%\MSBuild\14.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\ADITestTool\ADITestTool\ADITestTool.sln
+IF ERRORLEVEL 1 GOTO END
+"%ProgFiles86Root%\MSBuild\14.0\Bin\MSBuild.exe" /p:Configuration=Debug /p:Platform=x86 ..\ADITestTool\\ADITestTool\ADITestTool.sln
+IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\MSBuild\14.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\AnalogDevices\AnalogDevices.sln
 IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\MSBuild\14.0\Bin\MSBuild.exe" /p:Configuration=Debug /p:Platform=x86 ..\AnalogDevices\AnalogDevices.sln
