@@ -12,6 +12,6 @@ namespace SDI
         /// <summary>
         ///  Enabled
         /// </summary>
-        Enabled = 1 << 6
+        Enabled = 1 << 7
     }
 }

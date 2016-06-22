@@ -297,11 +297,17 @@ namespace SDITestTool
         }
         private void rdoPowerDownLevelFull_CheckedChanged(object sender, EventArgs e)
         {
-            UpdatePowerDownValues();
+            if (rdoPowerDownLevelFull.Checked)
+            {
+                UpdatePowerDownValues();
+            }
         }
         private void rdoPowerDownLevelHalf_CheckedChanged(object sender, EventArgs e)
         {
-            UpdatePowerDownValues();
+            if (rdoPowerDownLevelHalf.Checked)
+            {
+                UpdatePowerDownValues();
+            }
         }
         private void nudPowerDownDelay_ValueChanged(object sender, EventArgs e)
         {
@@ -311,6 +317,7 @@ namespace SDITestTool
         {
             if (chkPowerDownEnabled.CheckState == CheckState.Indeterminate)
             {
+                UpdateUIControlsEnabledOrDisabledState();
                 return;
             }
             if (DeviceIsValid)
@@ -327,6 +334,7 @@ namespace SDITestTool
                     _log.Debug(ex);
                 }
             }
+            UpdateUIControlsEnabledOrDisabledState();
         }
 
         private void nudStatorS1BaseAngle_ValueChanged(object sender, EventArgs e)
@@ -388,7 +396,9 @@ namespace SDITestTool
             nudURCSmoothModeThresholdDecimal.Enabled = rdoURCSmoothMode.Checked;
             lblURCSmoothModeSmoothUpdates.Enabled = rdoURCSmoothMode.Checked;
             cboURCSmoothModeSmoothUpdates.Enabled = rdoURCSmoothMode.Checked;
-
+#if (!DEBUG)
+            chkUpdateRateControlShortestPath.Enabled = IsPitch;
+#endif
 
         }
         private bool DeviceIsValid
@@ -592,11 +602,17 @@ namespace SDITestTool
         }
         private void rdoModusStartToEndToStart_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateDemo();
+            if (rdoModusStartToEndToStart.Checked)
+            {
+                UpdateDemo();
+            }
         }
         private void rdoDemoModusStartToEndJumpToStart_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateDemo();
+            if (rdoDemoModusStartToEndJumpToStart.Checked)
+            {
+                UpdateDemo();
+            }
         }
         private void chkStartDemo_CheckedChanged(object sender, EventArgs e)
         {
@@ -700,7 +716,7 @@ namespace SDITestTool
             {
                 try
                 {
-                    _sdiDevice.SetUpdateRateControlMode_Limit(threshold);
+                    _sdiDevice.SetUpdateRateControlModeLimit(threshold);
                 }
                 catch (Exception ex)
                 {
@@ -730,17 +746,17 @@ namespace SDITestTool
                 {
                     return UpdateRateControlSmoothingMode.Adaptive;
                 }
-                else if (selectedSmoothingMode == "2 updates")
+                else if (selectedSmoothingMode == "2 steps")
                 {
-                    return UpdateRateControlSmoothingMode.TwoStep;
+                    return UpdateRateControlSmoothingMode.TwoSteps;
                 }
-                else if (selectedSmoothingMode == "4 updates")
+                else if (selectedSmoothingMode == "4 steps")
                 {
-                    return UpdateRateControlSmoothingMode.FourStep;
+                    return UpdateRateControlSmoothingMode.FourSteps;
                 }
-                else if (selectedSmoothingMode == "8 updates")
+                else if (selectedSmoothingMode == "8 steps")
                 {
-                    return UpdateRateControlSmoothingMode.EightStep;
+                    return UpdateRateControlSmoothingMode.EightSteps;
                 }
                 return UpdateRateControlSmoothingMode.Adaptive;
             }
@@ -755,7 +771,7 @@ namespace SDITestTool
             {
                 try
                 {
-                    _sdiDevice.SetUpdateRateControlMode_Smooth(threshold, SmoothingMode );
+                    _sdiDevice.SetUpdateRateControlModeSmooth(thresholdRaw, SmoothingMode );
                 }
                 catch (Exception ex)
                 {
@@ -765,6 +781,53 @@ namespace SDITestTool
             UpdateUIControlsEnabledOrDisabledState();
         }
 
+        private void nudUpdateRateControlSpeed_ValueChanged(object sender, EventArgs e)
+        {
+            var stepUpdateDelayMillis = (ushort)nudUpdateRateControlSpeed.Value;
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.SetUpdateRateControlSpeed(stepUpdateDelayMillis);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
 
+        private void chkUpdateRateControlShortestPath_CheckedChanged(object sender, EventArgs e)
+        {
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.SetUpdateRateControlMiscellaneous(chkUpdateRateControlShortestPath.Checked);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void chkUSBDebugEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.UsbDebug(chkUSBDebugEnabled.Checked);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
     }
 }

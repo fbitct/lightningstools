@@ -13,11 +13,11 @@ namespace SDI
         /// <summary>
         ///  Start (bit 0)
         /// </summary>
-        Start = 0x00,
+        Start = 0x01,
         /// <summary>
         ///  Modus (bit 1)
         /// </summary>
-        Level = 0x01,
+        Modus = 0x02,
         /// <summary>
         ///  Movement step size (bits 2-5)
         /// </summary>

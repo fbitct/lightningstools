@@ -28,11 +28,21 @@ namespace SDI
                     var readBuffer = new byte[IDENTIFY_STRING_LENGTH];
                     SerialPortConnection.Read(readBuffer, 0, IDENTIFY_STRING_LENGTH);
                     return Encoding.ASCII.GetString(readBuffer, 0, IDENTIFY_STRING_LENGTH);
+                case CommandSubaddress.DISABLE_WATCHDOG:
+                    SendCommandInternal(subaddress);
+                    return null;
                 default:
                     SendCommandInternal(subaddress, data);
                     return null;
             }
             
+        }
+        private void SendCommandInternal(CommandSubaddress subaddress)
+        {
+            if (SerialPortConnection != null)
+            {
+                SerialPortConnection.Write(new[] { (byte)subaddress }, 0, 1);
+            }
         }
         private void SendCommandInternal(CommandSubaddress subaddress, byte data)
         {
@@ -56,7 +66,10 @@ namespace SDI
         {
             if (disposing && !_isDisposed )
             {
-                SerialPortConnection.Dispose();
+                if (SerialPortConnection != null)
+                {
+                    SerialPortConnection.Dispose();
+                }
             }
             _isDisposed = true;
         }

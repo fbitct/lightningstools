@@ -17,14 +17,14 @@ namespace SDI
         /// <summary>
         /// Smooth
         /// </summary>
-        Smooth = 0x01,
+        Smooth = 0x01 <<6,
         /// <summary>
         /// Speed
         /// </summary>
-        Speed = 0x02,
+        Speed = 0x02 <<6,
         /// <summary>
         /// Miscellaneous
         /// </summary>
-        Miscellaneous = 0x03,
+        Miscellaneous = 0x03 <<6,
     }
 }

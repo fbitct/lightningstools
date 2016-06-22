@@ -119,6 +119,10 @@
             this.tabDeviceSetup = new System.Windows.Forms.TabPage();
             this.tabSynchroSetup = new System.Windows.Forms.TabPage();
             this.gbUpdateRateControl = new System.Windows.Forms.GroupBox();
+            this.nudUpdateRateControlSpeed = new System.Windows.Forms.NumericUpDown();
+            this.chkUpdateRateControlShortestPath = new System.Windows.Forms.CheckBox();
+            this.lblUpdateRateControlSpeedDesc = new System.Windows.Forms.Label();
+            this.lblUpdateRateControlSpeed = new System.Windows.Forms.Label();
             this.gbURCMode = new System.Windows.Forms.GroupBox();
             this.lblURCSmoothModeSmoothUpdates = new System.Windows.Forms.Label();
             this.cboURCSmoothModeSmoothUpdates = new System.Windows.Forms.ComboBox();
@@ -163,6 +167,7 @@
             this.tabDeviceSetup.SuspendLayout();
             this.tabSynchroSetup.SuspendLayout();
             this.gbUpdateRateControl.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpdateRateControlSpeed)).BeginInit();
             this.gbURCMode.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudURCSmoothModeThresholdDecimal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudURCLimitThresholdDecimal)).BeginInit();
@@ -271,6 +276,7 @@
             this.cbSerialPort.Name = "cbSerialPort";
             this.cbSerialPort.Size = new System.Drawing.Size(238, 33);
             this.cbSerialPort.TabIndex = 4;
+            this.cbSerialPort.SelectedIndexChanged += new System.EventHandler(this.cbSerialPort_SelectedIndexChanged);
             // 
             // lblIdentification
             // 
@@ -431,7 +437,7 @@
             // 
             this.lblDelayDescr.AutoSize = true;
             this.lblDelayDescr.BackColor = System.Drawing.SystemColors.Info;
-            this.lblDelayDescr.Location = new System.Drawing.Point(369, 108);
+            this.lblDelayDescr.Location = new System.Drawing.Point(387, 108);
             this.lblDelayDescr.Name = "lblDelayDescr";
             this.lblDelayDescr.Size = new System.Drawing.Size(323, 25);
             this.lblDelayDescr.TabIndex = 6;
@@ -440,7 +446,7 @@
             // lblPowerDownDelayTime
             // 
             this.lblPowerDownDelayTime.AutoSize = true;
-            this.lblPowerDownDelayTime.Location = new System.Drawing.Point(238, 65);
+            this.lblPowerDownDelayTime.Location = new System.Drawing.Point(261, 65);
             this.lblPowerDownDelayTime.Name = "lblPowerDownDelayTime";
             this.lblPowerDownDelayTime.Size = new System.Drawing.Size(121, 25);
             this.lblPowerDownDelayTime.TabIndex = 5;
@@ -453,7 +459,7 @@
             0,
             0,
             0});
-            this.nudPowerDownDelay.Location = new System.Drawing.Point(239, 106);
+            this.nudPowerDownDelay.Location = new System.Drawing.Point(261, 106);
             this.nudPowerDownDelay.Maximum = new decimal(new int[] {
             2016,
             0,
@@ -476,7 +482,7 @@
             this.gbPowerDownLevel.Controls.Add(this.rdoPowerDownLevelFull);
             this.gbPowerDownLevel.Location = new System.Drawing.Point(8, 65);
             this.gbPowerDownLevel.Name = "gbPowerDownLevel";
-            this.gbPowerDownLevel.Size = new System.Drawing.Size(218, 72);
+            this.gbPowerDownLevel.Size = new System.Drawing.Size(247, 72);
             this.gbPowerDownLevel.TabIndex = 5;
             this.gbPowerDownLevel.TabStop = false;
             this.gbPowerDownLevel.Text = "Power Down Level";
@@ -484,7 +490,7 @@
             // rdoPowerDownLevelHalf
             // 
             this.rdoPowerDownLevelHalf.AutoSize = true;
-            this.rdoPowerDownLevelHalf.Location = new System.Drawing.Point(90, 30);
+            this.rdoPowerDownLevelHalf.Location = new System.Drawing.Point(119, 30);
             this.rdoPowerDownLevelHalf.Name = "rdoPowerDownLevelHalf";
             this.rdoPowerDownLevelHalf.Size = new System.Drawing.Size(81, 29);
             this.rdoPowerDownLevelHalf.TabIndex = 7;
@@ -539,6 +545,7 @@
             this.chkUSBDebugEnabled.TabIndex = 8;
             this.chkUSBDebugEnabled.Text = "Enabled";
             this.chkUSBDebugEnabled.UseVisualStyleBackColor = true;
+            this.chkUSBDebugEnabled.CheckedChanged += new System.EventHandler(this.chkUSBDebugEnabled_CheckedChanged);
             // 
             // gbDemo
             // 
@@ -675,9 +682,9 @@
             this.rdoDemoModusStartToEndJumpToStart.AutoSize = true;
             this.rdoDemoModusStartToEndJumpToStart.Location = new System.Drawing.Point(12, 65);
             this.rdoDemoModusStartToEndJumpToStart.Name = "rdoDemoModusStartToEndJumpToStart";
-            this.rdoDemoModusStartToEndJumpToStart.Size = new System.Drawing.Size(717, 29);
+            this.rdoDemoModusStartToEndJumpToStart.Size = new System.Drawing.Size(706, 29);
             this.rdoDemoModusStartToEndJumpToStart.TabIndex = 54;
-            this.rdoDemoModusStartToEndJumpToStart.Text = "Sweep \"up\" from start to end position, then jumps back to start position";
+            this.rdoDemoModusStartToEndJumpToStart.Text = "Sweep \"up\" from start to end position, then jump back to start position";
             this.rdoDemoModusStartToEndJumpToStart.UseVisualStyleBackColor = true;
             this.rdoDemoModusStartToEndJumpToStart.CheckedChanged += new System.EventHandler(this.rdoDemoModusStartToEndJumpToStart_CheckedChanged);
             // 
@@ -686,10 +693,10 @@
             this.rdoModusStartToEndToStart.AutoSize = true;
             this.rdoModusStartToEndToStart.Location = new System.Drawing.Point(12, 30);
             this.rdoModusStartToEndToStart.Name = "rdoModusStartToEndToStart";
-            this.rdoModusStartToEndToStart.Size = new System.Drawing.Size(842, 29);
+            this.rdoModusStartToEndToStart.Size = new System.Drawing.Size(831, 29);
             this.rdoModusStartToEndToStart.TabIndex = 53;
-            this.rdoModusStartToEndToStart.Text = "Sweep \"up\" from start to end position, then sweeps \"down\" from end to start posit" +
-    "ion";
+            this.rdoModusStartToEndToStart.Text = "Sweep \"up\" from start to end position, then sweep \"down\" from end to start positi" +
+    "on";
             this.rdoModusStartToEndToStart.UseVisualStyleBackColor = true;
             this.rdoModusStartToEndToStart.CheckedChanged += new System.EventHandler(this.rdoModusStartToEndToStart_CheckedChanged);
             // 
@@ -940,7 +947,7 @@
             // 
             // nudStatorS3BaseAngle
             // 
-            this.nudStatorS3BaseAngle.Location = new System.Drawing.Point(233, 123);
+            this.nudStatorS3BaseAngle.Location = new System.Drawing.Point(261, 123);
             this.nudStatorS3BaseAngle.Maximum = new decimal(new int[] {
             1023,
             0,
@@ -963,7 +970,7 @@
             // 
             // nudStatorS2BaseAngle
             // 
-            this.nudStatorS2BaseAngle.Location = new System.Drawing.Point(233, 86);
+            this.nudStatorS2BaseAngle.Location = new System.Drawing.Point(261, 86);
             this.nudStatorS2BaseAngle.Maximum = new decimal(new int[] {
             1023,
             0,
@@ -986,7 +993,7 @@
             // 
             // nudStatorS1BaseAngle
             // 
-            this.nudStatorS1BaseAngle.Location = new System.Drawing.Point(233, 49);
+            this.nudStatorS1BaseAngle.Location = new System.Drawing.Point(261, 49);
             this.nudStatorS1BaseAngle.Maximum = new decimal(new int[] {
             1023,
             0,
@@ -1066,7 +1073,7 @@
             // 
             this.lblLimitMinDesc.AutoSize = true;
             this.lblLimitMinDesc.BackColor = System.Drawing.SystemColors.Info;
-            this.lblLimitMinDesc.Location = new System.Drawing.Point(238, 70);
+            this.lblLimitMinDesc.Location = new System.Drawing.Point(261, 70);
             this.lblLimitMinDesc.Name = "lblLimitMinDesc";
             this.lblLimitMinDesc.Size = new System.Drawing.Size(195, 25);
             this.lblLimitMinDesc.TabIndex = 8;
@@ -1076,7 +1083,7 @@
             // 
             this.lblLimitMaxDesc.AutoSize = true;
             this.lblLimitMaxDesc.BackColor = System.Drawing.SystemColors.Info;
-            this.lblLimitMaxDesc.Location = new System.Drawing.Point(233, 150);
+            this.lblLimitMaxDesc.Location = new System.Drawing.Point(261, 150);
             this.lblLimitMaxDesc.Name = "lblLimitMaxDesc";
             this.lblLimitMaxDesc.Size = new System.Drawing.Size(225, 25);
             this.lblLimitMaxDesc.TabIndex = 11;
@@ -1084,7 +1091,7 @@
             // 
             // nudLimitMax
             // 
-            this.nudLimitMax.Location = new System.Drawing.Point(233, 111);
+            this.nudLimitMax.Location = new System.Drawing.Point(261, 111);
             this.nudLimitMax.Maximum = new decimal(new int[] {
             255,
             0,
@@ -1112,7 +1119,7 @@
             // 
             // nudLimitMin
             // 
-            this.nudLimitMin.Location = new System.Drawing.Point(233, 30);
+            this.nudLimitMin.Location = new System.Drawing.Point(261, 30);
             this.nudLimitMin.Maximum = new decimal(new int[] {
             255,
             0,
@@ -1182,13 +1189,77 @@
             // 
             // gbUpdateRateControl
             // 
+            this.gbUpdateRateControl.Controls.Add(this.nudUpdateRateControlSpeed);
+            this.gbUpdateRateControl.Controls.Add(this.chkUpdateRateControlShortestPath);
+            this.gbUpdateRateControl.Controls.Add(this.lblUpdateRateControlSpeedDesc);
+            this.gbUpdateRateControl.Controls.Add(this.lblUpdateRateControlSpeed);
             this.gbUpdateRateControl.Controls.Add(this.gbURCMode);
             this.gbUpdateRateControl.Location = new System.Drawing.Point(5, 592);
             this.gbUpdateRateControl.Name = "gbUpdateRateControl";
-            this.gbUpdateRateControl.Size = new System.Drawing.Size(905, 254);
+            this.gbUpdateRateControl.Size = new System.Drawing.Size(905, 281);
             this.gbUpdateRateControl.TabIndex = 11;
             this.gbUpdateRateControl.TabStop = false;
             this.gbUpdateRateControl.Text = "Update Rate Control (URC)";
+            // 
+            // nudUpdateRateControlSpeed
+            // 
+            this.nudUpdateRateControlSpeed.Increment = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.nudUpdateRateControlSpeed.Location = new System.Drawing.Point(87, 191);
+            this.nudUpdateRateControlSpeed.Maximum = new decimal(new int[] {
+            256,
+            0,
+            0,
+            0});
+            this.nudUpdateRateControlSpeed.Minimum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.nudUpdateRateControlSpeed.Name = "nudUpdateRateControlSpeed";
+            this.nudUpdateRateControlSpeed.Size = new System.Drawing.Size(95, 31);
+            this.nudUpdateRateControlSpeed.TabIndex = 41;
+            this.nudUpdateRateControlSpeed.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudUpdateRateControlSpeed.Value = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.nudUpdateRateControlSpeed.ValueChanged += new System.EventHandler(this.nudUpdateRateControlSpeed_ValueChanged);
+            // 
+            // chkUpdateRateControlShortestPath
+            // 
+            this.chkUpdateRateControlShortestPath.AutoSize = true;
+            this.chkUpdateRateControlShortestPath.Checked = true;
+            this.chkUpdateRateControlShortestPath.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkUpdateRateControlShortestPath.Location = new System.Drawing.Point(15, 229);
+            this.chkUpdateRateControlShortestPath.Name = "chkUpdateRateControlShortestPath";
+            this.chkUpdateRateControlShortestPath.Size = new System.Drawing.Size(286, 29);
+            this.chkUpdateRateControlShortestPath.TabIndex = 44;
+            this.chkUpdateRateControlShortestPath.Text = "Move using shortest path";
+            this.chkUpdateRateControlShortestPath.UseVisualStyleBackColor = true;
+            this.chkUpdateRateControlShortestPath.CheckedChanged += new System.EventHandler(this.chkUpdateRateControlShortestPath_CheckedChanged);
+            // 
+            // lblUpdateRateControlSpeedDesc
+            // 
+            this.lblUpdateRateControlSpeedDesc.AutoSize = true;
+            this.lblUpdateRateControlSpeedDesc.Location = new System.Drawing.Point(188, 193);
+            this.lblUpdateRateControlSpeedDesc.Name = "lblUpdateRateControlSpeedDesc";
+            this.lblUpdateRateControlSpeedDesc.Size = new System.Drawing.Size(314, 25);
+            this.lblUpdateRateControlSpeedDesc.TabIndex = 43;
+            this.lblUpdateRateControlSpeedDesc.Text = "ms delay time between updates";
+            // 
+            // lblUpdateRateControlSpeed
+            // 
+            this.lblUpdateRateControlSpeed.AutoSize = true;
+            this.lblUpdateRateControlSpeed.Location = new System.Drawing.Point(10, 193);
+            this.lblUpdateRateControlSpeed.Name = "lblUpdateRateControlSpeed";
+            this.lblUpdateRateControlSpeed.Size = new System.Drawing.Size(80, 25);
+            this.lblUpdateRateControlSpeed.TabIndex = 41;
+            this.lblUpdateRateControlSpeed.Text = "Speed:";
             // 
             // gbURCMode
             // 
@@ -1206,7 +1277,7 @@
             this.gbURCMode.Controls.Add(this.nudURCLimitThresholdDecimal);
             this.gbURCMode.Location = new System.Drawing.Point(6, 30);
             this.gbURCMode.Name = "gbURCMode";
-            this.gbURCMode.Size = new System.Drawing.Size(692, 197);
+            this.gbURCMode.Size = new System.Drawing.Size(692, 149);
             this.gbURCMode.TabIndex = 1;
             this.gbURCMode.TabStop = false;
             this.gbURCMode.Text = "Mode";
@@ -1275,10 +1346,20 @@
             0,
             0,
             0});
+            this.nudURCSmoothModeThresholdDecimal.Minimum = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
             this.nudURCSmoothModeThresholdDecimal.Name = "nudURCSmoothModeThresholdDecimal";
             this.nudURCSmoothModeThresholdDecimal.Size = new System.Drawing.Size(95, 31);
             this.nudURCSmoothModeThresholdDecimal.TabIndex = 38;
             this.nudURCSmoothModeThresholdDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudURCSmoothModeThresholdDecimal.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
             this.nudURCSmoothModeThresholdDecimal.ValueChanged += new System.EventHandler(this.nudURCSmoothModeThresholdDecimal_ValueChanged);
             // 
             // rdoURCSmoothMode
@@ -1446,6 +1527,8 @@
             this.tabDeviceSetup.ResumeLayout(false);
             this.tabSynchroSetup.ResumeLayout(false);
             this.gbUpdateRateControl.ResumeLayout(false);
+            this.gbUpdateRateControl.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpdateRateControlSpeed)).EndInit();
             this.gbURCMode.ResumeLayout(false);
             this.gbURCMode.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudURCSmoothModeThresholdDecimal)).EndInit();
@@ -1565,6 +1648,10 @@
         private System.Windows.Forms.RadioButton rdoURCSmoothMode;
         private System.Windows.Forms.Label lblURCSmoothModeSmoothUpdates;
         private System.Windows.Forms.ComboBox cboURCSmoothModeSmoothUpdates;
+        private System.Windows.Forms.CheckBox chkUpdateRateControlShortestPath;
+        private System.Windows.Forms.Label lblUpdateRateControlSpeedDesc;
+        private System.Windows.Forms.Label lblUpdateRateControlSpeed;
+        private System.Windows.Forms.NumericUpDown nudUpdateRateControlSpeed;
     }
 }
 

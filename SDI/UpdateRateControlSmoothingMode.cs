@@ -15,14 +15,14 @@ namespace SDI
         /// <summary>
         ///  Two-step
         /// </summary>
-        TwoStep = 0x01,
+        TwoSteps = 0x01,
         /// <summary>
         ///  Four-step
         /// </summary>
-        FourStep = 0x02,
+        FourSteps = 0x02,
         /// <summary>
         ///  Eight-step
         /// </summary>
-        EightStep = 0x03,
+        EightSteps = 0x03,
     }
 }

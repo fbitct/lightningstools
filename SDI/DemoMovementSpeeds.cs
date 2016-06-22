@@ -25,6 +25,6 @@ namespace SDI
         /// <summary>
         /// 2 seconds
         /// </summary>
-        x2sec = 0x04
+        x2sec = 0x03
     }
 }

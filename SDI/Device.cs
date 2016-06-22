@@ -96,7 +96,7 @@ namespace SDI
 
         public void ConfigurePowerDown(PowerDownState enabled, PowerDownLevel level, short delayTimeMilliseconds)
         {
-            const uint MAX_POWER_DOWN_DELAY = 2047;
+            const uint MAX_POWER_DOWN_DELAY = 2016;
             if (delayTimeMilliseconds <0 || delayTimeMilliseconds > MAX_POWER_DOWN_DELAY)
             {
                 throw new ArgumentOutOfRangeException("delayTimeMilliseconds", delayTimeMilliseconds, string.Format(CultureInfo.InvariantCulture, "Value must be >=0 and <= {0}", MAX_POWER_DOWN_DELAY));
@@ -240,7 +240,7 @@ namespace SDI
             
         }
 
-        public void SetUpdateRateControlMode_Limit(byte limitThreshold)
+        public void SetUpdateRateControlModeLimit(byte limitThreshold)
         {
             const byte MAX_LIMIT_THRESHOLD = 63; //6 bits
             if (limitThreshold > MAX_LIMIT_THRESHOLD)
@@ -250,30 +250,32 @@ namespace SDI
             var data = (byte)((byte)UpdateRateControlModes.Limit | limitThreshold);
             SendCommand(CommandSubaddress.UPDATE_RATE_CONTROL, data);
         }
-        public void SetUpdateRateControlMode_Smooth(byte smoothingMinimumThresholdValue, UpdateRateControlSmoothingMode smoothingMode)
+        public void SetUpdateRateControlModeSmooth(byte smoothingMinimumThresholdValue, UpdateRateControlSmoothingMode smoothingMode)
         {
             const byte MAX_SMOOTHING_MINIMUM_THRESHOLD = 15; //4 bits
             if ((smoothingMinimumThresholdValue > MAX_SMOOTHING_MINIMUM_THRESHOLD))
             {
                 throw new ArgumentOutOfRangeException("smoothingMinimumThresholdValue", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_SMOOTHING_MINIMUM_THRESHOLD));
             }
-            var data = (byte)((byte)UpdateRateControlModes.Smooth  | (byte)(smoothingMinimumThresholdValue <<2) | (byte)smoothingMode);
+            var data = (byte)((byte)UpdateRateControlModes.Smooth  | 
+                (byte)(smoothingMinimumThresholdValue <<2) | 
+                (byte)smoothingMode);
             SendCommand(CommandSubaddress.UPDATE_RATE_CONTROL, data);
         }
 
-        public void SetUpdateRateControlMode_Speed(short stepUpdateDelayMillis)
+        public void SetUpdateRateControlSpeed(ushort stepUpdateDelayMillis)
         {
-            const byte MAX_STEP_UPDATE_DELAY = 31; //5 bits
+            const ushort MAX_STEP_UPDATE_DELAY = 256; 
            
-            if (stepUpdateDelayMillis <0 || stepUpdateDelayMillis > MAX_STEP_UPDATE_DELAY)
+            if (stepUpdateDelayMillis <8 || stepUpdateDelayMillis > MAX_STEP_UPDATE_DELAY)
             {
                 throw new ArgumentOutOfRangeException("stepUpdateDelayMillis", string.Format(CultureInfo.InvariantCulture, "Must be >=0 and <= {0}", MAX_STEP_UPDATE_DELAY));
             }
-            var data = (byte)((byte)UpdateRateControlModes.Smooth | stepUpdateDelayMillis);
+            var data = (byte)((byte)UpdateRateControlModes.Speed | ((stepUpdateDelayMillis-8)/8));
             SendCommand(CommandSubaddress.UPDATE_RATE_CONTROL, data);
         }
 
-        public void SetUpdateRateControlMode_Miscellaneous(bool shortPath)
+        public void SetUpdateRateControlMiscellaneous(bool shortPath)
         {
             var data = (byte)((byte)UpdateRateControlModes.Miscellaneous | (byte)(shortPath ? 1: 0));
             SendCommand(CommandSubaddress.UPDATE_RATE_CONTROL, data);
@@ -285,16 +287,16 @@ namespace SDI
         public void Demo(DemoMovementSpeeds movementSpeed, byte movementStepSize, DemoModus modus, bool start)
         {
             const byte MAX_MOVEMENT_STEP_SIZE = 15; //4 bits
-            if (movementStepSize >MAX_MOVEMENT_STEP_SIZE )
+            if (movementStepSize > MAX_MOVEMENT_STEP_SIZE)
             {
                 throw new ArgumentOutOfRangeException("movementStepSize", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_MOVEMENT_STEP_SIZE));
             }
             var data = (byte)
                        (
-                            (((byte)movementSpeed & (byte)DemoBits.MovementSpeed) << 6) |
-                           (byte)(movementStepSize << 2) |
-                           (byte)modus |
-                           (byte)(start ? 1 : 0)
+                           ((byte)DemoBits.MovementSpeed & ((byte)((byte)movementSpeed << 6))) |
+                           ((byte)DemoBits.MovementStepSize & ((byte)(movementStepSize << 2))) |
+                           ((byte)DemoBits.Modus & ((byte)modus <<1)) |
+                           ((byte)DemoBits.Start & ((byte)(start ? 1 : 0)))
                         );
             SendCommand(CommandSubaddress.DEMO_MODE, data);
         }
