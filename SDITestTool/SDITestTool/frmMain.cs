@@ -384,7 +384,6 @@ namespace SDITestTool
             lblStatorS1BaseAngleHex.Text = string.Format("Hex:0x{0}", offset.ToString("X").PadLeft(3, '0'));
             lblStatorS1BaseAngleLSB.Text = string.Format("LSB:0x{0}", (offset & 0xFF).ToString("X").PadLeft(2,'0'));
             lblStatorS1BaseAngleMSB.Text = string.Format("MSB:0x{0}", ((offset & 0x300)>>8).ToString("X").PadLeft(2,'0'));
-            btnUpdateStatorBaseAngles.Enabled = true;
         }
 
         private void nudStatorS2BaseAngle_ValueChanged(object sender, EventArgs e)
@@ -394,7 +393,6 @@ namespace SDITestTool
             lblStatorS2BaseAngleHex.Text = string.Format("Hex:0x{0}", offset.ToString("X").PadLeft(3, '0'));
             lblStatorS2BaseAngleLSB.Text = string.Format("LSB:0x{0}", (offset & 0xFF).ToString("X").PadLeft(2, '0'));
             lblStatorS2BaseAngleMSB.Text = string.Format("MSB:0x{0}", ((offset & 0x300) >> 8).ToString("X").PadLeft(2, '0'));
-            btnUpdateStatorBaseAngles.Enabled = true;
         }
 
         private void nudStatorS3BaseAngle_ValueChanged(object sender, EventArgs e)
@@ -404,7 +402,6 @@ namespace SDITestTool
             lblStatorS3BaseAngleHex.Text = string.Format("Hex:0x{0}", offset.ToString("X").PadLeft(3, '0'));
             lblStatorS3BaseAngleLSB.Text = string.Format("LSB:0x{0}", (offset & 0xFF).ToString("X").PadLeft(2, '0'));
             lblStatorS3BaseAngleMSB.Text = string.Format("MSB:0x{0}", ((offset & 0x300) >> 8).ToString("X").PadLeft(2, '0'));
-            btnUpdateStatorBaseAngles.Enabled = true;
         }
         private void UpdateUIControlsEnabledOrDisabledState()
         {
@@ -438,7 +435,7 @@ namespace SDITestTool
             lblURCSmoothModeSmoothUpdates.Enabled = rdoURCSmoothMode.Checked;
             cboURCSmoothModeSmoothUpdates.Enabled = rdoURCSmoothMode.Checked;
 
-            chkUpdateRateControlShortestPath.Enabled = IsPitch;
+            chkUpdateRateControlShortestPath.Enabled = IsRoll;
 
             btnUpdateStatorAmplitudesAndPolarities.Enabled = rdoStatorAmplitudeAndPolarityDeferredUpdates.Checked;
 
@@ -512,7 +509,6 @@ namespace SDITestTool
                 nudStatorS2BaseAngle.Value = 938;
                 nudStatorS3BaseAngle.Value = 256;
             }
-            btnUpdateStatorBaseAngles.Enabled = true;
         }
         private void SetDefaultMovementLimits()
         {
@@ -580,7 +576,6 @@ namespace SDITestTool
                     _sdiDevice.SetStatorBaseAngle(StatorSignals.S2, offset);
                     offset = (short)nudStatorS3BaseAngle.Value;
                     _sdiDevice.SetStatorBaseAngle(StatorSignals.S3, offset);
-                    btnUpdateStatorBaseAngles.Enabled = false;
                 }
                 catch (Exception ex)
                 {
