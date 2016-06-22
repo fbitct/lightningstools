@@ -215,6 +215,11 @@
             this.cboDIG_PWM_7_Value = new System.Windows.Forms.ComboBox();
             this.cboDIG_PWM_7_Mode = new System.Windows.Forms.ComboBox();
             this.lblDIG_PWM_7 = new System.Windows.Forms.Label();
+            this.lblOB_BUF_PWM_Hex = new System.Windows.Forms.Label();
+            this.nudOB_BUF_PWM_DutyCycle = new System.Windows.Forms.NumericUpDown();
+            this.cboOB_BUF_PWM_Value = new System.Windows.Forms.ComboBox();
+            this.cboOB_BUF_PWM_Mode = new System.Windows.Forms.ComboBox();
+            this.lblOB_BUF_PWM = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.epErrorProvider)).BeginInit();
             this.gbRawDataControl.SuspendLayout();
             this.gbLED.SuspendLayout();
@@ -266,6 +271,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_5_DutyCycle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_6_DutyCycle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_7_DutyCycle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOB_BUF_PWM_DutyCycle)).BeginInit();
             this.SuspendLayout();
             // 
             // lblDeviceAddress
@@ -400,7 +406,6 @@
             this.rdoToggleLEDPerAcceptedCommand.Name = "rdoToggleLEDPerAcceptedCommand";
             this.rdoToggleLEDPerAcceptedCommand.Size = new System.Drawing.Size(471, 29);
             this.rdoToggleLEDPerAcceptedCommand.TabIndex = 11;
-            this.rdoToggleLEDPerAcceptedCommand.TabStop = true;
             this.rdoToggleLEDPerAcceptedCommand.Text = "Toggle LED ON/OFF per accepted command";
             this.rdoToggleLEDPerAcceptedCommand.UseVisualStyleBackColor = true;
             this.rdoToggleLEDPerAcceptedCommand.CheckedChanged += new System.EventHandler(this.rdoToggleLEDPerAcceptedCommand_CheckedChanged);
@@ -408,6 +413,7 @@
             // rdoLEDFlashesAtHeartbeatRate
             // 
             this.rdoLEDFlashesAtHeartbeatRate.AutoSize = true;
+            this.rdoLEDFlashesAtHeartbeatRate.Checked = true;
             this.rdoLEDFlashesAtHeartbeatRate.Location = new System.Drawing.Point(6, 100);
             this.rdoLEDFlashesAtHeartbeatRate.Name = "rdoLEDFlashesAtHeartbeatRate";
             this.rdoLEDFlashesAtHeartbeatRate.Size = new System.Drawing.Size(318, 29);
@@ -424,7 +430,6 @@
             this.rdoLEDAlwaysOn.Name = "rdoLEDAlwaysOn";
             this.rdoLEDAlwaysOn.Size = new System.Drawing.Size(195, 29);
             this.rdoLEDAlwaysOn.TabIndex = 9;
-            this.rdoLEDAlwaysOn.TabStop = true;
             this.rdoLEDAlwaysOn.Text = "LED Always ON";
             this.rdoLEDAlwaysOn.UseVisualStyleBackColor = true;
             this.rdoLEDAlwaysOn.CheckedChanged += new System.EventHandler(this.rdoLEDAlwaysON_CheckedChanged);
@@ -436,7 +441,6 @@
             this.rdoLEDAlwaysOff.Name = "rdoLEDAlwaysOff";
             this.rdoLEDAlwaysOff.Size = new System.Drawing.Size(206, 29);
             this.rdoLEDAlwaysOff.TabIndex = 8;
-            this.rdoLEDAlwaysOff.TabStop = true;
             this.rdoLEDAlwaysOff.Text = "LED Always OFF";
             this.rdoLEDAlwaysOff.UseVisualStyleBackColor = true;
             this.rdoLEDAlwaysOff.CheckedChanged += new System.EventHandler(this.rdoLEDAlwaysOff_CheckedChanged);
@@ -492,7 +496,7 @@
             // 
             this.chkWatchdogEnabled.AutoSize = true;
             this.chkWatchdogEnabled.Checked = true;
-            this.chkWatchdogEnabled.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.chkWatchdogEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkWatchdogEnabled.Location = new System.Drawing.Point(13, 81);
             this.chkWatchdogEnabled.Name = "chkWatchdogEnabled";
             this.chkWatchdogEnabled.Size = new System.Drawing.Size(123, 29);
@@ -606,8 +610,6 @@
             // chkPowerDownEnabled
             // 
             this.chkPowerDownEnabled.AutoSize = true;
-            this.chkPowerDownEnabled.Checked = true;
-            this.chkPowerDownEnabled.CheckState = System.Windows.Forms.CheckState.Indeterminate;
             this.chkPowerDownEnabled.Location = new System.Drawing.Point(6, 30);
             this.chkPowerDownEnabled.Name = "chkPowerDownEnabled";
             this.chkPowerDownEnabled.Size = new System.Drawing.Size(123, 29);
@@ -630,7 +632,7 @@
             // 
             this.chkUSBDebugEnabled.AutoSize = true;
             this.chkUSBDebugEnabled.Checked = true;
-            this.chkUSBDebugEnabled.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.chkUSBDebugEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkUSBDebugEnabled.Location = new System.Drawing.Point(6, 30);
             this.chkUSBDebugEnabled.Name = "chkUSBDebugEnabled";
             this.chkUSBDebugEnabled.Size = new System.Drawing.Size(123, 29);
@@ -783,10 +785,12 @@
             // rdoModusStartToEndToStart
             // 
             this.rdoModusStartToEndToStart.AutoSize = true;
+            this.rdoModusStartToEndToStart.Checked = true;
             this.rdoModusStartToEndToStart.Location = new System.Drawing.Point(12, 30);
             this.rdoModusStartToEndToStart.Name = "rdoModusStartToEndToStart";
             this.rdoModusStartToEndToStart.Size = new System.Drawing.Size(831, 29);
             this.rdoModusStartToEndToStart.TabIndex = 53;
+            this.rdoModusStartToEndToStart.TabStop = true;
             this.rdoModusStartToEndToStart.Text = "Sweep \"up\" from start to end position, then sweep \"down\" from end to start positi" +
     "on";
             this.rdoModusStartToEndToStart.UseVisualStyleBackColor = true;
@@ -1960,6 +1964,11 @@
             // 
             // gbDigitalAndPWMOutputs
             // 
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblOB_BUF_PWM_Hex);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.nudOB_BUF_PWM_DutyCycle);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboOB_BUF_PWM_Value);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.cboOB_BUF_PWM_Mode);
+            this.gbDigitalAndPWMOutputs.Controls.Add(this.lblOB_BUF_PWM);
             this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_7_Hex);
             this.gbDigitalAndPWMOutputs.Controls.Add(this.nudDIG_PWM_7_DutyCycle);
             this.gbDigitalAndPWMOutputs.Controls.Add(this.cboDIG_PWM_7_Value);
@@ -2001,7 +2010,7 @@
             this.gbDigitalAndPWMOutputs.Controls.Add(this.lblDIG_PWM_1);
             this.gbDigitalAndPWMOutputs.Location = new System.Drawing.Point(6, 6);
             this.gbDigitalAndPWMOutputs.Name = "gbDigitalAndPWMOutputs";
-            this.gbDigitalAndPWMOutputs.Size = new System.Drawing.Size(806, 418);
+            this.gbDigitalAndPWMOutputs.Size = new System.Drawing.Size(806, 456);
             this.gbDigitalAndPWMOutputs.TabIndex = 0;
             this.gbDigitalAndPWMOutputs.TabStop = false;
             this.gbDigitalAndPWMOutputs.Text = "Digital and PWM Outputs";
@@ -2459,6 +2468,65 @@
             this.lblDIG_PWM_7.TabIndex = 71;
             this.lblDIG_PWM_7.Text = "DIG_PWM_7";
             // 
+            // lblOB_BUF_PWM_Hex
+            // 
+            this.lblOB_BUF_PWM_Hex.AutoSize = true;
+            this.lblOB_BUF_PWM_Hex.Location = new System.Drawing.Point(645, 412);
+            this.lblOB_BUF_PWM_Hex.Name = "lblOB_BUF_PWM_Hex";
+            this.lblOB_BUF_PWM_Hex.Size = new System.Drawing.Size(56, 25);
+            this.lblOB_BUF_PWM_Hex.TabIndex = 80;
+            this.lblOB_BUF_PWM_Hex.Text = "Hex:";
+            // 
+            // nudOB_BUF_PWM_DutyCycle
+            // 
+            this.nudOB_BUF_PWM_DutyCycle.Location = new System.Drawing.Point(464, 409);
+            this.nudOB_BUF_PWM_DutyCycle.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudOB_BUF_PWM_DutyCycle.Name = "nudOB_BUF_PWM_DutyCycle";
+            this.nudOB_BUF_PWM_DutyCycle.Size = new System.Drawing.Size(121, 31);
+            this.nudOB_BUF_PWM_DutyCycle.TabIndex = 79;
+            this.nudOB_BUF_PWM_DutyCycle.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudOB_BUF_PWM_DutyCycle.ValueChanged += new System.EventHandler(this.nudOB_BUF_PWM_DutyCycle_ValueChanged);
+            // 
+            // cboOB_BUF_PWM_Value
+            // 
+            this.cboOB_BUF_PWM_Value.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboOB_BUF_PWM_Value.FormattingEnabled = true;
+            this.cboOB_BUF_PWM_Value.Items.AddRange(new object[] {
+            "OFF",
+            "ON"});
+            this.cboOB_BUF_PWM_Value.Location = new System.Drawing.Point(325, 408);
+            this.cboOB_BUF_PWM_Value.Name = "cboOB_BUF_PWM_Value";
+            this.cboOB_BUF_PWM_Value.Size = new System.Drawing.Size(112, 33);
+            this.cboOB_BUF_PWM_Value.TabIndex = 78;
+            this.cboOB_BUF_PWM_Value.SelectedIndexChanged += new System.EventHandler(this.cboOB_BUF_PWM_Value_SelectedIndexChanged);
+            // 
+            // cboOB_BUF_PWM_Mode
+            // 
+            this.cboOB_BUF_PWM_Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboOB_BUF_PWM_Mode.FormattingEnabled = true;
+            this.cboOB_BUF_PWM_Mode.Items.AddRange(new object[] {
+            "Digital",
+            "PWM"});
+            this.cboOB_BUF_PWM_Mode.Location = new System.Drawing.Point(189, 408);
+            this.cboOB_BUF_PWM_Mode.Name = "cboOB_BUF_PWM_Mode";
+            this.cboOB_BUF_PWM_Mode.Size = new System.Drawing.Size(114, 33);
+            this.cboOB_BUF_PWM_Mode.TabIndex = 77;
+            this.cboOB_BUF_PWM_Mode.SelectedIndexChanged += new System.EventHandler(this.cboOB_BUF_PWM_Mode_SelectedIndexChanged);
+            // 
+            // lblOB_BUF_PWM
+            // 
+            this.lblOB_BUF_PWM.AutoSize = true;
+            this.lblOB_BUF_PWM.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOB_BUF_PWM.Location = new System.Drawing.Point(6, 412);
+            this.lblOB_BUF_PWM.Name = "lblOB_BUF_PWM";
+            this.lblOB_BUF_PWM.Size = new System.Drawing.Size(170, 25);
+            this.lblOB_BUF_PWM.TabIndex = 76;
+            this.lblOB_BUF_PWM.Text = "OB_BUF_PWM";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -2548,6 +2616,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_5_DutyCycle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_6_DutyCycle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDIG_PWM_7_DutyCycle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOB_BUF_PWM_DutyCycle)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2739,6 +2808,11 @@
         private System.Windows.Forms.ComboBox cboDIG_PWM_7_Value;
         private System.Windows.Forms.ComboBox cboDIG_PWM_7_Mode;
         private System.Windows.Forms.Label lblDIG_PWM_7;
+        private System.Windows.Forms.Label lblOB_BUF_PWM_Hex;
+        private System.Windows.Forms.NumericUpDown nudOB_BUF_PWM_DutyCycle;
+        private System.Windows.Forms.ComboBox cboOB_BUF_PWM_Value;
+        private System.Windows.Forms.ComboBox cboOB_BUF_PWM_Mode;
+        private System.Windows.Forms.Label lblOB_BUF_PWM;
     }
 }
 

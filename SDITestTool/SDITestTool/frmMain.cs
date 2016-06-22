@@ -56,7 +56,6 @@ namespace SDITestTool
         {
             cboDemoMovementSpeed.SelectedIndex = 0;
             cboDemoMovementStepSize.SelectedIndex = 0;
-            rdoModusStartToEndToStart.Checked = true;
         }
         private void SetupDefaultURCParameters()
         {
@@ -95,6 +94,10 @@ namespace SDITestTool
             cboDIG_PWM_7_Mode.SelectedIndex = 0;
             cboDIG_PWM_7_Value.SelectedIndex = 0;
             nudDIG_PWM_7_DutyCycle.Value = 0;
+
+            cboOB_BUF_PWM_Mode.SelectedIndex = 1;
+            cboOB_BUF_PWM_Value.SelectedIndex = 0;
+            nudOB_BUF_PWM_DutyCycle.Value = 0;
         }
         private void EnumerateSerialPorts()
         {
@@ -130,7 +133,9 @@ namespace SDITestTool
             }
             catch (Exception ex)
             {
+#if (!DEBUG)
                 DisposeSDIDevice();
+#endif
                 lblIdentification.Text = "Identification:";
                 _log.Debug(ex);
             }
@@ -403,9 +408,6 @@ namespace SDITestTool
         }
         private void UpdateUIControlsEnabledOrDisabledState()
         {
-#if (!DEBUG)
-
-
             gbLED.Enabled = DeviceIsValid;
             gbUSBDebug.Enabled = DeviceIsValid;
             gbWatchdog.Enabled = DeviceIsValid;
@@ -415,7 +417,11 @@ namespace SDITestTool
             gbDemo.Enabled = DeviceIsValid;
             gbMovementLimits.Enabled = DeviceIsValid;
             gbUpdateRateControl.Enabled = DeviceIsValid;
-#endif
+            gbDigitalAndPWMOutputs.Enabled = DeviceIsValid;
+            gbIndicatorMovementControl.Enabled = DeviceIsValid;
+            gbMoveIndicatorCoarseResolution.Enabled = DeviceIsValid;
+            gbSetStatorAmplitudeAndPolarityImmediate.Enabled = DeviceIsValid;
+
             rdoPowerDownLevelFull.Enabled = chkPowerDownEnabled.CheckState != CheckState.Indeterminate;
             rdoPowerDownLevelHalf.Enabled = chkPowerDownEnabled.CheckState != CheckState.Indeterminate;
             nudPowerDownDelay.Enabled = chkPowerDownEnabled.CheckState != CheckState.Indeterminate;
@@ -431,9 +437,9 @@ namespace SDITestTool
             nudURCSmoothModeThresholdDecimal.Enabled = rdoURCSmoothMode.Checked;
             lblURCSmoothModeSmoothUpdates.Enabled = rdoURCSmoothMode.Checked;
             cboURCSmoothModeSmoothUpdates.Enabled = rdoURCSmoothMode.Checked;
-#if (!DEBUG)
+
             chkUpdateRateControlShortestPath.Enabled = IsPitch;
-#endif
+
             btnUpdateStatorAmplitudesAndPolarities.Enabled = rdoStatorAmplitudeAndPolarityDeferredUpdates.Checked;
 
             cboDIG_PWM_1_Value.Enabled = (cboDIG_PWM_1_Mode.SelectedIndex == 0);
@@ -456,6 +462,9 @@ namespace SDITestTool
 
             cboDIG_PWM_7_Value.Enabled = (cboDIG_PWM_7_Mode.SelectedIndex == 0);
             nudDIG_PWM_7_DutyCycle.Enabled = (cboDIG_PWM_7_Mode.SelectedIndex == 1);
+
+            cboOB_BUF_PWM_Value.Enabled = (cboOB_BUF_PWM_Mode.SelectedIndex == 0);
+            nudOB_BUF_PWM_DutyCycle.Enabled = (cboOB_BUF_PWM_Mode.SelectedIndex == 1);
         }
         private bool DeviceIsValid
         {
@@ -468,14 +477,25 @@ namespace SDITestTool
         {
             get
             {
-                return DeviceIsValid && lblIdentification.Text.ToLowerInvariant().EndsWith("30");
+                return DeviceIsValid &&
+                    (
+                        lblIdentification.Text.ToLowerInvariant().EndsWith("30") 
+                            ||
+                        lblIdentification.Text.ToLowerInvariant().EndsWith("48")
+                    );
             }
         }
         private bool IsRoll
         {
-            get 
+            get
             {
-                return DeviceIsValid && lblIdentification.Text.ToLowerInvariant().EndsWith("32");
+                return DeviceIsValid &&
+                    (
+                        lblIdentification.Text.ToLowerInvariant().EndsWith("32")
+                            ||
+                        lblIdentification.Text.ToLowerInvariant().EndsWith("50")
+                    );
+
             }
         }
         private void SetInitialBaseAngles()
@@ -1172,6 +1192,11 @@ namespace SDITestTool
             UpdateChannelDigitalValue(cboDIG_PWM_7_Value, lblDIG_PWM_7_Hex, nudDIG_PWM_7_DutyCycle, OutputChannels.DIG_PWM_7);
             UpdateUIControlsEnabledOrDisabledState();
         }
+        private void cboOB_BUF_PWM_Mode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDigitalValue(cboOB_BUF_PWM_Value, lblOB_BUF_PWM_Hex, nudOB_BUF_PWM_DutyCycle, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
+            UpdateUIControlsEnabledOrDisabledState();
+        }
 
         private void cboDIG_PWM_1_Value_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1200,6 +1225,10 @@ namespace SDITestTool
         private void cboDIG_PWM_7_Value_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateChannelDigitalValue(cboDIG_PWM_7_Value, lblDIG_PWM_7_Hex, nudDIG_PWM_7_DutyCycle, OutputChannels.DIG_PWM_7);
+        }
+        private void cboOB_BUF_PWM_Value_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDigitalValue(cboOB_BUF_PWM_Value, lblOB_BUF_PWM_Hex, nudOB_BUF_PWM_DutyCycle, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
         }
 
         private void nudDIG_PWM_1_DutyCycle_ValueChanged(object sender, EventArgs e)
@@ -1230,6 +1259,10 @@ namespace SDITestTool
         {
             UpdateChannelDutyCycle(nudDIG_PWM_7_DutyCycle, lblDIG_PWM_7_Hex, cboDIG_PWM_7_Value, OutputChannels.DIG_PWM_7);
         }
+        private void nudOB_BUF_PWM_DutyCycle_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateChannelDutyCycle(nudOB_BUF_PWM_DutyCycle, lblOB_BUF_PWM_Hex, cboOB_BUF_PWM_Value, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
+        }
 
         private void UpdateChannelDigitalValue(ComboBox digitalValueComboBox, Label hexValueLabel, NumericUpDown dutyCycleNumericUpDownControl,OutputChannels outputChannel)
         {
@@ -1239,7 +1272,10 @@ namespace SDITestTool
             {
                 dutyCycleNumericUpDownControl.Value = value;
             }
-            UpdateOutputChannelValue(outputChannel, value);
+            else
+            {
+                UpdateOutputChannelValue(outputChannel, value);
+            }
             UpdateUIControlsEnabledOrDisabledState();
         }
         private void UpdateChannelDutyCycle(NumericUpDown dutyCycleNumericUpDownControl, Label hexValueLabel, ComboBox digitalValueComboBox, OutputChannels outputChannel )
