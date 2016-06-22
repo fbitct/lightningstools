@@ -15,26 +15,56 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_84AF633425F4624D3AE5E156BDA81A53"
-        "OwnerKey" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
+        "MsmKey" = "8:_1C56CC33DCC9B840AF47037D37D25F19"
+        "OwnerKey" = "8:_83DE0582FF75464696D549BDE666B238"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
+        "MsmKey" = "8:_83DE0582FF75464696D549BDE666B238"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
+        "MsmKey" = "8:_AA5E9C3ED6EC402C99FF1E821B45579D"
+        "OwnerKey" = "8:_83DE0582FF75464696D549BDE666B238"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AA5E9C3ED6EC402C99FF1E821B45579D"
+        "OwnerKey" = "8:_1C56CC33DCC9B840AF47037D37D25F19"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E3E57CC2B51359F82076371470B00C64"
+        "OwnerKey" = "8:_83DE0582FF75464696D549BDE666B238"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_84AF633425F4624D3AE5E156BDA81A53"
+        "OwnerKey" = "8:_E3E57CC2B51359F82076371470B00C64"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_83DE0582FF75464696D549BDE666B238"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_1C56CC33DCC9B840AF47037D37D25F19"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_AA5E9C3ED6EC402C99FF1E821B45579D"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -132,20 +162,82 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_84AF633425F4624D3AE5E156BDA81A53"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1C56CC33DCC9B840AF47037D37D25F19"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:SDI, Version=0.1.0.0, Culture=neutral, PublicKeyToken=81b1c007ef9a37db, processorArchitecture=x86"
+                "ScatterAssemblies"
+                {
+                    "_1C56CC33DCC9B840AF47037D37D25F19"
+                    {
+                    "Name" = "8:SDI.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:SDI.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_6893A8ACEA854862B34060E3614415E6"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_AA5E9C3ED6EC402C99FF1E821B45579D"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:Phcc, Version=0.2.2.0, Culture=neutral, PublicKeyToken=d747a6aa7a16ca9c, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_84AF633425F4624D3AE5E156BDA81A53"
+                    "_AA5E9C3ED6EC402C99FF1E821B45579D"
                     {
                     "Name" = "8:Phcc.dll"
                     "Attributes" = "3:512"
                     }
                 }
             "SourcePath" = "8:Phcc.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_6893A8ACEA854862B34060E3614415E6"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E3E57CC2B51359F82076371470B00C64"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_E3E57CC2B51359F82076371470B00C64"
+                    {
+                    "Name" = "8:log4net.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:log4net.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6893A8ACEA854862B34060E3614415E6"
@@ -248,7 +340,7 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
+        "ARPPRODUCTICON" = "8:_83DE0582FF75464696D549BDE666B238"
         "ARPIconIndex" = "3:32512"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
@@ -359,10 +451,10 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:32512"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
+            "Target" = "8:_83DE0582FF75464696D549BDE666B238"
             "Folder" = "8:_8D9ADC64D9C7460D83C3E246645D6C61"
             "WorkingFolder" = "8:_6893A8ACEA854862B34060E3614415E6"
-            "Icon" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
+            "Icon" = "8:_83DE0582FF75464696D549BDE666B238"
             "Feature" = "8:"
             }
         }
@@ -764,7 +856,7 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_980E5B407D5D4E51B1BA49713C3383A5"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_83DE0582FF75464696D549BDE666B238"
             {
             "SourcePath" = "8:..\\SDITestTool\\obj\\x86\\Debug\\SDITestTool.exe"
             "TargetName" = "8:"
@@ -786,7 +878,7 @@
             "ProjectOutputGroupRegister" = "3:1"
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{68656C46-3097-4A71-87EF-9E402DCAD3E4}"
+            "OutputProjectGuid" = "8:{AEE62688-9F5E-4447-B0F3-186E4AE0AD89}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {

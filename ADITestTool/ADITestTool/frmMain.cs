@@ -11,7 +11,8 @@ namespace ADITestTool
 {
     public partial class frmMain : Form
     {
-        private Device _sdiDevice = new Device();
+        private Device _pitchSdiDevice = new Device();
+        private Device _rollSdiDevice = new Device();
         private ReadOnlyCollection<string> _serialPorts;
         private ILog _log = LogManager.GetLogger(typeof(frmMain));
         public frmMain()
@@ -39,14 +40,19 @@ namespace ADITestTool
         private void SetupSerialPorts()
         {
             EnumerateSerialPorts();
-            cbSerialPort.Sorted = true;
+            cbPitchDeviceSerialPort.Sorted = true;
+            cbRollDeviceSerialPort.Sorted = true;
             foreach (var port in _serialPorts)
             {
-                cbSerialPort.Items.Add(port);
-                cbSerialPort.Text = port;
+                cbPitchDeviceSerialPort.Items.Add(port);
+                cbPitchDeviceSerialPort.Text = port;
+                cbRollDeviceSerialPort.Items.Add(port);
+                cbRollDeviceSerialPort.Text = port;
                 Application.DoEvents();
             }
-            ChangeSerialPort();
+            ChangePitchDeviceSerialPort();
+            ChangeRollDeviceSerialPort();
+
         }
 
         private void EnumerateSerialPorts()
@@ -55,18 +61,29 @@ namespace ADITestTool
             _serialPorts = ports.SerialPortNames;
         }
 
-        private void cbSerialPort_SelectedIndexChanged(object sender, EventArgs e)
+        private void cbPitchDeviceSerialPort_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ChangeSerialPort();
+            ChangePitchDeviceSerialPort();
         }
-
-        private void ChangeSerialPort()
+        private void cbRollDeviceSerialPort_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selectedPort = cbSerialPort.Text;
+            ChangeRollDeviceSerialPort();
+        }
+        private void ChangePitchDeviceSerialPort()
+        {
+            ChangeSerialPort(cbPitchDeviceSerialPort, ref _pitchSdiDevice, lblPitchDeviceIdentification);
+        }
+        private void ChangeRollDeviceSerialPort()
+        {
+            ChangeSerialPort(cbRollDeviceSerialPort, ref _rollSdiDevice, lblRollDeviceIdentification);
+        }
+        private void ChangeSerialPort(ComboBox serialPortSelectionComboBox, ref Device sdiDevice, Label deviceIdentificationLabel)
+        {
+            var selectedPort = serialPortSelectionComboBox.Text;
             if (String.IsNullOrWhiteSpace(selectedPort)) return;
             try
             {
-                if (_sdiDevice != null) DisposeSDIDevice();
+                if (sdiDevice != null) DisposeSDIDevice(ref sdiDevice);
             }
             catch (Exception ex)
             {
@@ -74,19 +91,19 @@ namespace ADITestTool
             }
             try
             {
-                _sdiDevice = new Device(selectedPort);
-                var identification = _sdiDevice.Identify().TrimEnd();
+                sdiDevice = new Device(selectedPort);
+                var identification = sdiDevice.Identify().TrimEnd();
                 if (!string.IsNullOrWhiteSpace(identification))
                 {
-                    lblIdentification.Text = "Identification:" + identification;
+                    deviceIdentificationLabel.Text = "Identification:" + identification;
                 }
             }
             catch (Exception ex)
             {
 #if (!DEBUG)
-                DisposeSDIDevice();
+                DisposeSDIDevice(ref sdiDevice);
 #endif
-                lblIdentification.Text = "Identification:";
+                deviceIdentificationLabel.Text = "Identification:";
                 _log.Debug(ex);
             }
             ResetErrors();
@@ -94,17 +111,18 @@ namespace ADITestTool
 
        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            DisposeSDIDevice();
+            DisposeSDIDevice(ref _pitchSdiDevice);
+            DisposeSDIDevice(ref _rollSdiDevice);
         }
 
-        private void DisposeSDIDevice()
+        private void DisposeSDIDevice(ref Device sdiDevice)
         {
-            if (_sdiDevice != null)
+            if (sdiDevice != null)
             {
                 try
                 {
-                    _sdiDevice.Dispose();
-                    _sdiDevice = null;
+                    sdiDevice.Dispose();
+                    sdiDevice = null;
                 }
                 catch (Exception ex)
                 {
@@ -116,13 +134,19 @@ namespace ADITestTool
         private void ResetErrors()
         {
             epErrorProvider.Clear();
-            if (String.IsNullOrEmpty(cbSerialPort.Text) || lblIdentification.Text == "Identification:")
+            SetErrorsForSerialDeviceSelection(cbPitchDeviceSerialPort, lblPitchDeviceIdentification);
+            SetErrorsForSerialDeviceSelection(cbRollDeviceSerialPort, lblRollDeviceIdentification);
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void SetErrorsForSerialDeviceSelection(ComboBox serialPortSelectionComboBox, Label deviceIdentificationLabel)
+        {
+            if (String.IsNullOrEmpty(serialPortSelectionComboBox.Text) || deviceIdentificationLabel.Text == "Identification:")
             {
                 epErrorProvider.BlinkStyle = ErrorBlinkStyle.NeverBlink;
-                epErrorProvider.SetError(cbSerialPort,
+                epErrorProvider.SetError(serialPortSelectionComboBox,
                                          "No serial port is selected, or no SDI device is detected on the selected serial port.");
             }
-            UpdateUIControlsEnabledOrDisabledState();
         }
 
         private void tcTabs_SelectedIndexChanged(object sender, EventArgs e)
@@ -130,25 +154,38 @@ namespace ADITestTool
             ResetErrors();
         }
 
-        private void txtSubAddr_Leave(object sender, EventArgs e)
+        private void txtPitchSubAddr_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            var valid = ValidateHexTextControl(txtSubAddr, out val);
+            var valid = ValidateHexTextControl(txtPitchSubAddr, out val);
         }
-        private void btnSend_Click(object sender, EventArgs e)
+        private void txtRollSubAddr_Leave(object sender, EventArgs e)
+        {
+            byte val = 0;
+            var valid = ValidateHexTextControl(txtRollSubAddr, out val);
+        }
+        private void btnPitchSendRaw_Click(object sender, EventArgs e)
+        {
+            SendRaw(txtPitchSubAddr, txtPitchDataByte, _pitchSdiDevice, ()=>PitchDeviceIsValid);
+        }
+        private void btnRollSendRaw_Click(object sender, EventArgs e)
+        {
+            SendRaw(txtRollSubAddr, txtRollDataByte, _rollSdiDevice, ()=>RollDeviceIsValid);
+        }
+        private void SendRaw(TextBox subAddressTextBox, TextBox dataByteTextBox, Device sdiDevice, Func<bool> deviceValidationFunction)
         {
             byte subAddr = 0;
             byte data = 0;
-            bool valid = ValidateHexTextControl(txtSubAddr, out subAddr);
+            bool valid = ValidateHexTextControl(subAddressTextBox, out subAddr);
             if (!valid) return;
-            valid = ValidateHexTextControl(txtDataByte, out data);
+            valid = ValidateHexTextControl(dataByteTextBox, out data);
             if (valid)
             {
-                if (DeviceIsValid)
+                if (deviceValidationFunction())
                 {
                     try
                     {
-                        _sdiDevice.SendCommand((CommandSubaddress)subAddr, data);
+                        sdiDevice.SendCommand((CommandSubaddress)subAddr, data);
                     }
                     catch (Exception ex)
                     {
@@ -158,48 +195,53 @@ namespace ADITestTool
             }
         }
 
-        private void txtDataByte_Leave(object sender, EventArgs e)
+        private void txtPitchDataByte_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            var valid = ValidateHexTextControl(txtDataByte, out val);
+            var valid = ValidateHexTextControl(txtPitchDataByte, out val);
         }
-
+        private void txtRollDataByte_Leave(object sender, EventArgs e)
+        {
+            byte val = 0;
+            var valid = ValidateHexTextControl(txtRollDataByte, out val);
+        }
 
         private void UpdateUIControlsEnabledOrDisabledState()
         {
-            gbRawDataControl.Enabled = DeviceIsValid;
+            gbPitchRawDataControl.Enabled = PitchDeviceIsValid;
+            gbRollRawDataControl.Enabled = RollDeviceIsValid;
         }
-        private bool DeviceIsValid
+        private bool PitchDeviceIsValid
         {
             get
             {
-                return _sdiDevice != null && !string.IsNullOrWhiteSpace(_sdiDevice.PortName);
+                return _pitchSdiDevice != null && !string.IsNullOrWhiteSpace(_pitchSdiDevice.PortName);
             }
         }
-        private bool IsPitch
+        private bool RollDeviceIsValid
         {
             get
             {
-                return DeviceIsValid &&
+                return _rollSdiDevice != null && !string.IsNullOrWhiteSpace(_rollSdiDevice.PortName);
+            }
+        }
+        private bool IsPitch(string deviceIdentification)
+        {
+            return PitchDeviceIsValid &&
                     (
-                        lblIdentification.Text.ToLowerInvariant().EndsWith("30") 
+                        deviceIdentification.ToLowerInvariant().EndsWith("30") 
                             ||
-                        lblIdentification.Text.ToLowerInvariant().EndsWith("48")
+                        deviceIdentification.ToLowerInvariant().EndsWith("48")
                     );
-            }
         }
-        private bool IsRoll
+        private bool IsRoll(string deviceIdentification)
         {
-            get
-            {
-                return DeviceIsValid &&
-                    (
-                        lblIdentification.Text.ToLowerInvariant().EndsWith("32")
-                            ||
-                        lblIdentification.Text.ToLowerInvariant().EndsWith("50")
-                    );
-
-            }
+            return RollDeviceIsValid &&
+                (
+                    deviceIdentification.ToLowerInvariant().EndsWith("32")
+                        ||
+                    deviceIdentification.ToLowerInvariant().EndsWith("50")
+                );
         }
         private bool ValidateHexTextControl(TextBox textControl, out byte val)
         {
@@ -241,8 +283,6 @@ namespace ADITestTool
             }
             return parsed;
         }
-
-
 
 
     }
