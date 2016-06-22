@@ -373,7 +373,16 @@ namespace ADITestTool
         {
             var value = nudSpherePitchIndication.Value;
             var address = 0;
-            if (value <768)
+            if (value < 256)
+            {
+                address = 0;
+            }
+            else if (value >= 256 && value < 512)
+            {
+                address = 1;
+                value -= 256;
+            }
+            else if (value >= 512 && value < 768)
             {
                 address = 2;
                 value -= 512;
@@ -390,8 +399,11 @@ namespace ADITestTool
         {
             var value = nudRollIndication.Value;
             var address = 0;
-
-            if (value >= 256 && value <512)
+            if (value <256)
+            {
+                address = 0;
+            }
+            else if (value >= 256 && value <512)
             {
                 address = 1;
                 value -= 256;
