@@ -151,6 +151,25 @@
             this.lblMoveIndicatorCoarseResolutionDegrees = new System.Windows.Forms.Label();
             this.nudMoveIndicatorCoarseResolutionDecimal = new System.Windows.Forms.NumericUpDown();
             this.lblMoveIndicatorCoarseResolutionPositionDecimal = new System.Windows.Forms.Label();
+            this.gbSetStatorAmplitudeAndPolarityImmediate = new System.Windows.Forms.GroupBox();
+            this.lblS1AmplitudeImmediateHex = new System.Windows.Forms.Label();
+            this.nudS1AmplitudeImmediateDecimal = new System.Windows.Forms.NumericUpDown();
+            this.lblS1AmplitudePolarityImmediate = new System.Windows.Forms.Label();
+            this.lblS2AmplitudeImmediateHex = new System.Windows.Forms.Label();
+            this.nudS2AmplitudeImmediateDecimal = new System.Windows.Forms.NumericUpDown();
+            this.lblS2AmplitudePolarityImmediate = new System.Windows.Forms.Label();
+            this.lblS3AmplitudeImmediateHex = new System.Windows.Forms.Label();
+            this.nudS3AmplitudeImmediateDecimal = new System.Windows.Forms.NumericUpDown();
+            this.lblS3AmplitudePolarityImmediate = new System.Windows.Forms.Label();
+            this.chkS1PolarityImmediate = new System.Windows.Forms.CheckBox();
+            this.chkS2PolarityImmediate = new System.Windows.Forms.CheckBox();
+            this.chkS3PolarityImmediate = new System.Windows.Forms.CheckBox();
+            this.lblImmediateAmplitudes = new System.Windows.Forms.Label();
+            this.lblImmediatePolarity = new System.Windows.Forms.Label();
+            this.lblS1AmplitudeImmediateDecimal = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lblStatorImmediate = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.epErrorProvider)).BeginInit();
             this.gbRawDataControl.SuspendLayout();
             this.gbLED.SuspendLayout();
@@ -189,6 +208,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorToPositionDecimal)).BeginInit();
             this.gbMoveIndicatorCoarseResolution.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorCoarseResolutionDecimal)).BeginInit();
+            this.gbSetStatorAmplitudeAndPolarityImmediate.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS1AmplitudeImmediateDecimal)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS2AmplitudeImmediateDecimal)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS3AmplitudeImmediateDecimal)).BeginInit();
             this.SuspendLayout();
             // 
             // lblDeviceAddress
@@ -1444,6 +1467,7 @@
             // 
             // tabSynchroControl
             // 
+            this.tabSynchroControl.Controls.Add(this.gbSetStatorAmplitudeAndPolarityImmediate);
             this.tabSynchroControl.Controls.Add(this.gbMoveIndicatorCoarseResolution);
             this.tabSynchroControl.Controls.Add(this.gbIndicatorMovementControl);
             this.tabSynchroControl.Location = new System.Drawing.Point(4, 34);
@@ -1609,6 +1633,218 @@
             this.lblMoveIndicatorCoarseResolutionPositionDecimal.TabIndex = 23;
             this.lblMoveIndicatorCoarseResolutionPositionDecimal.Text = "Position (decimal):";
             // 
+            // gbSetStatorAmplitudeAndPolarityImmediate
+            // 
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblStatorImmediate);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.label2);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.label1);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS1AmplitudeImmediateDecimal);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblImmediatePolarity);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblImmediateAmplitudes);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.chkS3PolarityImmediate);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.chkS2PolarityImmediate);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.chkS1PolarityImmediate);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS3AmplitudeImmediateHex);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.nudS3AmplitudeImmediateDecimal);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS3AmplitudePolarityImmediate);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS2AmplitudeImmediateHex);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.nudS2AmplitudeImmediateDecimal);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS2AmplitudePolarityImmediate);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS1AmplitudeImmediateHex);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.nudS1AmplitudeImmediateDecimal);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Controls.Add(this.lblS1AmplitudePolarityImmediate);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Location = new System.Drawing.Point(14, 183);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Name = "gbSetStatorAmplitudeAndPolarityImmediate";
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Size = new System.Drawing.Size(798, 206);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.TabIndex = 43;
+            this.gbSetStatorAmplitudeAndPolarityImmediate.TabStop = false;
+            this.gbSetStatorAmplitudeAndPolarityImmediate.Text = "Set Stator Amplitude/Polarity (with Immediate effect)";
+            // 
+            // lblS1AmplitudeImmediateHex
+            // 
+            this.lblS1AmplitudeImmediateHex.AutoSize = true;
+            this.lblS1AmplitudeImmediateHex.Location = new System.Drawing.Point(656, 83);
+            this.lblS1AmplitudeImmediateHex.Name = "lblS1AmplitudeImmediateHex";
+            this.lblS1AmplitudeImmediateHex.Size = new System.Drawing.Size(56, 25);
+            this.lblS1AmplitudeImmediateHex.TabIndex = 26;
+            this.lblS1AmplitudeImmediateHex.Text = "Hex:";
+            // 
+            // nudS1AmplitudeImmediateDecimal
+            // 
+            this.nudS1AmplitudeImmediateDecimal.Location = new System.Drawing.Point(384, 80);
+            this.nudS1AmplitudeImmediateDecimal.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudS1AmplitudeImmediateDecimal.Name = "nudS1AmplitudeImmediateDecimal";
+            this.nudS1AmplitudeImmediateDecimal.Size = new System.Drawing.Size(95, 31);
+            this.nudS1AmplitudeImmediateDecimal.TabIndex = 24;
+            this.nudS1AmplitudeImmediateDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudS1AmplitudeImmediateDecimal.ValueChanged += new System.EventHandler(this.nudS1AmplitudeImmediateDecimal_ValueChanged);
+            // 
+            // lblS1AmplitudePolarityImmediate
+            // 
+            this.lblS1AmplitudePolarityImmediate.AutoSize = true;
+            this.lblS1AmplitudePolarityImmediate.Location = new System.Drawing.Point(101, 83);
+            this.lblS1AmplitudePolarityImmediate.Name = "lblS1AmplitudePolarityImmediate";
+            this.lblS1AmplitudePolarityImmediate.Size = new System.Drawing.Size(38, 25);
+            this.lblS1AmplitudePolarityImmediate.TabIndex = 23;
+            this.lblS1AmplitudePolarityImmediate.Text = "S1";
+            // 
+            // lblS2AmplitudeImmediateHex
+            // 
+            this.lblS2AmplitudeImmediateHex.AutoSize = true;
+            this.lblS2AmplitudeImmediateHex.Location = new System.Drawing.Point(656, 123);
+            this.lblS2AmplitudeImmediateHex.Name = "lblS2AmplitudeImmediateHex";
+            this.lblS2AmplitudeImmediateHex.Size = new System.Drawing.Size(56, 25);
+            this.lblS2AmplitudeImmediateHex.TabIndex = 29;
+            this.lblS2AmplitudeImmediateHex.Text = "Hex:";
+            // 
+            // nudS2AmplitudeImmediateDecimal
+            // 
+            this.nudS2AmplitudeImmediateDecimal.Location = new System.Drawing.Point(384, 120);
+            this.nudS2AmplitudeImmediateDecimal.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudS2AmplitudeImmediateDecimal.Name = "nudS2AmplitudeImmediateDecimal";
+            this.nudS2AmplitudeImmediateDecimal.Size = new System.Drawing.Size(95, 31);
+            this.nudS2AmplitudeImmediateDecimal.TabIndex = 28;
+            this.nudS2AmplitudeImmediateDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudS2AmplitudeImmediateDecimal.ValueChanged += new System.EventHandler(this.nudS2AmplitudeImmediateDecimal_ValueChanged);
+            // 
+            // lblS2AmplitudePolarityImmediate
+            // 
+            this.lblS2AmplitudePolarityImmediate.AutoSize = true;
+            this.lblS2AmplitudePolarityImmediate.Location = new System.Drawing.Point(101, 123);
+            this.lblS2AmplitudePolarityImmediate.Name = "lblS2AmplitudePolarityImmediate";
+            this.lblS2AmplitudePolarityImmediate.Size = new System.Drawing.Size(38, 25);
+            this.lblS2AmplitudePolarityImmediate.TabIndex = 27;
+            this.lblS2AmplitudePolarityImmediate.Text = "S2";
+            // 
+            // lblS3AmplitudeImmediateHex
+            // 
+            this.lblS3AmplitudeImmediateHex.AutoSize = true;
+            this.lblS3AmplitudeImmediateHex.Location = new System.Drawing.Point(656, 163);
+            this.lblS3AmplitudeImmediateHex.Name = "lblS3AmplitudeImmediateHex";
+            this.lblS3AmplitudeImmediateHex.Size = new System.Drawing.Size(56, 25);
+            this.lblS3AmplitudeImmediateHex.TabIndex = 32;
+            this.lblS3AmplitudeImmediateHex.Text = "Hex:";
+            // 
+            // nudS3AmplitudeImmediateDecimal
+            // 
+            this.nudS3AmplitudeImmediateDecimal.Location = new System.Drawing.Point(384, 160);
+            this.nudS3AmplitudeImmediateDecimal.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudS3AmplitudeImmediateDecimal.Name = "nudS3AmplitudeImmediateDecimal";
+            this.nudS3AmplitudeImmediateDecimal.Size = new System.Drawing.Size(95, 31);
+            this.nudS3AmplitudeImmediateDecimal.TabIndex = 31;
+            this.nudS3AmplitudeImmediateDecimal.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.nudS3AmplitudeImmediateDecimal.ValueChanged += new System.EventHandler(this.nudS3AmplitudeImmediateDecimal_ValueChanged);
+            // 
+            // lblS3AmplitudePolarityImmediate
+            // 
+            this.lblS3AmplitudePolarityImmediate.AutoSize = true;
+            this.lblS3AmplitudePolarityImmediate.Location = new System.Drawing.Point(100, 163);
+            this.lblS3AmplitudePolarityImmediate.Name = "lblS3AmplitudePolarityImmediate";
+            this.lblS3AmplitudePolarityImmediate.Size = new System.Drawing.Size(38, 25);
+            this.lblS3AmplitudePolarityImmediate.TabIndex = 30;
+            this.lblS3AmplitudePolarityImmediate.Text = "S3";
+            // 
+            // chkS1PolarityImmediate
+            // 
+            this.chkS1PolarityImmediate.AutoSize = true;
+            this.chkS1PolarityImmediate.Location = new System.Drawing.Point(189, 82);
+            this.chkS1PolarityImmediate.Name = "chkS1PolarityImmediate";
+            this.chkS1PolarityImmediate.Size = new System.Drawing.Size(28, 27);
+            this.chkS1PolarityImmediate.TabIndex = 44;
+            this.chkS1PolarityImmediate.UseVisualStyleBackColor = true;
+            this.chkS1PolarityImmediate.CheckedChanged += new System.EventHandler(this.chkS1PolarityImmediate_CheckedChanged);
+            // 
+            // chkS2PolarityImmediate
+            // 
+            this.chkS2PolarityImmediate.AutoSize = true;
+            this.chkS2PolarityImmediate.Location = new System.Drawing.Point(189, 122);
+            this.chkS2PolarityImmediate.Name = "chkS2PolarityImmediate";
+            this.chkS2PolarityImmediate.Size = new System.Drawing.Size(28, 27);
+            this.chkS2PolarityImmediate.TabIndex = 45;
+            this.chkS2PolarityImmediate.UseVisualStyleBackColor = true;
+            this.chkS2PolarityImmediate.CheckedChanged += new System.EventHandler(this.chkS2PolarityImmediate_CheckedChanged);
+            // 
+            // chkS3PolarityImmediate
+            // 
+            this.chkS3PolarityImmediate.AutoSize = true;
+            this.chkS3PolarityImmediate.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.chkS3PolarityImmediate.Location = new System.Drawing.Point(189, 160);
+            this.chkS3PolarityImmediate.Name = "chkS3PolarityImmediate";
+            this.chkS3PolarityImmediate.Size = new System.Drawing.Size(43, 30);
+            this.chkS3PolarityImmediate.TabIndex = 46;
+            this.chkS3PolarityImmediate.Text = " ";
+            this.chkS3PolarityImmediate.UseVisualStyleBackColor = true;
+            this.chkS3PolarityImmediate.CheckedChanged += new System.EventHandler(this.chkS3PolarityImmediate_CheckedChanged);
+            // 
+            // lblImmediateAmplitudes
+            // 
+            this.lblImmediateAmplitudes.AutoSize = true;
+            this.lblImmediateAmplitudes.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblImmediateAmplitudes.Location = new System.Drawing.Point(272, 39);
+            this.lblImmediateAmplitudes.Name = "lblImmediateAmplitudes";
+            this.lblImmediateAmplitudes.Size = new System.Drawing.Size(116, 25);
+            this.lblImmediateAmplitudes.TabIndex = 47;
+            this.lblImmediateAmplitudes.Text = "Amplitude";
+            // 
+            // lblImmediatePolarity
+            // 
+            this.lblImmediatePolarity.AutoSize = true;
+            this.lblImmediatePolarity.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblImmediatePolarity.Location = new System.Drawing.Point(158, 39);
+            this.lblImmediatePolarity.Name = "lblImmediatePolarity";
+            this.lblImmediatePolarity.Size = new System.Drawing.Size(92, 25);
+            this.lblImmediatePolarity.TabIndex = 48;
+            this.lblImmediatePolarity.Text = "Polarity";
+            // 
+            // lblS1AmplitudeImmediateDecimal
+            // 
+            this.lblS1AmplitudeImmediateDecimal.AutoSize = true;
+            this.lblS1AmplitudeImmediateDecimal.Location = new System.Drawing.Point(272, 83);
+            this.lblS1AmplitudeImmediateDecimal.Name = "lblS1AmplitudeImmediateDecimal";
+            this.lblS1AmplitudeImmediateDecimal.Size = new System.Drawing.Size(106, 25);
+            this.lblS1AmplitudeImmediateDecimal.TabIndex = 49;
+            this.lblS1AmplitudeImmediateDecimal.Text = "(decimal):";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(272, 123);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(106, 25);
+            this.label1.TabIndex = 50;
+            this.label1.Text = "(decimal):";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(272, 163);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(106, 25);
+            this.label2.TabIndex = 51;
+            this.label2.Text = "(decimal):";
+            // 
+            // lblStatorImmediate
+            // 
+            this.lblStatorImmediate.AutoSize = true;
+            this.lblStatorImmediate.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStatorImmediate.Location = new System.Drawing.Point(64, 39);
+            this.lblStatorImmediate.Name = "lblStatorImmediate";
+            this.lblStatorImmediate.Size = new System.Drawing.Size(75, 25);
+            this.lblStatorImmediate.TabIndex = 52;
+            this.lblStatorImmediate.Text = "Stator";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -1683,6 +1919,11 @@
             this.gbMoveIndicatorCoarseResolution.ResumeLayout(false);
             this.gbMoveIndicatorCoarseResolution.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMoveIndicatorCoarseResolutionDecimal)).EndInit();
+            this.gbSetStatorAmplitudeAndPolarityImmediate.ResumeLayout(false);
+            this.gbSetStatorAmplitudeAndPolarityImmediate.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS1AmplitudeImmediateDecimal)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS2AmplitudeImmediateDecimal)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudS3AmplitudeImmediateDecimal)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1810,6 +2051,25 @@
         private System.Windows.Forms.Label lblMoveIndicatorCoarseResolutionDegrees;
         private System.Windows.Forms.NumericUpDown nudMoveIndicatorCoarseResolutionDecimal;
         private System.Windows.Forms.Label lblMoveIndicatorCoarseResolutionPositionDecimal;
+        private System.Windows.Forms.GroupBox gbSetStatorAmplitudeAndPolarityImmediate;
+        private System.Windows.Forms.Label lblS3AmplitudeImmediateHex;
+        private System.Windows.Forms.NumericUpDown nudS3AmplitudeImmediateDecimal;
+        private System.Windows.Forms.Label lblS3AmplitudePolarityImmediate;
+        private System.Windows.Forms.Label lblS2AmplitudeImmediateHex;
+        private System.Windows.Forms.NumericUpDown nudS2AmplitudeImmediateDecimal;
+        private System.Windows.Forms.Label lblS2AmplitudePolarityImmediate;
+        private System.Windows.Forms.Label lblS1AmplitudeImmediateHex;
+        private System.Windows.Forms.NumericUpDown nudS1AmplitudeImmediateDecimal;
+        private System.Windows.Forms.Label lblS1AmplitudePolarityImmediate;
+        private System.Windows.Forms.CheckBox chkS3PolarityImmediate;
+        private System.Windows.Forms.CheckBox chkS2PolarityImmediate;
+        private System.Windows.Forms.CheckBox chkS1PolarityImmediate;
+        private System.Windows.Forms.Label lblImmediatePolarity;
+        private System.Windows.Forms.Label lblImmediateAmplitudes;
+        private System.Windows.Forms.Label lblStatorImmediate;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblS1AmplitudeImmediateDecimal;
     }
 }
 

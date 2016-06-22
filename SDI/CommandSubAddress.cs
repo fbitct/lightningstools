@@ -46,7 +46,7 @@ namespace SDI
         /// <summary>
         ///   Set polarity of the stator signals S1, S2, S3 (immediate)
         /// </summary>
-        SXPOL = 36,
+        SXPOL = 37,
 
 
         /// <summary>

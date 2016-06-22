@@ -881,5 +881,99 @@ namespace SDITestTool
             }
             UpdateUIControlsEnabledOrDisabledState();
         }
+
+        private void nudS1AmplitudeImmediateDecimal_ValueChanged(object sender, EventArgs e)
+        {
+            var amplitude = (byte)nudS1AmplitudeImmediateDecimal.Value;
+            lblS1AmplitudeImmediateHex.Text = string.Format("Hex:0x{0}", amplitude.ToString("X").PadLeft(2, '0'));
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.SetStatorSignalAmplitudeImmediate(StatorSignals.S1, amplitude);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void nudS2AmplitudeImmediateDecimal_ValueChanged(object sender, EventArgs e)
+        {
+            var amplitude = (byte)nudS2AmplitudeImmediateDecimal.Value;
+            lblS2AmplitudeImmediateHex.Text = string.Format("Hex:0x{0}", amplitude.ToString("X").PadLeft(2, '0'));
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.SetStatorSignalAmplitudeImmediate(StatorSignals.S2, amplitude);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void nudS3AmplitudeImmediateDecimal_ValueChanged(object sender, EventArgs e)
+        {
+            var amplitude = (byte)nudS3AmplitudeImmediateDecimal.Value;
+            lblS3AmplitudeImmediateHex.Text = string.Format("Hex:0x{0}", amplitude.ToString("X").PadLeft(2, '0'));
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.SetStatorSignalAmplitudeImmediate(StatorSignals.S3, amplitude);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void UpdatePolarityImmediate()
+        {
+            var s1Polarity = chkS1PolarityImmediate.Checked;
+            var s2Polarity = chkS2PolarityImmediate.Checked;
+            var s3Polarity = chkS3PolarityImmediate.Checked;
+            var polarities = StatorSignals.Unknown;
+
+            if (s1Polarity) polarities |= StatorSignals.S1;
+            if (s2Polarity) polarities |= StatorSignals.S2;
+            if (s3Polarity) polarities |= StatorSignals.S3;
+            
+            if (DeviceIsValid)
+            {
+                try
+                {
+                    _sdiDevice.SetStatorSignalsPolarityImmediate(polarities);
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex);
+                }
+            }
+            UpdateUIControlsEnabledOrDisabledState();
+        }
+
+        private void chkS1PolarityImmediate_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdatePolarityImmediate();
+        }
+
+        private void chkS2PolarityImmediate_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdatePolarityImmediate();
+        }
+
+        private void chkS3PolarityImmediate_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdatePolarityImmediate();
+        }
     }
 }
