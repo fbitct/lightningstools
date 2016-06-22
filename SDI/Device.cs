@@ -244,7 +244,7 @@ namespace SDI
                     SendCommand(CommandSubaddress.ONBOARD_PWM, value);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("outputChannelConfigurations");
+                    throw new ArgumentOutOfRangeException("outputChannel");
             }
             
         }
