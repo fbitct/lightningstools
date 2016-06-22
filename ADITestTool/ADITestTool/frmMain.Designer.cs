@@ -43,6 +43,23 @@
             this.lblPitchDeviceIdentification = new System.Windows.Forms.Label();
             this.gbMain = new System.Windows.Forms.GroupBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabADI = new System.Windows.Forms.TabPage();
+            this.nudRollIndication = new System.Windows.Forms.NumericUpDown();
+            this.nudSpherePitchIndication = new System.Windows.Forms.NumericUpDown();
+            this.nudRateOfTurnIndicator = new System.Windows.Forms.NumericUpDown();
+            this.nudGlideslopeIndicatorVertical = new System.Windows.Forms.NumericUpDown();
+            this.nudGlideslopeIndicatorHorizontal = new System.Windows.Forms.NumericUpDown();
+            this.lblSphereRollIndication = new System.Windows.Forms.Label();
+            this.lblSpherePitchIndication = new System.Windows.Forms.Label();
+            this.lblRateOfTurnIndicator = new System.Windows.Forms.Label();
+            this.lblGlideslopeIndicatorVertical = new System.Windows.Forms.Label();
+            this.lblGlideslopeIndicatorHorizontal = new System.Windows.Forms.Label();
+            this.chkEnableRollAndPitch = new System.Windows.Forms.CheckBox();
+            this.chkEnableGlideslope = new System.Windows.Forms.CheckBox();
+            this.chkEnableFlagsAndRot = new System.Windows.Forms.CheckBox();
+            this.chkAuxFlagVisible = new System.Windows.Forms.CheckBox();
+            this.chkLocFlagVisible = new System.Windows.Forms.CheckBox();
+            this.chkGsFlagVisible = new System.Windows.Forms.CheckBox();
             this.tabRawData = new System.Windows.Forms.TabPage();
             this.gbRollRawDataControl = new System.Windows.Forms.GroupBox();
             this.lblRollSubAddr = new System.Windows.Forms.Label();
@@ -57,6 +74,12 @@
             this.gbPitchRawDataControl.SuspendLayout();
             this.gbMain.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.tabADI.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRollIndication)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSpherePitchIndication)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRateOfTurnIndicator)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudGlideslopeIndicatorVertical)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudGlideslopeIndicatorHorizontal)).BeginInit();
             this.tabRawData.SuspendLayout();
             this.gbRollRawDataControl.SuspendLayout();
             this.SuspendLayout();
@@ -176,21 +199,234 @@
             // gbMain
             // 
             this.gbMain.Controls.Add(this.tabControl1);
-            this.gbMain.Location = new System.Drawing.Point(3, 104);
+            this.gbMain.Location = new System.Drawing.Point(3, 90);
             this.gbMain.Name = "gbMain";
-            this.gbMain.Size = new System.Drawing.Size(1060, 895);
+            this.gbMain.Size = new System.Drawing.Size(1060, 461);
             this.gbMain.TabIndex = 11;
             this.gbMain.TabStop = false;
             // 
             // tabControl1
             // 
+            this.tabControl1.Controls.Add(this.tabADI);
             this.tabControl1.Controls.Add(this.tabRawData);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(3, 27);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1054, 865);
+            this.tabControl1.Size = new System.Drawing.Size(1054, 431);
             this.tabControl1.TabIndex = 0;
+            // 
+            // tabADI
+            // 
+            this.tabADI.Controls.Add(this.nudRollIndication);
+            this.tabADI.Controls.Add(this.nudSpherePitchIndication);
+            this.tabADI.Controls.Add(this.nudRateOfTurnIndicator);
+            this.tabADI.Controls.Add(this.nudGlideslopeIndicatorVertical);
+            this.tabADI.Controls.Add(this.nudGlideslopeIndicatorHorizontal);
+            this.tabADI.Controls.Add(this.lblSphereRollIndication);
+            this.tabADI.Controls.Add(this.lblSpherePitchIndication);
+            this.tabADI.Controls.Add(this.lblRateOfTurnIndicator);
+            this.tabADI.Controls.Add(this.lblGlideslopeIndicatorVertical);
+            this.tabADI.Controls.Add(this.lblGlideslopeIndicatorHorizontal);
+            this.tabADI.Controls.Add(this.chkEnableRollAndPitch);
+            this.tabADI.Controls.Add(this.chkEnableGlideslope);
+            this.tabADI.Controls.Add(this.chkEnableFlagsAndRot);
+            this.tabADI.Controls.Add(this.chkAuxFlagVisible);
+            this.tabADI.Controls.Add(this.chkLocFlagVisible);
+            this.tabADI.Controls.Add(this.chkGsFlagVisible);
+            this.tabADI.Location = new System.Drawing.Point(4, 34);
+            this.tabADI.Name = "tabADI";
+            this.tabADI.Padding = new System.Windows.Forms.Padding(3);
+            this.tabADI.Size = new System.Drawing.Size(1046, 393);
+            this.tabADI.TabIndex = 5;
+            this.tabADI.Text = "ADI";
+            this.tabADI.UseVisualStyleBackColor = true;
+            // 
+            // nudRollIndication
+            // 
+            this.nudRollIndication.Location = new System.Drawing.Point(346, 305);
+            this.nudRollIndication.Maximum = new decimal(new int[] {
+            1023,
+            0,
+            0,
+            0});
+            this.nudRollIndication.Name = "nudRollIndication";
+            this.nudRollIndication.Size = new System.Drawing.Size(120, 31);
+            this.nudRollIndication.TabIndex = 15;
+            this.nudRollIndication.ValueChanged += new System.EventHandler(this.nudRollIndication_ValueChanged);
+            // 
+            // nudSpherePitchIndication
+            // 
+            this.nudSpherePitchIndication.Location = new System.Drawing.Point(346, 268);
+            this.nudSpherePitchIndication.Maximum = new decimal(new int[] {
+            700,
+            0,
+            0,
+            0});
+            this.nudSpherePitchIndication.Minimum = new decimal(new int[] {
+            140,
+            0,
+            0,
+            0});
+            this.nudSpherePitchIndication.Name = "nudSpherePitchIndication";
+            this.nudSpherePitchIndication.Size = new System.Drawing.Size(120, 31);
+            this.nudSpherePitchIndication.TabIndex = 14;
+            this.nudSpherePitchIndication.Value = new decimal(new int[] {
+            140,
+            0,
+            0,
+            0});
+            this.nudSpherePitchIndication.ValueChanged += new System.EventHandler(this.nudSpherePitchIndication_ValueChanged);
+            // 
+            // nudRateOfTurnIndicator
+            // 
+            this.nudRateOfTurnIndicator.Location = new System.Drawing.Point(346, 231);
+            this.nudRateOfTurnIndicator.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudRateOfTurnIndicator.Name = "nudRateOfTurnIndicator";
+            this.nudRateOfTurnIndicator.Size = new System.Drawing.Size(120, 31);
+            this.nudRateOfTurnIndicator.TabIndex = 13;
+            this.nudRateOfTurnIndicator.ValueChanged += new System.EventHandler(this.nudRateOfTurnIndicator_ValueChanged);
+            // 
+            // nudGlideslopeIndicatorVertical
+            // 
+            this.nudGlideslopeIndicatorVertical.Location = new System.Drawing.Point(346, 194);
+            this.nudGlideslopeIndicatorVertical.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudGlideslopeIndicatorVertical.Name = "nudGlideslopeIndicatorVertical";
+            this.nudGlideslopeIndicatorVertical.Size = new System.Drawing.Size(120, 31);
+            this.nudGlideslopeIndicatorVertical.TabIndex = 12;
+            this.nudGlideslopeIndicatorVertical.ValueChanged += new System.EventHandler(this.nudGlideslopeIndicatorVertical_ValueChanged);
+            // 
+            // nudGlideslopeIndicatorHorizontal
+            // 
+            this.nudGlideslopeIndicatorHorizontal.Location = new System.Drawing.Point(346, 157);
+            this.nudGlideslopeIndicatorHorizontal.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudGlideslopeIndicatorHorizontal.Name = "nudGlideslopeIndicatorHorizontal";
+            this.nudGlideslopeIndicatorHorizontal.Size = new System.Drawing.Size(120, 31);
+            this.nudGlideslopeIndicatorHorizontal.TabIndex = 11;
+            this.nudGlideslopeIndicatorHorizontal.ValueChanged += new System.EventHandler(this.nudGlideslopeIndicatorHorizontal_ValueChanged);
+            // 
+            // lblSphereRollIndication
+            // 
+            this.lblSphereRollIndication.AutoSize = true;
+            this.lblSphereRollIndication.Location = new System.Drawing.Point(32, 308);
+            this.lblSphereRollIndication.Name = "lblSphereRollIndication";
+            this.lblSphereRollIndication.Size = new System.Drawing.Size(240, 25);
+            this.lblSphereRollIndication.TabIndex = 10;
+            this.lblSphereRollIndication.Text = "Sphere ROLL indication";
+            // 
+            // lblSpherePitchIndication
+            // 
+            this.lblSpherePitchIndication.AutoSize = true;
+            this.lblSpherePitchIndication.Location = new System.Drawing.Point(32, 271);
+            this.lblSpherePitchIndication.Name = "lblSpherePitchIndication";
+            this.lblSpherePitchIndication.Size = new System.Drawing.Size(247, 25);
+            this.lblSpherePitchIndication.TabIndex = 9;
+            this.lblSpherePitchIndication.Text = "Sphere PITCH indication";
+            // 
+            // lblRateOfTurnIndicator
+            // 
+            this.lblRateOfTurnIndicator.AutoSize = true;
+            this.lblRateOfTurnIndicator.Location = new System.Drawing.Point(32, 234);
+            this.lblRateOfTurnIndicator.Name = "lblRateOfTurnIndicator";
+            this.lblRateOfTurnIndicator.Size = new System.Drawing.Size(219, 25);
+            this.lblRateOfTurnIndicator.TabIndex = 8;
+            this.lblRateOfTurnIndicator.Text = "Rate of Turn Indicator";
+            // 
+            // lblGlideslopeIndicatorVertical
+            // 
+            this.lblGlideslopeIndicatorVertical.AutoSize = true;
+            this.lblGlideslopeIndicatorVertical.Location = new System.Drawing.Point(32, 197);
+            this.lblGlideslopeIndicatorVertical.Name = "lblGlideslopeIndicatorVertical";
+            this.lblGlideslopeIndicatorVertical.Size = new System.Drawing.Size(280, 25);
+            this.lblGlideslopeIndicatorVertical.TabIndex = 7;
+            this.lblGlideslopeIndicatorVertical.Text = "Glideslope Indicator Vertical";
+            // 
+            // lblGlideslopeIndicatorHorizontal
+            // 
+            this.lblGlideslopeIndicatorHorizontal.AutoSize = true;
+            this.lblGlideslopeIndicatorHorizontal.Location = new System.Drawing.Point(32, 160);
+            this.lblGlideslopeIndicatorHorizontal.Name = "lblGlideslopeIndicatorHorizontal";
+            this.lblGlideslopeIndicatorHorizontal.Size = new System.Drawing.Size(305, 25);
+            this.lblGlideslopeIndicatorHorizontal.TabIndex = 6;
+            this.lblGlideslopeIndicatorHorizontal.Text = "Glideslope Indicator Horizontal";
+            // 
+            // chkEnableRollAndPitch
+            // 
+            this.chkEnableRollAndPitch.AutoSize = true;
+            this.chkEnableRollAndPitch.Location = new System.Drawing.Point(375, 94);
+            this.chkEnableRollAndPitch.Name = "chkEnableRollAndPitch";
+            this.chkEnableRollAndPitch.Size = new System.Drawing.Size(266, 29);
+            this.chkEnableRollAndPitch.TabIndex = 5;
+            this.chkEnableRollAndPitch.Text = "ENABLE Roll and Pitch";
+            this.chkEnableRollAndPitch.UseVisualStyleBackColor = true;
+            this.chkEnableRollAndPitch.CheckedChanged += new System.EventHandler(this.chkEnableRollAndPitch_CheckedChanged);
+            // 
+            // chkEnableGlideslope
+            // 
+            this.chkEnableGlideslope.AutoSize = true;
+            this.chkEnableGlideslope.Location = new System.Drawing.Point(375, 59);
+            this.chkEnableGlideslope.Name = "chkEnableGlideslope";
+            this.chkEnableGlideslope.Size = new System.Drawing.Size(235, 29);
+            this.chkEnableGlideslope.TabIndex = 4;
+            this.chkEnableGlideslope.Text = "ENABLE Glideslope";
+            this.chkEnableGlideslope.UseVisualStyleBackColor = true;
+            this.chkEnableGlideslope.CheckedChanged += new System.EventHandler(this.chkEnableGlideslope_CheckedChanged);
+            // 
+            // chkEnableFlagsAndRot
+            // 
+            this.chkEnableFlagsAndRot.AutoSize = true;
+            this.chkEnableFlagsAndRot.Location = new System.Drawing.Point(375, 24);
+            this.chkEnableFlagsAndRot.Name = "chkEnableFlagsAndRot";
+            this.chkEnableFlagsAndRot.Size = new System.Drawing.Size(278, 29);
+            this.chkEnableFlagsAndRot.TabIndex = 3;
+            this.chkEnableFlagsAndRot.Text = "ENABLE Flags and ROT";
+            this.chkEnableFlagsAndRot.UseVisualStyleBackColor = true;
+            this.chkEnableFlagsAndRot.CheckedChanged += new System.EventHandler(this.chkEnableFlagsAndRot_CheckedChanged);
+            // 
+            // chkAuxFlagVisible
+            // 
+            this.chkAuxFlagVisible.AutoSize = true;
+            this.chkAuxFlagVisible.Location = new System.Drawing.Point(37, 94);
+            this.chkAuxFlagVisible.Name = "chkAuxFlagVisible";
+            this.chkAuxFlagVisible.Size = new System.Drawing.Size(205, 29);
+            this.chkAuxFlagVisible.TabIndex = 2;
+            this.chkAuxFlagVisible.Text = "AUX Flag Visible";
+            this.chkAuxFlagVisible.UseVisualStyleBackColor = true;
+            this.chkAuxFlagVisible.CheckedChanged += new System.EventHandler(this.chkAuxFlagVisible_CheckedChanged);
+            // 
+            // chkLocFlagVisible
+            // 
+            this.chkLocFlagVisible.AutoSize = true;
+            this.chkLocFlagVisible.Location = new System.Drawing.Point(37, 59);
+            this.chkLocFlagVisible.Name = "chkLocFlagVisible";
+            this.chkLocFlagVisible.Size = new System.Drawing.Size(205, 29);
+            this.chkLocFlagVisible.TabIndex = 1;
+            this.chkLocFlagVisible.Text = "LOC Flag Visible";
+            this.chkLocFlagVisible.UseVisualStyleBackColor = true;
+            this.chkLocFlagVisible.CheckedChanged += new System.EventHandler(this.chkLocFlagVisible_CheckedChanged);
+            // 
+            // chkGsFlagVisible
+            // 
+            this.chkGsFlagVisible.AutoSize = true;
+            this.chkGsFlagVisible.Location = new System.Drawing.Point(37, 24);
+            this.chkGsFlagVisible.Name = "chkGsFlagVisible";
+            this.chkGsFlagVisible.Size = new System.Drawing.Size(192, 29);
+            this.chkGsFlagVisible.TabIndex = 0;
+            this.chkGsFlagVisible.Text = "GS Flag Visible";
+            this.chkGsFlagVisible.UseVisualStyleBackColor = true;
+            this.chkGsFlagVisible.CheckedChanged += new System.EventHandler(this.chkGsFlagVisible_CheckedChanged);
             // 
             // tabRawData
             // 
@@ -198,7 +434,7 @@
             this.tabRawData.Controls.Add(this.gbPitchRawDataControl);
             this.tabRawData.Location = new System.Drawing.Point(4, 34);
             this.tabRawData.Name = "tabRawData";
-            this.tabRawData.Size = new System.Drawing.Size(1046, 827);
+            this.tabRawData.Size = new System.Drawing.Size(1046, 393);
             this.tabRawData.TabIndex = 4;
             this.tabRawData.Text = "Raw Data";
             this.tabRawData.UseVisualStyleBackColor = true;
@@ -309,7 +545,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1067, 997);
+            this.ClientSize = new System.Drawing.Size(1067, 554);
             this.Controls.Add(this.lblRollDeviceSerialPort);
             this.Controls.Add(this.cbRollDeviceSerialPort);
             this.Controls.Add(this.lblRollDeviceIdentification);
@@ -332,6 +568,13 @@
             this.gbPitchRawDataControl.PerformLayout();
             this.gbMain.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
+            this.tabADI.ResumeLayout(false);
+            this.tabADI.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRollIndication)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSpherePitchIndication)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRateOfTurnIndicator)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudGlideslopeIndicatorVertical)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudGlideslopeIndicatorHorizontal)).EndInit();
             this.tabRawData.ResumeLayout(false);
             this.gbRollRawDataControl.ResumeLayout(false);
             this.gbRollRawDataControl.PerformLayout();
@@ -365,6 +608,23 @@
         private System.Windows.Forms.Button btnRollSendRaw;
         private System.Windows.Forms.Label lblRollDataByte;
         private System.Windows.Forms.TextBox txtRollDataByte;
+        private System.Windows.Forms.TabPage tabADI;
+        private System.Windows.Forms.Label lblSphereRollIndication;
+        private System.Windows.Forms.Label lblSpherePitchIndication;
+        private System.Windows.Forms.Label lblRateOfTurnIndicator;
+        private System.Windows.Forms.Label lblGlideslopeIndicatorVertical;
+        private System.Windows.Forms.Label lblGlideslopeIndicatorHorizontal;
+        private System.Windows.Forms.CheckBox chkEnableRollAndPitch;
+        private System.Windows.Forms.CheckBox chkEnableGlideslope;
+        private System.Windows.Forms.CheckBox chkEnableFlagsAndRot;
+        private System.Windows.Forms.CheckBox chkAuxFlagVisible;
+        private System.Windows.Forms.CheckBox chkLocFlagVisible;
+        private System.Windows.Forms.CheckBox chkGsFlagVisible;
+        private System.Windows.Forms.NumericUpDown nudRollIndication;
+        private System.Windows.Forms.NumericUpDown nudSpherePitchIndication;
+        private System.Windows.Forms.NumericUpDown nudRateOfTurnIndicator;
+        private System.Windows.Forms.NumericUpDown nudGlideslopeIndicatorVertical;
+        private System.Windows.Forms.NumericUpDown nudGlideslopeIndicatorHorizontal;
     }
 }
 

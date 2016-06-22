@@ -100,9 +100,7 @@ namespace ADITestTool
             }
             catch (Exception ex)
             {
-#if (!DEBUG)
                 DisposeSDIDevice(ref sdiDevice);
-#endif
                 deviceIdentificationLabel.Text = "Identification:";
                 _log.Debug(ex);
             }
@@ -284,6 +282,131 @@ namespace ADITestTool
             return parsed;
         }
 
+        private void chkGsFlagVisible_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkGsFlagVisible.Checked)
+            {
+                _rollSdiDevice.SendCommand((CommandSubaddress)15, 0);
+            }
+            else
+            {
+                _rollSdiDevice.SendCommand((CommandSubaddress)15, 1);
+            }
+        }
 
+        private void chkLocFlagVisible_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkLocFlagVisible.Checked)
+            {
+                _rollSdiDevice.SendCommand((CommandSubaddress)17, 0);
+            }
+            else
+            {
+                _rollSdiDevice.SendCommand((CommandSubaddress)17, 1);
+            }
+        }
+
+        private void chkAuxFlagVisible_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkAuxFlagVisible.Checked)
+            {
+                _rollSdiDevice.SendCommand((CommandSubaddress)18, 0);
+            }
+            else
+            {
+                _rollSdiDevice.SendCommand((CommandSubaddress)18, 1);
+            }
+        }
+
+        private void chkEnableFlagsAndRot_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkEnableFlagsAndRot.Checked)
+            {
+                _rollSdiDevice.SendCommand((CommandSubaddress)16, 1);
+            }
+            else
+            {
+                _rollSdiDevice.SendCommand((CommandSubaddress)16, 0);
+            }
+        }
+
+        private void chkEnableGlideslope_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkEnableGlideslope.Checked)
+            {
+                _pitchSdiDevice.SendCommand((CommandSubaddress)16, 1);
+            }
+            else
+            {
+                _pitchSdiDevice.SendCommand((CommandSubaddress)16, 0);
+            }
+        }
+
+        private void chkEnableRollAndPitch_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkEnableRollAndPitch.Checked)
+            {
+                _pitchSdiDevice.SendCommand((CommandSubaddress)15, 1);
+            }
+            else
+            {
+                _pitchSdiDevice.SendCommand((CommandSubaddress)15, 0);
+            }
+        }
+
+        private void nudGlideslopeIndicatorHorizontal_ValueChanged(object sender, EventArgs e)
+        {
+            _pitchSdiDevice.SendCommand((CommandSubaddress)17, (byte)nudGlideslopeIndicatorHorizontal.Value);
+        }
+
+        private void nudGlideslopeIndicatorVertical_ValueChanged(object sender, EventArgs e)
+        {
+            _pitchSdiDevice.SendCommand((CommandSubaddress)18, (byte)nudGlideslopeIndicatorVertical.Value);
+        }
+
+        private void nudRateOfTurnIndicator_ValueChanged(object sender, EventArgs e)
+        {
+            _rollSdiDevice.SendCommand((CommandSubaddress)22, (byte)nudRateOfTurnIndicator.Value);
+        }
+
+        private void nudSpherePitchIndication_ValueChanged(object sender, EventArgs e)
+        {
+            var value = nudSpherePitchIndication.Value;
+            var address = 0;
+            if (value <768)
+            {
+                address = 2;
+                value -= 512;
+            }
+            else
+            {
+                address = 3;
+                value -= 768;
+            }
+            _pitchSdiDevice.SendCommand((CommandSubaddress)address, (byte)value);
+        }
+
+        private void nudRollIndication_ValueChanged(object sender, EventArgs e)
+        {
+            var value = nudRollIndication.Value;
+            var address = 0;
+
+            if (value >= 256 && value <512)
+            {
+                address = 1;
+                value -= 256;
+            }
+            else if (value >=512 && value < 768)
+            {
+                address = 2;
+                value -= 512;
+            }
+            else
+            {
+                address = 3;
+                value -= 768;
+            }
+            _rollSdiDevice.SendCommand((CommandSubaddress)address, (byte)value);
+        }
     }
 }
