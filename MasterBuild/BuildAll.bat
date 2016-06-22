@@ -108,9 +108,9 @@ IF ERRORLEVEL 1 GOTO END
 IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\MSBuild\14.0\Bin\MSBuild.exe" /p:Configuration=Debug /p:Platform=x86 ..\SDI\SDI.sln
 IF ERRORLEVEL 1 GOTO END
-"%ProgFiles86Root%\MSBuild\14.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\SDITestTool\SDITestTool.sln
+"%ProgFiles86Root%\MSBuild\14.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\SDITestTool\SDITestTool\SDITestTool.sln
 IF ERRORLEVEL 1 GOTO END
-"%ProgFiles86Root%\MSBuild\14.0\Bin\MSBuild.exe" /p:Configuration=Debug /p:Platform=x86 ..\SDITestTool\SDITestTool.sln
+"%ProgFiles86Root%\MSBuild\14.0\Bin\MSBuild.exe" /p:Configuration=Debug /p:Platform=x86 ..\SDITestTool\SDITestTool\SDITestTool.sln
 IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\MSBuild\14.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\SimLinkup\SimLinkup.sln
 IF ERRORLEVEL 1 GOTO END

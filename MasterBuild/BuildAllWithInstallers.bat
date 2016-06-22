@@ -108,9 +108,9 @@ IF ERRORLEVEL 1 GOTO END
 IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Debug" ..\SDI\SDI.sln
 IF ERRORLEVEL 1 GOTO END
-"%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Release" ..\SDITestTool\SDITestTool.sln
+"%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Release" ..\SDITestTool\SDITestTool\SDITestTool.sln
 IF ERRORLEVEL 1 GOTO END
-"%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Debug" ..\SDITestTool\SDITestTool.sln
+"%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Debug" ..\SDITestTool\SDITestTool\SDITestTool.sln
 IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Release" ..\SimLinkup\SimLinkup.sln
 IF ERRORLEVEL 1 GOTO END
