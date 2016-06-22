@@ -457,7 +457,7 @@
             this.gbWatchdog.Size = new System.Drawing.Size(372, 210);
             this.gbWatchdog.TabIndex = 9;
             this.gbWatchdog.TabStop = false;
-            this.gbWatchdog.Text = "Watchdog Timer";
+            this.gbWatchdog.Text = "ConfigureWatchdog Timer";
             // 
             // lblCountdownDesc
             // 
@@ -511,7 +511,7 @@
             this.btnDisableWatchdog.Name = "btnDisableWatchdog";
             this.btnDisableWatchdog.Size = new System.Drawing.Size(227, 43);
             this.btnDisableWatchdog.TabIndex = 0;
-            this.btnDisableWatchdog.Text = "&Disable Watchdog";
+            this.btnDisableWatchdog.Text = "&Disable ConfigureWatchdog";
             this.btnDisableWatchdog.UseVisualStyleBackColor = true;
             this.btnDisableWatchdog.Click += new System.EventHandler(this.btnDisableWatchdog_Click);
             // 
@@ -652,7 +652,7 @@
             this.gbDemo.Size = new System.Drawing.Size(907, 459);
             this.gbDemo.TabIndex = 9;
             this.gbDemo.TabStop = false;
-            this.gbDemo.Text = "Demo Mode";
+            this.gbDemo.Text = "ConfigureDemoMode Mode";
             // 
             // chkStartDemo
             // 
@@ -663,7 +663,7 @@
             this.chkStartDemo.Name = "chkStartDemo";
             this.chkStartDemo.Size = new System.Drawing.Size(129, 35);
             this.chkStartDemo.TabIndex = 12;
-            this.chkStartDemo.Text = "Start Demo";
+            this.chkStartDemo.Text = "Start ConfigureDemoMode";
             this.chkStartDemo.UseVisualStyleBackColor = true;
             this.chkStartDemo.CheckedChanged += new System.EventHandler(this.chkStartDemo_CheckedChanged);
             // 
@@ -1936,7 +1936,7 @@
             this.tabDemoMode.Name = "tabDemoMode";
             this.tabDemoMode.Size = new System.Drawing.Size(1046, 880);
             this.tabDemoMode.TabIndex = 6;
-            this.tabDemoMode.Text = "Demo Mode";
+            this.tabDemoMode.Text = "ConfigureDemoMode Mode";
             this.tabDemoMode.UseVisualStyleBackColor = true;
             // 
             // tabRawData

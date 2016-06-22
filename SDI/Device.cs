@@ -293,7 +293,7 @@ namespace SDI
         {
             SendCommand(CommandSubaddress.DIAG_LED, (byte)mode);
         }
-        public void Demo(DemoMovementSpeeds movementSpeed, byte movementStepSize, DemoModus modus, bool start)
+        public void ConfigureDemoMode(DemoMovementSpeeds movementSpeed, byte movementStepSize, DemoModus modus, bool start)
         {
             const byte MAX_MOVEMENT_STEP_SIZE = 15; //4 bits
             if (movementStepSize > MAX_MOVEMENT_STEP_SIZE)
@@ -327,7 +327,7 @@ namespace SDI
         {
             SendCommand(CommandSubaddress.DISABLE_WATCHDOG, 0x00);
         }
-        public void Watchdog(bool enable, byte countdown)
+        public void ConfigureWatchdog(bool enable, byte countdown)
         {
             const ushort MAX_COUNTDOWN = 63; //6 bits
             if (countdown > MAX_COUNTDOWN)
@@ -338,7 +338,7 @@ namespace SDI
             SendCommand(CommandSubaddress.WATCHDOG_CONTROL, (byte)data);
         }
 
-        public void UsbDebug(bool enable)
+        public void ConfigureUsbDebug(bool enable)
         {
             SendCommand(CommandSubaddress.USB_DEBUG, enable ? Convert.ToByte('Y') : Convert.ToByte('N'));
         }

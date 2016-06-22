@@ -303,7 +303,7 @@ namespace SDITestTool
             {
                 try
                 {
-                    _sdiDevice.Watchdog(chkWatchdogEnabled.CheckState == CheckState.Checked, (byte)nudWatchdogCountdown.Value);
+                    _sdiDevice.ConfigureWatchdog(chkWatchdogEnabled.CheckState == CheckState.Checked, (byte)nudWatchdogCountdown.Value);
                 }
                 catch (Exception ex)
                 {
@@ -323,7 +323,7 @@ namespace SDITestTool
             {
                 try
                 {
-                    _sdiDevice.Watchdog(chkWatchdogEnabled.CheckState == CheckState.Checked, (byte)nudWatchdogCountdown.Value);
+                    _sdiDevice.ConfigureWatchdog(chkWatchdogEnabled.CheckState == CheckState.Checked, (byte)nudWatchdogCountdown.Value);
                 }
                 catch (Exception ex)
                 {
@@ -689,11 +689,11 @@ namespace SDITestTool
         {
             if (chkStartDemo.Checked)
             {
-                chkStartDemo.Text = "Stop Demo";
+                chkStartDemo.Text = "Stop ConfigureDemoMode";
             }
             else
             {
-                chkStartDemo.Text = "Start Demo";
+                chkStartDemo.Text = "Start ConfigureDemoMode";
             }
             UpdateDemo();
         }
@@ -761,7 +761,7 @@ namespace SDITestTool
             {
                 try
                 {
-                    _sdiDevice.Demo(speed, stepSize, modus, start);
+                    _sdiDevice.ConfigureDemoMode(speed, stepSize, modus, start);
                 }
                 catch (Exception ex)
                 {
@@ -891,7 +891,7 @@ namespace SDITestTool
             {
                 try
                 {
-                    _sdiDevice.UsbDebug(chkUSBDebugEnabled.Checked);
+                    _sdiDevice.ConfigureUsbDebug(chkUSBDebugEnabled.Checked);
                 }
                 catch (Exception ex)
                 {

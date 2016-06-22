@@ -3,7 +3,7 @@
 namespace SDI
 {
     /// <summary>
-    ///   Watchdog status
+    ///   ConfigureWatchdog status
     /// </summary>
     [ComVisible(true)]
     public enum WatchdogStatus : byte

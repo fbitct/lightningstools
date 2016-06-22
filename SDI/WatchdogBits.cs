@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace SDI
 {
     /// <summary>
-    ///   Watchdog control bit masks
+    ///   ConfigureWatchdog control bit masks
     /// </summary>
     [ComVisible(false)]
     [Flags]
