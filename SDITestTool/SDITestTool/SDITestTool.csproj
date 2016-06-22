@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{AEE62688-9F5E-4447-B0F3-186E4AE0AD89}</ProjectGuid>
+    <ProjectGuid>{68656C46-3097-4A71-87EF-9E402DCAD3E4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SDITestTool</RootNamespace>
