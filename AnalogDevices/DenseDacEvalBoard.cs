@@ -950,12 +950,14 @@ namespace AnalogDevices
             var buf = new byte[len];
             var setupPacket = new UsbSetupPacket
             {
-                Request = (DeviceRequestType) DeviceCommand.SendSPI,
+                Request = (byte)DeviceCommand.SendSPI,
                 Index = 0,
-                RequestType = UsbRequestType.TypeVendor | UsbRequestType.EndpointIn,
+                RequestType = (byte)((byte)UsbRequestType.TypeVendor | (byte)UsbCtrlFlags.Direction_In),
                 Length = (short) len,
                 Value = 0
+
             };
+            
             int lengthTransferred;
             UsbControlTransfer(ref setupPacket, buf, buf.Length, out lengthTransferred);
             return (ushort) (buf[0] + (ushort) (buf[1]*256));
@@ -978,10 +980,10 @@ namespace AnalogDevices
             var bRequest = (byte) command;
             var setupPacket = new UsbSetupPacket
             {
-                Request = (DeviceRequestType) bRequest,
+                Request = bRequest,
                 Value = (short) (setupData & 0xFFFF),
                 Index = (short) ((setupData & 0xFF0000)/0x10000),
-                RequestType = UsbRequestType.TypeVendor,
+                RequestType = (byte)UsbRequestType.TypeVendor,
                 Length = 0
             };
             int lengthTransferred;
@@ -1000,8 +1002,8 @@ namespace AnalogDevices
             byte[] buffer = {(byte) (r ? 1 : 0)};
             var setupPacket = new UsbSetupPacket
             {
-                RequestType = UsbRequestType.TypeVendor,
-                Request = (DeviceRequestType) 0xA0
+                RequestType = (byte)UsbRequestType.TypeVendor,
+                Request = 0xA0
             };
             unchecked
             {
@@ -1030,8 +1032,8 @@ namespace AnalogDevices
                     {
                         var setupPacket = new UsbSetupPacket
                         {
-                            RequestType = UsbRequestType.TypeVendor,
-                            Request = (DeviceRequestType) 0xA0,
+                            RequestType = (byte)UsbRequestType.TypeVendor,
+                            Request = 0xA0,
                             Value = (short) (i - j),
                             Index = 0
                         };
