@@ -169,6 +169,7 @@
     <Compile Include="HardwareSupport\Westin\Westin521993HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Westin\Westin521993HardwareSupportModuleConfig.cs" />
     <Compile Include="Runtime\Runtime.cs" />
+    <Compile Include="Runtime\SimSupportModuleLoader.cs" />
     <Compile Include="Scripting\CSSCodeProvider.cs" />
     <Compile Include="Scripting\Script.cs" />
     <Compile Include="Scripting\ScriptingContext.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="Signals\MappingProfile.cs" />
     <Compile Include="Signals\MappingType.cs" />
     <Compile Include="Signals\SignalMapping.cs" />
+    <Compile Include="Runtime\HardwareSupportModuleLoader.cs" />
     <Compile Include="UI\frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -212,10 +214,6 @@
     </Content>
     <Content Include="Content\Mapping\AMI900157501angleofattack.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HardwareSupportModule.registry">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </Content>
     <Content Include="SimLinkup.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -313,9 +311,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="SimSupportModule.registry">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>

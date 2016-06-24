@@ -48,8 +48,8 @@ namespace SimLinkup.UI
 
         private void DiscoverPlugins()
         {
-            hardwareSupportModuleList.HardwareSupportModules = Runtime.Runtime.GetRegisteredHardwareSupportModules();
-            simSupportModuleList.SimSupportModules = Runtime.Runtime.GetRegisteredSimSupportModules();
+            hardwareSupportModuleList.HardwareSupportModules = Runtime.Runtime.LoadHardwareSupportModules();
+            simSupportModuleList.SimSupportModules = Runtime.Runtime.LoadSimSupportModules();
         }
 
         private void LoadSettings()
