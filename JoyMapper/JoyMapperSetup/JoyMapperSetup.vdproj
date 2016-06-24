@@ -426,7 +426,12 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.DirectX.9c"
+					"{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
+                    }
+					"{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.DirectX.9c"
                     {
                     "Name" = "8:Microsoft DirectX 9c Web"
                     "ProductCode" = "8:Microsoft.DirectX.9c"
