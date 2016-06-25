@@ -293,7 +293,11 @@ namespace SimLinkup.UI.UserControls
         }
         private IHardwareSupportModule HardwareSupportModuleFor(TreeNode treeNode)
         {
-            return treeNode != null ? ScriptingContext.HardwareSupportModules.Where(x => x.FriendlyName == treeNode.Text).FirstOrDefault() : null;
+            return treeNode != null && ScriptingContext !=null 
+                ? ScriptingContext.HardwareSupportModules
+                    .Where(x => x.FriendlyName == treeNode.Text)
+                    .FirstOrDefault() 
+                : null;
         }
     }
 }

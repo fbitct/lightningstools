@@ -32,8 +32,8 @@ namespace SimLinkup.HardwareSupport.DirectInput
             foreach (var button in device.Buttons)
             {
                 var thisSignal = new DigitalSignal();
-                thisSignal.Category = "Outputs";
-                thisSignal.CollectionName = "Digital Outputs";
+                thisSignal.Category = "Controls";
+                thisSignal.CollectionName = "Buttons";
                 thisSignal.FriendlyName = button.Alias;
                 thisSignal.Id = button.ToString();
                 thisSignal.Index = button.ControlNum;
@@ -52,8 +52,8 @@ namespace SimLinkup.HardwareSupport.DirectInput
             foreach (var axis in device.Axes)
             {
                 var thisSignal = new AnalogSignal();
-                thisSignal.Category = "Outputs";
-                thisSignal.CollectionName = "Analog Outputs";
+                thisSignal.Category = "Controls";
+                thisSignal.CollectionName = "Axes";
                 thisSignal.FriendlyName = axis.Alias;
                 thisSignal.Id = axis.ToString();
                 thisSignal.Index = axis.ControlNum;
@@ -75,8 +75,8 @@ namespace SimLinkup.HardwareSupport.DirectInput
             foreach (var pov in device.Povs)
             {
                 var thisSignal = new AnalogSignal();
-                thisSignal.Category = "Outputs";
-                thisSignal.CollectionName = "Analog Outputs";
+                thisSignal.Category = "Controls";
+                thisSignal.CollectionName = "POVs";
                 thisSignal.FriendlyName = pov.Alias;
                 thisSignal.Id = pov.ToString();
                 thisSignal.Index = pov.ControlNum;
