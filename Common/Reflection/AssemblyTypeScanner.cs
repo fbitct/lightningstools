@@ -25,12 +25,14 @@ namespace Common.Reflection
                 assembly = Assembly.LoadFrom(assemblyFileName);
                 try
                 {
-                    toReturn.AddRange(assembly.DefinedTypes.Where(x =>
+                    toReturn.AddRange(assembly.ExportedTypes.Where(x =>
                         (
                             x.IsSubclassOf(typeof(T))
                                 ||
                             x.GetInterface(typeof(T).FullName) != null
                         )
+                        && !x.IsAbstract
+                        && !x.IsInterface
                     ));
                 }
                 catch { }

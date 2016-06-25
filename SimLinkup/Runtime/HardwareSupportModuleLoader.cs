@@ -3,7 +3,7 @@ using Common.Reflection;
 using log4net;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 namespace SimLinkup.Runtime
 {
     internal class HardwareSupportModuleLoader 
@@ -16,7 +16,7 @@ namespace SimLinkup.Runtime
             {
                 var moduleTypes = new AssemblyTypeScanner<IHardwareSupportModule>().FindMatchingTypesInAssemblies(pathToScan, recursiveScan);
 
-                foreach (var moduleType in moduleTypes)
+                foreach (var moduleType in moduleTypes.Distinct())
                 {
                     try
                     {

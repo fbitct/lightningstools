@@ -3,7 +3,7 @@ using Common.SimSupport;
 using log4net;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 namespace SimLinkup
 {
     internal class SimSupportModuleLoader
@@ -16,11 +16,11 @@ namespace SimLinkup
             {
                 var moduleTypes = new AssemblyTypeScanner<SimSupportModule>().FindMatchingTypesInAssemblies(pathToScan, recursiveScan);
 
-                foreach (var moduleType in moduleTypes)
+                foreach (var moduleType in moduleTypes.Distinct())
                 {
                     try
                     {
-                        var module = Activator.CreateInstance(moduleType, nonPublic: true) as SimSupportModule;
+                        var module = Activator.CreateInstance(moduleType) as SimSupportModule;
                         toReturn.Add(module);
                     }
                     catch (Exception e)

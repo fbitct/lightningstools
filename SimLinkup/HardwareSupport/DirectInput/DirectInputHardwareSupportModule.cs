@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.HardwareSupport;
+using Common.InputSupport;
 using Common.InputSupport.DirectInput;
 using Common.MacroProgramming;
 using log4net;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace SimLinkup.HardwareSupport.DirectInput
 {
@@ -19,18 +22,18 @@ namespace SimLinkup.HardwareSupport.DirectInput
 
         #region Signal Creation
 
-        private void CreateInputSignals(DIPhysicalDeviceInfo device, out AnalogSignal[] analogSignals,
-            out DigitalSignal[] digitalSignals)
+        private void CreateSignals(out DigitalSignal[] buttons, out AnalogSignal[] axes, out AnalogSignal[] povs)
         {
-            if (device == null) throw new ArgumentNullException("device");
-            var analogSignalsToReturn = new List<AnalogSignal>();
-            var digitalSignalsToReturn = new List<DigitalSignal>();
+            var device = _deviceMonitor.DeviceInfo;
+            var buttonsToReturn = new List<DigitalSignal>();
+            var axesToReturn = new List<AnalogSignal>();
+            var povsToReturn = new List<AnalogSignal>();
 
             foreach (var button in device.Buttons)
             {
                 var thisSignal = new DigitalSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Digital Inputs";
+                thisSignal.Category = "Outputs";
+                thisSignal.CollectionName = "Digital Outputs";
                 thisSignal.FriendlyName = button.Alias;
                 thisSignal.Id = button.ToString();
                 thisSignal.Index = button.ControlNum;
@@ -42,14 +45,14 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = false;
-                digitalSignalsToReturn.Add(thisSignal);
+                buttonsToReturn.Add(thisSignal);
             }
 
             foreach (var axis in device.Axes)
             {
                 var thisSignal = new AnalogSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Analog Inputs";
+                thisSignal.Category = "Outputs";
+                thisSignal.CollectionName = "Analog Outputs";
                 thisSignal.FriendlyName = axis.Alias;
                 thisSignal.Id = axis.ToString();
                 thisSignal.Index = axis.ControlNum;
@@ -61,17 +64,17 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0;
-                thisSignal.MinValue = 0;
-                thisSignal.MaxValue = 1024;
+                thisSignal.MinValue = _deviceMonitor.AxisRangeMin;
+                thisSignal.MaxValue = _deviceMonitor.AxisRangeMax;
 
-                analogSignalsToReturn.Add(thisSignal);
+                axesToReturn.Add(thisSignal);
             }
 
             foreach (var axis in device.Povs)
             {
                 var thisSignal = new AnalogSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Analog Inputs";
+                thisSignal.Category = "Outputs";
+                thisSignal.CollectionName = "Analog Outputs";
                 thisSignal.FriendlyName = axis.Alias;
                 thisSignal.Id = axis.ToString();
                 thisSignal.Index = axis.ControlNum;
@@ -83,11 +86,16 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0;
-                analogSignalsToReturn.Add(thisSignal);
+                thisSignal.MinValue = -1;
+                thisSignal.MaxValue = _deviceMonitor.AxisRangeMax;
+                povsToReturn.Add(thisSignal);
             }
-            analogSignals = analogSignalsToReturn.ToArray();
-            digitalSignals = digitalSignalsToReturn.ToArray();
+
+            buttons = buttonsToReturn.ToArray();
+            axes = axesToReturn.ToArray();
+            povs = povsToReturn.ToArray();
         }
+
 
         #endregion
 
@@ -95,30 +103,57 @@ namespace SimLinkup.HardwareSupport.DirectInput
 
         #region Instance variables
 
-        private readonly AnalogSignal[] _analogInputSignals;
-        private readonly DigitalSignal[] _digitalInputSignals;
-        private DIPhysicalDeviceInfo _device;
-        private bool _isDisposed;
+        private readonly DigitalSignal[] _buttons;
+        private readonly AnalogSignal[] _axes;
+        private readonly AnalogSignal[] _povs;
+        private readonly Mediator _mediator;
+        private readonly DIDeviceMonitor _deviceMonitor;
+        private bool _isDisposed=false;
 
         #endregion
 
         #region Constructors
 
-        private DirectInputHardwareSupportModule()
-        {
-        }
+        private DirectInputHardwareSupportModule(){}
 
-        private DirectInputHardwareSupportModule(DIPhysicalDeviceInfo device)
+        private DirectInputHardwareSupportModule(Mediator mediator, DIDeviceMonitor deviceMonitor)
             : this()
         {
-            if (device == null) throw new ArgumentNullException("device");
-            _device = device;
-            CreateInputSignals(_device, out _analogInputSignals, out _digitalInputSignals);
+            if (mediator == null) throw new ArgumentNullException("mediator");
+            _mediator = mediator;
+            if (deviceMonitor == null) throw new ArgumentNullException("deviceMonitor");
+            _deviceMonitor = deviceMonitor;
+
+            CreateSignals(out _buttons, out _axes, out _povs);
+            _mediator.PhysicalControlStateChanged += _mediator_PhysicalControlStateChanged;
+        }
+
+
+        private void _mediator_PhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
+        {
+            if (e.Control.Parent != _deviceMonitor.DeviceInfo.Key) return;
+            switch (e.Control.ControlType)
+            {
+                case ControlType.Axis:
+                    var thisAxis = _axes.Where(x => x.Id == e.Control.ToString()).SingleOrDefault();
+                    thisAxis.State = e.CurrentState;
+                    break;
+                case ControlType.Button:
+                    var thisButton = _buttons.Where(x => x.Id == e.Control.ToString()).SingleOrDefault();
+                    thisButton.State = e.CurrentState == 1 ? true: false;
+                    break;
+                case ControlType.Pov:
+                    var thisPov = _povs.Where(x => x.Id == e.Control.ToString()).SingleOrDefault();
+                    thisPov.State = e.CurrentState;
+                    break;
+                default:
+                    break;
+            }
         }
 
         public override string FriendlyName
         {
-            get { return string.Format("DirectInput Device: {0}", _device.Alias); }
+            get { return string.Format("DirectInput Device: {0}", _deviceMonitor.DeviceInfo.Alias); }
         }
 
         public static IHardwareSupportModule[] GetInstances()
@@ -126,13 +161,12 @@ namespace SimLinkup.HardwareSupport.DirectInput
             var toReturn = new List<IHardwareSupportModule>();
             try
             {
-                using (var mediator = new Mediator(null))
+                var mediator = new Mediator(Application.OpenForms[0]);
+                mediator.RaiseEvents = true;
+                foreach (var deviceMonitor in mediator.DeviceMonitors)
                 {
-                    foreach (var device in mediator.DeviceMonitors)
-                    {
-                        IHardwareSupportModule thisHsm = new DirectInputHardwareSupportModule(device.Value.DeviceInfo);
-                        toReturn.Add(thisHsm);
-                    }
+                    IHardwareSupportModule thisHsm = new DirectInputHardwareSupportModule(mediator, deviceMonitor.Value);
+                    toReturn.Add(thisHsm);
                 }
             }
             catch (Exception e)
@@ -148,22 +182,22 @@ namespace SimLinkup.HardwareSupport.DirectInput
 
         public override AnalogSignal[] AnalogInputs
         {
-            get { return _analogInputSignals; }
+            get { return null; }
         }
 
         public override DigitalSignal[] DigitalInputs
         {
-            get { return _digitalInputSignals; }
+            get { return null; }
         }
 
         public override AnalogSignal[] AnalogOutputs
         {
-            get { return null; }
+            get { return _axes.Union(_povs).ToArray(); }
         }
 
         public override DigitalSignal[] DigitalOutputs
         {
-            get { return null; }
+            get { return _buttons.ToArray(); }
         }
 
         #endregion
@@ -205,8 +239,6 @@ namespace SimLinkup.HardwareSupport.DirectInput
             {
                 if (disposing)
                 {
-                    Common.Util.DisposeObject(_device); //disconnect 
-                    _device = null;
                 }
             }
             _isDisposed = true;

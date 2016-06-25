@@ -43,7 +43,7 @@ namespace Common.InputSupport.DirectInput
         ///   translation between the internal values used by the device, and the values 
         ///   that are expected by calling code.
         /// </summary>
-        private readonly int _axisRangeMin;
+        private readonly int _axisRangeMin=0;
 
         private readonly DIPhysicalDeviceInfo _deviceInfo;
 
@@ -153,7 +153,8 @@ namespace Common.InputSupport.DirectInput
         {
             get { return _deviceInfo; }
         }
-
+        public int AxisRangeMin { get { return _axisRangeMin; } }
+        public int AxisRangeMax {  get { return _axisRangeMax; } }
         #endregion
 
         #region Public Methods
