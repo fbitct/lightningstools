@@ -130,7 +130,7 @@ namespace Common.InputSupport.DirectInput
                     }
                     else if (doi.ObjectType == ObjectTypeGuid.ZAxis)
                     {
-                        axisName = "Y Axis";
+                        axisName = "Z Axis";
                     }
                     else if (doi.ObjectType == ObjectTypeGuid.RxAxis)
                     {

@@ -138,7 +138,7 @@ namespace Common.MacroProgramming
             var valueCurvePointList = new List<PointF>();
             var correlatedValueCurvePointList = new List<PointF>();
             
-            foreach (var sample in _signalStateHistory)
+            foreach (var sample in _signalStateHistory.ToList())
             {
                 x2 = width - ((float)(drawTime.Subtract(sample.Timestamp).TotalMilliseconds / _duration.TotalMilliseconds) * width);
                 if (x2 < 0) x2 = 0;

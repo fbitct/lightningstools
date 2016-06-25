@@ -44,7 +44,8 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 thisSignal.SubSource = null;
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
-                thisSignal.State = false;
+                var currentState = _mediator.GetPhysicalControlValue(button, StateType.Current);
+                thisSignal.State = currentState.HasValue ? currentState.Value==1 : false;
                 buttonsToReturn.Add(thisSignal);
             }
 
@@ -63,21 +64,22 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 thisSignal.SubSource = null;
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
-                thisSignal.State = 0;
+                var currentState = _mediator.GetPhysicalControlValue(axis, StateType.Current);
+                thisSignal.State = currentState.HasValue ? currentState.Value : _deviceMonitor.AxisRangeMin;
                 thisSignal.MinValue = _deviceMonitor.AxisRangeMin;
                 thisSignal.MaxValue = _deviceMonitor.AxisRangeMax;
 
                 axesToReturn.Add(thisSignal);
             }
 
-            foreach (var axis in device.Povs)
+            foreach (var pov in device.Povs)
             {
                 var thisSignal = new AnalogSignal();
                 thisSignal.Category = "Outputs";
                 thisSignal.CollectionName = "Analog Outputs";
-                thisSignal.FriendlyName = axis.Alias;
-                thisSignal.Id = axis.ToString();
-                thisSignal.Index = axis.ControlNum;
+                thisSignal.FriendlyName = pov.Alias;
+                thisSignal.Id = pov.ToString();
+                thisSignal.Index = pov.ControlNum;
                 thisSignal.PublisherObject = this;
                 thisSignal.Source = device;
                 thisSignal.SourceFriendlyName = device.Alias;
@@ -86,6 +88,8 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0;
+                var currentState = _mediator.GetPhysicalControlValue(pov, StateType.Current);
+                thisSignal.State = currentState.HasValue ? currentState.Value : -1;
                 thisSignal.MinValue = -1;
                 thisSignal.MaxValue = _deviceMonitor.AxisRangeMax;
                 povsToReturn.Add(thisSignal);
@@ -131,7 +135,7 @@ namespace SimLinkup.HardwareSupport.DirectInput
 
         private void _mediator_PhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
         {
-            if (e.Control.Parent != _deviceMonitor.DeviceInfo.Key) return;
+            if (e.Control.Parent.Key != _deviceMonitor.DeviceInfo.Key) return;
             switch (e.Control.ControlType)
             {
                 case ControlType.Axis:
