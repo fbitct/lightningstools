@@ -34,7 +34,6 @@
   <ItemGroup>
     <Compile Include="CompositeControl.cs" />
     <Compile Include="HardwareSupportModuleBase.cs" />
-    <Compile Include="HardwareSupportModuleRegistry.cs" />
     <Compile Include="IHardwareSupportModule.cs" />
     <Compile Include="MotorControl\DirectionalMotor.cs" />
     <Compile Include="MotorControl\MotorControlBase.cs" />
