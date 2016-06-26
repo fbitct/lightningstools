@@ -42,9 +42,13 @@ namespace Common.MacroProgramming
         public List<string> GetDistinctSignalSourceNames()
         {
             var toReturn = new List<string>();
-            foreach (var signal in
-                this.Where(x => x.SourceFriendlyName != null && !toReturn.Contains(x.SourceFriendlyName))
-                )
+
+            foreach 
+                (
+                var signal in this
+                    .Where(x => !string.IsNullOrWhiteSpace(x.SourceFriendlyName) && 
+                    !toReturn.Contains(x.SourceFriendlyName))
+            )
             {
                 toReturn.Add(signal.SourceFriendlyName);
             }

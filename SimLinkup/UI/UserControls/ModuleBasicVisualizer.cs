@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SimLinkup.UI.UserControls
@@ -25,10 +18,7 @@ namespace SimLinkup.UI.UserControls
 
         private void btnShowSignals_Click(object sender, EventArgs e)
         {
-            if (ShowSignals != null)
-            {
-                ShowSignals(this, null);
-            }
+            ShowSignals?.Invoke(this, null);
         }
         
     }

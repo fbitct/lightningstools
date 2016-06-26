@@ -40,11 +40,12 @@ namespace SDI
         ///   Creates an instance of the <see cref = "Device" /> class.
         /// </summary>
         /// <param name = "phccDevice"><see cref="Phcc.Device"/> object which will be used to communicate with DOA peripherals</param>
-        /// <param name = "doaAddress">Specifies the address of the SDI device on the PHCC DOA bus.</param>
-        public Device(Phcc.Device phccDevice, byte doaAddress): this()
+        /// <param name = "address">Specifies the address of the SDI device on the PHCC DOA bus.</param>
+        public Device(Phcc.Device phccDevice, byte address): this()
         {
-            this.PhccDevice = phccDevice;
-            _commandDispatcher = new PhccCommandDispatcher(phccDevice, doaAddress);
+            Address = address;
+            PhccDevice = phccDevice;
+            _commandDispatcher = new PhccCommandDispatcher(phccDevice, address);
         }
 
         /// <summary>
@@ -54,6 +55,7 @@ namespace SDI
         public event EventHandler<DeviceDataReceivedEventArgs> DeviceDataReceived;
         public ConnectionType ConnectionType { get; set; }
         public string COMPort { get; set; }
+        public byte Address { get; set; }
         public Phcc.Device PhccDevice { get; set; }
 
         #region Protocol

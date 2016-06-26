@@ -7,6 +7,8 @@ using Common.MacroProgramming;
 using log4net;
 using SDIDriver = SDI;
 using System.Linq;
+using System.Globalization;
+
 namespace SimLinkup.HardwareSupport.Henk.SDI
 {
     //Henk Synchro Drive Interface Hardware Support Module
@@ -22,7 +24,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
         private bool _isDisposed;
         private SDIDriver.Device _sdiDevice;
-        private string _deviceIdentification;
+        private byte _deviceAddress;
         private DeviceConfig _deviceConfig;
         private AnalogSignal _positionInputSignal;
         private List<AnalogSignal> _inputSignalsForPwmOutputChannels = new List<AnalogSignal>();
@@ -46,7 +48,16 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
         public override string FriendlyName
         {
-            get { return string.Format("Henk Synchro Drive Interface: {0}", _deviceIdentification); }
+            get
+            {
+                return string.Format("Henk Synchro Drive Interface: 0x{0} {1} on {2} [ {3} ]", 
+                    _deviceAddress.ToString("x"),
+                    string.IsNullOrWhiteSpace(DeviceFunction) ? string.Empty: string.Format("(\"{0}\")", DeviceFunction), 
+                    _deviceConfig.ConnectionType.HasValue 
+                        ? _deviceConfig.ConnectionType.Value.ToString() 
+                        : "UNKNOWN", 
+                    _deviceConfig.COMPort ?? "<UNKNOWN>");
+            }
         }
 
         public static IHardwareSupportModule[] GetInstances()
@@ -171,7 +182,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Synchro Control";
             thisSignal.FriendlyName = "Synchro Position (Degrees)";
-            thisSignal.Id = "HenkSDI__Synchro_Position";
+            thisSignal.Id = string.Format("HenkSDI__Synchro_Position[{0}]", _deviceAddress.ToString("x"));
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
@@ -202,12 +213,12 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             if (channelNumber < 8)
             {
                 thisSignal.FriendlyName = string.Format("DIG_PWM_{0} ({1})", channelNumber, "PWM");
-                thisSignal.Id = string.Format("HenkSDI__DIG_PWM_{0}", channelNumber);
+                thisSignal.Id = string.Format("HenkSDI__DIG_PWM_{0}[{1}]", channelNumber, _deviceAddress.ToString("x"));
             }
             else
             {
                 thisSignal.FriendlyName = string.Format("PWM_OUT ({1})", channelNumber, "PWM");
-                thisSignal.Id = string.Format("HenkSDI__PWM_OUT", channelNumber);
+                thisSignal.Id = string.Format("HenkSDI__PWM_OUT[{0}]", channelNumber, _deviceAddress.ToString("x"));
             }
 
             thisSignal.Index = channelNumber;
@@ -226,7 +237,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Digital/PWM Output Channels";
             thisSignal.FriendlyName = string.Format("DIG_PWM_{0} ({1})", channelNumber, "Digital");
-            thisSignal.Id = string.Format("HenkSDI__DIG_PWM_{0}", channelNumber);
+            thisSignal.Id = string.Format("HenkSDI__DIG_PWM_{0}[{1}]", channelNumber, _deviceAddress.ToString("x"));
             thisSignal.Index = channelNumber;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
@@ -388,7 +399,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                     _deviceConfig.ConnectionType.HasValue &&
                     _deviceConfig.ConnectionType.Value == SDIDriver.ConnectionType.PHCC &&
                     !string.IsNullOrWhiteSpace(_deviceConfig.COMPort) &&
-                    !string.IsNullOrWhiteSpace(_deviceConfig.DOAAddress)
+                    !string.IsNullOrWhiteSpace(_deviceConfig.Address)
                 )
                 {
                     ConfigurePhccConnection();
@@ -416,10 +427,11 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             {
                 var comPort = _deviceConfig.COMPort;
                 _sdiDevice = new SDIDriver.Device(COMPort: comPort);
-                //string identity = _sdiDevice.Identify();
-                string identity = string.Format("${0}", (_deviceConfig.DOAAddress ?? string.Empty).Trim());
-                string function = GetFunction(identity);
-                _deviceIdentification = string.Format("{0} ({1}) on USB [{2}]", identity, function, comPort);
+                byte addressByte = 0x00;
+                string addressString = (_deviceConfig.Address ?? "").ToLowerInvariant().Replace("0x",string.Empty).Trim();
+                bool addressIsValid = byte.TryParse(addressString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out addressByte);
+                if (!addressIsValid) return;
+                _deviceAddress = addressByte;
             }
             catch (Exception e)
             {
@@ -434,25 +446,23 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                 !_deviceConfig.ConnectionType.HasValue ||
                 _deviceConfig.ConnectionType.Value != SDIDriver.ConnectionType.PHCC ||
                 string.IsNullOrWhiteSpace(_deviceConfig.COMPort) ||
-                string.IsNullOrWhiteSpace(_deviceConfig.DOAAddress
+                string.IsNullOrWhiteSpace(_deviceConfig.Address
             )
             )
             {
                 return;
             }
-            byte doaAddressByte = 0x00;
-            string doaAddressString = (_deviceConfig.DOAAddress ?? "").Trim();
-            bool doaAddressIsValid = byte.TryParse(doaAddressString, out doaAddressByte);
-            if (!doaAddressIsValid) return;
+            byte addressByte = 0x00;
+            string addressString = (_deviceConfig.Address ?? "").ToLowerInvariant().Replace("0x", string.Empty).Trim();
+            bool addressIsValid = byte.TryParse(addressString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out addressByte);
+            if (!addressIsValid) return;
 
             try
             {
                 var comPort = (_deviceConfig.COMPort ?? "").Trim();
                 var phccDevice = new global::Phcc.Device(portName: comPort, openPort: false);
-                _sdiDevice = new SDIDriver.Device(phccDevice: phccDevice, doaAddress: doaAddressByte);
-                string identity = string.Format("${0}", (_deviceConfig.DOAAddress ?? string.Empty).Trim());
-                string function = GetFunction(identity);
-                _deviceIdentification = string.Format("{0} ({1}) on PHCC [{2}]", identity, function, comPort);
+                _sdiDevice = new SDIDriver.Device(phccDevice: phccDevice, address: addressByte);
+                _deviceAddress = addressByte;
 
             }
             catch (Exception e)
@@ -461,20 +471,21 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             }
             
         }
-        private static string GetFunction(string identification)
+        private string DeviceFunction
         {
-            if (identification != null)
+            get
             {
-                if (identification.Contains("30") || identification.Contains("48"))
+                if (_deviceAddress == 0x30 || _deviceAddress == 0x48)
                 {
                     return "PITCH";
                 }
-                else if (identification.Contains("32") || identification.Contains("50"))
+                else if (_deviceAddress == 0x32 || _deviceAddress == 0x50)
                 {
                     return "ROLL";
                 }
+
+                return string.Empty;
             }
-            return string.Empty;
         }
         private void ConfigurePowerDown()
         {
@@ -505,7 +516,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
         private void ConfigureStatorBaseAngles()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.StatorBaseAnglesConfig != null) return;
+            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.StatorBaseAnglesConfig == null) return;
             
             if (_deviceConfig.StatorBaseAnglesConfig.S1BaseAngleDegrees.HasValue)
             {
@@ -514,12 +525,12 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
             if (_deviceConfig.StatorBaseAnglesConfig.S2BaseAngleDegrees.HasValue)
             {
-                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S2, (short)((_deviceConfig.StatorBaseAnglesConfig.S1BaseAngleDegrees.Value / 360.000)* SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET));
+                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S2, (short)((_deviceConfig.StatorBaseAnglesConfig.S2BaseAngleDegrees.Value / 360.000)* SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET));
             }
 
             if (_deviceConfig.StatorBaseAnglesConfig.S3BaseAngleDegrees.HasValue)
             {
-                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S3, (short)((_deviceConfig.StatorBaseAnglesConfig.S1BaseAngleDegrees.Value / 360.000)* SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET));
+                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S3, (short)((_deviceConfig.StatorBaseAnglesConfig.S3BaseAngleDegrees.Value / 360.000)* SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET));
             }
             
         }

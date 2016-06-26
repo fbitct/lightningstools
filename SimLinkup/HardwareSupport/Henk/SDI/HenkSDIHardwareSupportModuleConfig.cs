@@ -29,7 +29,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
     {
         public ConnectionType? ConnectionType { get; set; }
         public string COMPort { get; set; }
-        public string DOAAddress { get; set; }
+        public string Address { get; set; }
         public PowerDownConfig PowerDownConfig { get; set; }
         public StatorBaseAnglesConfig StatorBaseAnglesConfig { get; set; }
         public MovementLimitsConfig MovementLimitsConfig { get; set; }

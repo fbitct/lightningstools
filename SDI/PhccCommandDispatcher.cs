@@ -6,11 +6,11 @@ namespace SDI
     {
         private bool _isDisposed = false;
         private Phcc.Device _phccDevice;
-        private byte _sdiAddressOnDOA;
-        public PhccCommandDispatcher(Phcc.Device phccDevice, byte sdiAddressOnDOA)
+        private byte _address;
+        public PhccCommandDispatcher(Phcc.Device phccDevice, byte address)
         {
             _phccDevice = phccDevice;
-            _sdiAddressOnDOA = sdiAddressOnDOA;
+            _address = address;
         }
 
         public string SendCommand(CommandSubaddress subaddress, byte data)
@@ -22,7 +22,7 @@ namespace SDI
         {
             if (_phccDevice != null)
             {
-                _phccDevice.DoaSendRaw(_sdiAddressOnDOA, (byte)subaddress, data);
+                _phccDevice.DoaSendRaw(_address, (byte)subaddress, data);
             }
         }
         public void Dispose()
