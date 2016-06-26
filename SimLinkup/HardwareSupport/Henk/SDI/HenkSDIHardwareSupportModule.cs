@@ -490,15 +490,16 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                 return;
             }
 
+            byte addressByte = 0x00;
+            string addressString = (_deviceConfig.Address ?? "").ToLowerInvariant().Replace("0x", string.Empty).Trim();
+            bool addressIsValid = byte.TryParse(addressString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out addressByte);
+            if (!addressIsValid) return;
+            _deviceAddress = addressByte;
+
             try
             {
                 var comPort = _deviceConfig.COMPort;
-                _sdiDevice = new SDIDriver.Device(COMPort: comPort);
-                byte addressByte = 0x00;
-                string addressString = (_deviceConfig.Address ?? "").ToLowerInvariant().Replace("0x",string.Empty).Trim();
-                bool addressIsValid = byte.TryParse(addressString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out addressByte);
-                if (!addressIsValid) return;
-                _deviceAddress = addressByte;
+                _sdiDevice = new SDIDriver.Device(COMPort: comPort);  
             }
             catch (Exception e)
             {
@@ -508,29 +509,31 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
         private void ConfigurePhccConnection()
         {
-            if (
+            if 
+            (
                 _deviceConfig == null ||
                 !_deviceConfig.ConnectionType.HasValue ||
                 _deviceConfig.ConnectionType.Value != SDIDriver.ConnectionType.PHCC ||
                 string.IsNullOrWhiteSpace(_deviceConfig.COMPort) ||
-                string.IsNullOrWhiteSpace(_deviceConfig.Address
-            )
+                string.IsNullOrWhiteSpace(_deviceConfig.Address)
             )
             {
                 return;
             }
+
             byte addressByte = 0x00;
             string addressString = (_deviceConfig.Address ?? "").ToLowerInvariant().Replace("0x", string.Empty).Trim();
             bool addressIsValid = byte.TryParse(addressString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out addressByte);
             if (!addressIsValid) return;
 
+            _deviceAddress = addressByte;
+            var comPort = (_deviceConfig.COMPort ?? "").Trim();
+
             try
             {
-                var comPort = (_deviceConfig.COMPort ?? "").Trim();
+
                 var phccDevice = new global::Phcc.Device(portName: comPort, openPort: false);
                 _sdiDevice = new SDIDriver.Device(phccDevice: phccDevice, address: addressByte);
-                _deviceAddress = addressByte;
-
             }
             catch (Exception e)
             {
@@ -542,69 +545,107 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         {
             get
             {
-                if (_deviceAddress == 0x30 || _deviceAddress == 0x48)
-                {
-                    return "PITCH";
-                }
-                else if (_deviceAddress == 0x32 || _deviceAddress == 0x50)
-                {
-                    return "ROLL";
-                }
-
-                return string.Empty;
+                return _deviceAddress == 0x30 || _deviceAddress == 0x48
+                        ? "PITCH"
+                        : _deviceAddress == 0x32 || _deviceAddress == 0x50 
+                            ? "ROLL"
+                            : string.Empty;
             }
         }
         private void ConfigurePowerDown()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.PowerDownConfig == null) return;
+            if (_sdiDevice == null) return;
 
-            _sdiDevice.ConfigurePowerDown(
-                powerDownState: _deviceConfig.PowerDownConfig.Enabled.HasValue && _deviceConfig.PowerDownConfig.Enabled.Value == true ? SDIDriver.PowerDownState.Enabled : SDIDriver.PowerDownState.Disabled,
-                powerDownLevel: _deviceConfig.PowerDownConfig.Level.HasValue ? _deviceConfig.PowerDownConfig.Level.Value : SDIDriver.PowerDownLevel.Half,
-                delayTimeMilliseconds: _deviceConfig.PowerDownConfig.DelayTimeMilliseconds.HasValue ? _deviceConfig.PowerDownConfig.DelayTimeMilliseconds.Value : (short)0
-            );
+            var powerDownState = _deviceConfig != null &&
+                                 _deviceConfig.PowerDownConfig != null &&
+                                 _deviceConfig.PowerDownConfig.Enabled.HasValue &&
+                                 _deviceConfig.PowerDownConfig.Enabled.Value == true
+                                    ? SDIDriver.PowerDownState.Enabled
+                                    : SDIDriver.PowerDownState.Disabled;
+
+            var powerDownLevel = _deviceConfig != null &&
+                                 _deviceConfig.PowerDownConfig != null &&
+                                 _deviceConfig.PowerDownConfig.Level.HasValue
+                                    ? _deviceConfig.PowerDownConfig.Level.Value
+                                    : SDIDriver.PowerDownLevel.Half;
+
+            var delayTimeMilliseconds = _deviceConfig != null &&
+                                        _deviceConfig.PowerDownConfig != null &&
+                                        _deviceConfig.PowerDownConfig.DelayTimeMilliseconds.HasValue
+                                            ? _deviceConfig.PowerDownConfig.DelayTimeMilliseconds.Value
+                                            : (short)0;
+
+            _sdiDevice.ConfigurePowerDown(powerDownState, powerDownLevel, delayTimeMilliseconds);
         }
 
         private void ConfigureMovementLimits()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.MovementLimitsConfig == null) return;
+            if (_sdiDevice == null) return;
 
-            if (_deviceConfig.MovementLimitsConfig.Min.HasValue)
-            {
-                _sdiDevice.SetIndicatorMovementLimitMinimum(_deviceConfig.MovementLimitsConfig.Min.Value);
-            }
+            var min = _deviceConfig != null &&
+                      _deviceConfig.MovementLimitsConfig != null &&
+                      _deviceConfig.MovementLimitsConfig.Min.HasValue
+                        ? _deviceConfig.MovementLimitsConfig.Min.Value
+                        : DeviceFunction == "PITCH"
+                            ? (byte)35 //default maximum for PITCH device if not specified in config file
+                            : (byte)0; //no minimum by default for anything except PITCH SDI device
 
-            if (_deviceConfig.MovementLimitsConfig.Max.HasValue)
-            {
-                _sdiDevice.SetIndicatorMovementLimitMaximum(_deviceConfig.MovementLimitsConfig.Max.Value);
-            }
-           
+            var max = _deviceConfig != null &&
+                      _deviceConfig.MovementLimitsConfig != null &&
+                      _deviceConfig.MovementLimitsConfig.Max.HasValue
+                        ? _deviceConfig.MovementLimitsConfig.Max.Value
+                        : DeviceFunction == "PITCH"
+                            ? (byte)175 //default maximum for PITCH device if not specified in config file
+                            : (byte)255; //255=no maximum by default for anything except PITCH SDI device
+            
+            _sdiDevice.SetIndicatorMovementLimitMinimum(min);
+            _sdiDevice.SetIndicatorMovementLimitMaximum(max);
         }
 
         private void ConfigureStatorBaseAngles()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.StatorBaseAnglesConfig == null) return;
-            
-            if (_deviceConfig.StatorBaseAnglesConfig.S1BaseAngleDegrees.HasValue)
-            {
-                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S1, (short)((_deviceConfig.StatorBaseAnglesConfig.S1BaseAngleDegrees.Value/360.000)* SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET));
-            }
+            if (_sdiDevice == null) return;
 
-            if (_deviceConfig.StatorBaseAnglesConfig.S2BaseAngleDegrees.HasValue)
-            {
-                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S2, (short)((_deviceConfig.StatorBaseAnglesConfig.S2BaseAngleDegrees.Value / 360.000)* SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET));
-            }
+            var s1StatorBaseAngle = _deviceConfig != null &&
+                                    _deviceConfig.StatorBaseAnglesConfig != null &&
+                                    _deviceConfig.StatorBaseAnglesConfig.S1BaseAngleDegrees.HasValue
+                                        ? ((_deviceConfig.StatorBaseAnglesConfig.S1BaseAngleDegrees.Value / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET)
+                                        : DeviceFunction == "PITCH"
+                                            ? ((240.000 / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET)
+                                            : DeviceFunction == "ROLL"
+                                                ? ((210.000 / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET)
+                                                : ((0.000 / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET);
 
-            if (_deviceConfig.StatorBaseAnglesConfig.S3BaseAngleDegrees.HasValue)
-            {
-                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S3, (short)((_deviceConfig.StatorBaseAnglesConfig.S3BaseAngleDegrees.Value / 360.000)* SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET));
-            }
-            
+            var s2StatorBaseAngle = _deviceConfig != null &&
+                                   _deviceConfig.StatorBaseAnglesConfig != null &&
+                                   _deviceConfig.StatorBaseAnglesConfig.S2BaseAngleDegrees.HasValue
+                                       ? ((_deviceConfig.StatorBaseAnglesConfig.S2BaseAngleDegrees.Value / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET)
+                                       : DeviceFunction == "PITCH"
+                                           ? ((0.000 / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET)
+                                           : DeviceFunction == "ROLL"
+                                               ? ((330.000 / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET)
+                                               : ((120.00 / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET);
+
+            var s3StatorBaseAngle = _deviceConfig != null &&
+                                   _deviceConfig.StatorBaseAnglesConfig != null &&
+                                   _deviceConfig.StatorBaseAnglesConfig.S2BaseAngleDegrees.HasValue
+                                       ? ((_deviceConfig.StatorBaseAnglesConfig.S2BaseAngleDegrees.Value / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET)
+                                       : DeviceFunction == "PITCH"
+                                           ? ((120.000 / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET)
+                                           : DeviceFunction == "ROLL"
+                                               ? ((90.000 / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET)
+                                               : ((240.00 / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET);
+
+            _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S1, (short)s1StatorBaseAngle);
+            _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S2, (short)s2StatorBaseAngle);
+            _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S3, (short)s3StatorBaseAngle);
+
+
         }
 
         private void ConfigureOutputChannels()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.OutputChannelsConfig== null) return;
+            if (_sdiDevice == null) return;
 
             _sdiDevice.ConfigureOutputChannels(
                 digPwm1: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_1),
@@ -616,65 +657,114 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                 digPwm7: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_7)
             );
             _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_1, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_1));
+            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_2, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_2));
+            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_3, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_3));
+            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_4, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_4));
+            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_5, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_5));
+            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_6, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_6));
+            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_7, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_7));
+            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.PWM_OUT, OutputChannelInitialValue(SDIDriver.OutputChannels.PWM_OUT));
 
-            
         }
 
         private void ConfigureUpdateRateControl()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.UpdateRateControlConfig== null) return;
-            
-            if (_deviceConfig.UpdateRateControlConfig.Mode.HasValue)
-            {
-                switch (_deviceConfig.UpdateRateControlConfig.Mode.Value)
-                {
-                    case SDIDriver.UpdateRateControlModes.Limit:
-                        ConfigureUpdateRateControlLimitMode();
-                        break;
-                    case SDIDriver.UpdateRateControlModes.Smooth:
-                        ConfigureUpdateRateControlSmoothMode();
-                        break;
-                }
-            }
+            if (_sdiDevice == null) return;
 
-            if (_deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.HasValue)
-            {
-                _sdiDevice.SetUpdateRateControlSpeed((short)_deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.Value);
-            }
+            ConfigureUpdateRateControlMode();
+            ConfigureUpdateRateControlSpeed();
+            ConfigureUpdateRateControlMiscellaneous();
+            ConfigureDiagnosticLEDBehavio();
 
-            if (_deviceConfig.UpdateRateControlConfig.UseShortestPath.HasValue)
-            {
-                _sdiDevice.SetUpdateRateControlMiscellaneous(_deviceConfig.UpdateRateControlConfig.UseShortestPath.Value);
-            }
-
-            if (_deviceConfig.DiagnosticLEDMode.HasValue)
-            {
-                _sdiDevice.ConfigureDiagnosticLEDBehavior(_deviceConfig.DiagnosticLEDMode.Value);
-            }
-            
         }
 
+        private void ConfigureDiagnosticLEDBehavio()
+        {
+            if (_sdiDevice == null) return;
+
+            var diagnosticLEDBehavior = _deviceConfig != null &&
+                                        _deviceConfig.UpdateRateControlConfig != null &&
+                                        _deviceConfig.DiagnosticLEDMode.HasValue
+                                            ? _deviceConfig.DiagnosticLEDMode.Value
+                                            : SDIDriver.DiagnosticLEDMode.Heartbeat;
+
+            _sdiDevice.ConfigureDiagnosticLEDBehavior(diagnosticLEDBehavior);
+        }
+
+        private void ConfigureUpdateRateControlMiscellaneous()
+        {
+            if (_sdiDevice == null) return;
+            var useShortestPath = _deviceConfig != null &&
+                                    _deviceConfig.UpdateRateControlConfig != null &&
+                                    _deviceConfig.UpdateRateControlConfig.UseShortestPath.HasValue
+                                        ? _deviceConfig.UpdateRateControlConfig.UseShortestPath.Value
+                                        : DeviceFunction == "PITCH"
+                                            ? false
+                                            : true;
+            _sdiDevice.SetUpdateRateControlMiscellaneous(useShortestPath);
+        }
+
+        private void ConfigureUpdateRateControlMode()
+        {
+            if (_sdiDevice == null) return;
+
+            var updateRateControlMode = _deviceConfig != null &&
+                                        _deviceConfig.UpdateRateControlConfig != null &&
+                                        _deviceConfig.UpdateRateControlConfig.Mode.HasValue
+                                            ? _deviceConfig.UpdateRateControlConfig.Mode.Value
+                                            : SDIDriver.UpdateRateControlModes.Limit; //use limit mode defaults (disabled) if no URC mode is specified in the config file
+
+            switch (updateRateControlMode)
+            {
+                case SDIDriver.UpdateRateControlModes.Limit:
+                    ConfigureUpdateRateControlLimitMode();
+                    break;
+                case SDIDriver.UpdateRateControlModes.Smooth:
+                    ConfigureUpdateRateControlSmoothMode();
+                    break;
+            }
+           
+        }
+        private void ConfigureUpdateRateControlSpeed()
+        {
+            if (_sdiDevice == null) return;
+            var stepUpdateDelayMillis = _deviceConfig != null &&
+                                        _deviceConfig.UpdateRateControlConfig != null &&
+                                        _deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.HasValue
+                                            ? (short)_deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.Value
+                                            : SDIDriver.Device.UPDATE_RATE_CONTROL_MIN_STEP_UPDATE_DELAY_MILLIS; //use the fastest updates by default 
+
+            _sdiDevice.SetUpdateRateControlSpeed(stepUpdateDelayMillis);
+        }
         private void ConfigureUpdateRateControlLimitMode()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.UpdateRateControlConfig == null) return;
-            _sdiDevice.SetUpdateRateControlModeLimit(_deviceConfig.UpdateRateControlConfig.LimitThreshold.HasValue 
-                ? _deviceConfig.UpdateRateControlConfig.LimitThreshold.Value 
-                : (byte)0);
+            if (_sdiDevice == null) return;
+            var limitThreshold =_deviceConfig != null &&
+                                _deviceConfig.UpdateRateControlConfig != null &&
+                                _deviceConfig.UpdateRateControlConfig.LimitThreshold.HasValue
+                                    ? _deviceConfig.UpdateRateControlConfig.LimitThreshold.Value
+                                    : (byte)0;
+
+            _sdiDevice.SetUpdateRateControlModeLimit(limitThreshold);
         }
 
         private void ConfigureUpdateRateControlSmoothMode()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.UpdateRateControlConfig == null) return;
-            _sdiDevice.SetUpdateRateControlModeSmooth(
-                smoothingMinimumThresholdValue:
-                    _deviceConfig.UpdateRateControlConfig.SmoothingMinimumThreshold.HasValue
-                        ? _deviceConfig.UpdateRateControlConfig.SmoothingMinimumThreshold.Value
-                        : (byte)0,
-                smoothingMode:
-                    _deviceConfig.UpdateRateControlConfig.SmoothingMode.HasValue
-                        ? _deviceConfig.UpdateRateControlConfig.SmoothingMode.Value
-                        : SDIDriver.UpdateRateControlSmoothingMode.Adaptive
-            );
+            if (_sdiDevice == null) return;
+            
+            var smoothingMinimumThresholdValue = _deviceConfig !=null && 
+                                                 _deviceConfig.UpdateRateControlConfig !=null &&
+                                                 _deviceConfig.UpdateRateControlConfig.SmoothingMinimumThreshold.HasValue
+                                                    ? _deviceConfig.UpdateRateControlConfig.SmoothingMinimumThreshold.Value
+                                                    : (byte)0;
+
+            var smoothingMode = _deviceConfig != null &&
+                                _deviceConfig.UpdateRateControlConfig != null &&
+                                _deviceConfig.UpdateRateControlConfig.SmoothingMode.HasValue
+                                    ? _deviceConfig.UpdateRateControlConfig.SmoothingMode.Value
+                                    : SDIDriver.UpdateRateControlSmoothingMode.Adaptive;
+
+            _sdiDevice.SetUpdateRateControlModeSmooth(smoothingMinimumThresholdValue, smoothingMode);
         }
 
         #endregion
