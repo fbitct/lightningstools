@@ -95,9 +95,9 @@ namespace SDITestTool
             cboDIG_PWM_7_Value.SelectedIndex = 0;
             nudDIG_PWM_7_DutyCycle.Value = 0;
 
-            cboOB_BUF_PWM_Mode.SelectedIndex = 1;
-            cboOB_BUF_PWM_Value.SelectedIndex = 0;
-            nudOB_BUF_PWM_DutyCycle.Value = 0;
+            cboPWM_OUT_Mode.SelectedIndex = 1;
+            cboPWM_OUT_Value.SelectedIndex = 0;
+            nudPWM_OUT_DutyCycle.Value = 0;
         }
         private void EnumerateSerialPorts()
         {
@@ -460,8 +460,8 @@ namespace SDITestTool
             cboDIG_PWM_7_Value.Enabled = (cboDIG_PWM_7_Mode.SelectedIndex == 0);
             nudDIG_PWM_7_DutyCycle.Enabled = (cboDIG_PWM_7_Mode.SelectedIndex == 1);
 
-            cboOB_BUF_PWM_Value.Enabled = (cboOB_BUF_PWM_Mode.SelectedIndex == 0);
-            nudOB_BUF_PWM_DutyCycle.Enabled = (cboOB_BUF_PWM_Mode.SelectedIndex == 1);
+            cboPWM_OUT_Value.Enabled = (cboPWM_OUT_Mode.SelectedIndex == 0);
+            nudPWM_OUT_DutyCycle.Enabled = (cboPWM_OUT_Mode.SelectedIndex == 1);
         }
         private bool DeviceIsValid
         {
@@ -689,11 +689,11 @@ namespace SDITestTool
         {
             if (chkStartDemo.Checked)
             {
-                chkStartDemo.Text = "Stop ConfigureDemoMode";
+                chkStartDemo.Text = "Stop Demo";
             }
             else
             {
-                chkStartDemo.Text = "Start ConfigureDemoMode";
+                chkStartDemo.Text = "Start Demo";
             }
             UpdateDemo();
         }
@@ -1187,9 +1187,9 @@ namespace SDITestTool
             UpdateChannelDigitalValue(cboDIG_PWM_7_Value, lblDIG_PWM_7_Hex, nudDIG_PWM_7_DutyCycle, OutputChannels.DIG_PWM_7);
             UpdateUIControlsEnabledOrDisabledState();
         }
-        private void cboOB_BUF_PWM_Mode_SelectedIndexChanged(object sender, EventArgs e)
+        private void cboPWM_OUT_Mode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateChannelDigitalValue(cboOB_BUF_PWM_Value, lblOB_BUF_PWM_Hex, nudOB_BUF_PWM_DutyCycle, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
+            UpdateChannelDigitalValue(cboPWM_OUT_Value, lblPWM_OUT_Hex, nudPWM_OUT_DutyCycle, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
             UpdateUIControlsEnabledOrDisabledState();
         }
 
@@ -1221,9 +1221,9 @@ namespace SDITestTool
         {
             UpdateChannelDigitalValue(cboDIG_PWM_7_Value, lblDIG_PWM_7_Hex, nudDIG_PWM_7_DutyCycle, OutputChannels.DIG_PWM_7);
         }
-        private void cboOB_BUF_PWM_Value_SelectedIndexChanged(object sender, EventArgs e)
+        private void cboPWM_OUT_Value_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateChannelDigitalValue(cboOB_BUF_PWM_Value, lblOB_BUF_PWM_Hex, nudOB_BUF_PWM_DutyCycle, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
+            UpdateChannelDigitalValue(cboPWM_OUT_Value, lblPWM_OUT_Hex, nudPWM_OUT_DutyCycle, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
         }
 
         private void nudDIG_PWM_1_DutyCycle_ValueChanged(object sender, EventArgs e)
@@ -1254,9 +1254,9 @@ namespace SDITestTool
         {
             UpdateChannelDutyCycle(nudDIG_PWM_7_DutyCycle, lblDIG_PWM_7_Hex, cboDIG_PWM_7_Value, OutputChannels.DIG_PWM_7);
         }
-        private void nudOB_BUF_PWM_DutyCycle_ValueChanged(object sender, EventArgs e)
+        private void nudPWM_OUT_DutyCycle_ValueChanged(object sender, EventArgs e)
         {
-            UpdateChannelDutyCycle(nudOB_BUF_PWM_DutyCycle, lblOB_BUF_PWM_Hex, cboOB_BUF_PWM_Value, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
+            UpdateChannelDutyCycle(nudPWM_OUT_DutyCycle, lblPWM_OUT_Hex, cboPWM_OUT_Value, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
         }
 
         private void UpdateChannelDigitalValue(ComboBox digitalValueComboBox, Label hexValueLabel, NumericUpDown dutyCycleNumericUpDownControl,OutputChannels outputChannel)
