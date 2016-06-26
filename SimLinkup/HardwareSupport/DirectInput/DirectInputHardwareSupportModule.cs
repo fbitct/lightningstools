@@ -39,7 +39,7 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 thisSignal.Index = button.ControlNum;
                 thisSignal.PublisherObject = this;
                 thisSignal.Source = device;
-                thisSignal.SourceFriendlyName = device.Alias;
+                thisSignal.SourceFriendlyName = this.FriendlyName;
                 thisSignal.SourceAddress = device.Guid.ToString();
                 thisSignal.SubSource = null;
                 thisSignal.SubSourceFriendlyName = null;
@@ -59,7 +59,7 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 thisSignal.Index = axis.ControlNum;
                 thisSignal.PublisherObject = this;
                 thisSignal.Source = device;
-                thisSignal.SourceFriendlyName = device.Alias;
+                thisSignal.SourceFriendlyName = this.FriendlyName;
                 thisSignal.SourceAddress = device.Guid.ToString();
                 thisSignal.SubSource = null;
                 thisSignal.SubSourceFriendlyName = null;
@@ -82,7 +82,7 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 thisSignal.Index = pov.ControlNum;
                 thisSignal.PublisherObject = this;
                 thisSignal.Source = device;
-                thisSignal.SourceFriendlyName = device.Alias;
+                thisSignal.SourceFriendlyName = this.FriendlyName;
                 thisSignal.SourceAddress = device.Guid.ToString();
                 thisSignal.SubSource = null;
                 thisSignal.SubSourceFriendlyName = null;
@@ -157,7 +157,13 @@ namespace SimLinkup.HardwareSupport.DirectInput
 
         public override string FriendlyName
         {
-            get { return string.Format("DirectInput Device: {0}", _deviceMonitor.DeviceInfo.Alias); }
+            get
+            {
+                var alias = _deviceMonitor.DeviceInfo.Alias;
+                var guid = _deviceMonitor.DeviceInfo.Guid;
+                var deviceNum = _deviceMonitor.DeviceInfo.DeviceNum;
+                return string.Format("DirectInput Device {0} - {1} [GUID:{2}]", deviceNum, alias, guid);
+            }
         }
 
         public static IHardwareSupportModule[] GetInstances()
