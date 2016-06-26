@@ -182,7 +182,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Synchro Control";
             thisSignal.FriendlyName = "Synchro Position (Degrees)";
-            thisSignal.Id = string.Format("HenkSDI__Synchro_Position[{0}]", _deviceAddress.ToString("x"));
+            thisSignal.Id = string.Format("HenkSDI[{0}]__Synchro_Position", _deviceAddress.ToString("x"));
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
@@ -213,12 +213,12 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             if (channelNumber < 8)
             {
                 thisSignal.FriendlyName = string.Format("DIG_PWM_{0} ({1})", channelNumber, "PWM");
-                thisSignal.Id = string.Format("HenkSDI__DIG_PWM_{0}[{1}]", channelNumber, _deviceAddress.ToString("x"));
+                thisSignal.Id = string.Format("HenkSDI[{0}]__DIG_PWM_{1}", channelNumber, _deviceAddress.ToString("x"));
             }
             else
             {
-                thisSignal.FriendlyName = string.Format("PWM_OUT ({1})", channelNumber, "PWM");
-                thisSignal.Id = string.Format("HenkSDI__PWM_OUT[{0}]", channelNumber, _deviceAddress.ToString("x"));
+                thisSignal.FriendlyName = string.Format("PWM_OUT (PWM)");
+                thisSignal.Id = string.Format("HenkSDI[{0}]__PWM_OUT", _deviceAddress.ToString("x"));
             }
 
             thisSignal.Index = channelNumber;
@@ -237,7 +237,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Digital/PWM Output Channels";
             thisSignal.FriendlyName = string.Format("DIG_PWM_{0} ({1})", channelNumber, "Digital");
-            thisSignal.Id = string.Format("HenkSDI__DIG_PWM_{0}[{1}]", channelNumber, _deviceAddress.ToString("x"));
+            thisSignal.Id = string.Format("HenkSDI[{0}]__DIG_PWM_{1}", channelNumber, _deviceAddress.ToString("x"));
             thisSignal.Index = channelNumber;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
