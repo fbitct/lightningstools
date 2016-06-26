@@ -206,8 +206,8 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             }
             else
             {
-                thisSignal.FriendlyName = string.Format("OB_BUF_PWM ({1})", channelNumber, "PWM");
-                thisSignal.Id = string.Format("HenkSDI__OB_BUF_PWM", channelNumber);
+                thisSignal.FriendlyName = string.Format("PWM_OUT ({1})", channelNumber, "PWM");
+                thisSignal.Id = string.Format("HenkSDI__PWM_OUT", channelNumber);
             }
 
             thisSignal.Index = channelNumber;
@@ -278,39 +278,39 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                 case SDIDriver.OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM:
                     return SDIDriver.OutputChannelMode.PWM;
                 case SDIDriver.OutputChannels.DIG_PWM_1:
-                    return _deviceConfig !=null && _deviceConfig.OutputChannels !=null &&
-                            _deviceConfig.OutputChannels.Channel1.HasValue
-                                ? _deviceConfig.OutputChannels.Channel1.Value
+                    return _deviceConfig !=null && _deviceConfig.OutputChannelsConfig !=null &&
+                            _deviceConfig.OutputChannelsConfig.DIG_PWM_1.HasValue
+                                ? _deviceConfig.OutputChannelsConfig.DIG_PWM_1.Value
                                 : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_2:
-                    return _deviceConfig != null && _deviceConfig.OutputChannels != null && 
-                            _deviceConfig.OutputChannels.Channel2.HasValue
-                                ? _deviceConfig.OutputChannels.Channel2.Value
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                            _deviceConfig.OutputChannelsConfig.DIG_PWM_2.HasValue
+                                ? _deviceConfig.OutputChannelsConfig.DIG_PWM_2.Value
                                 : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_3:
-                    return _deviceConfig != null && _deviceConfig.OutputChannels != null && 
-                            _deviceConfig.OutputChannels.Channel3.HasValue
-                                ? _deviceConfig.OutputChannels.Channel3.Value
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                            _deviceConfig.OutputChannelsConfig.DIG_PWM_3.HasValue
+                                ? _deviceConfig.OutputChannelsConfig.DIG_PWM_3.Value
                                 : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_4:
-                    return _deviceConfig != null && _deviceConfig.OutputChannels != null && 
-                            _deviceConfig.OutputChannels.Channel4.HasValue
-                                ? _deviceConfig.OutputChannels.Channel4.Value
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                            _deviceConfig.OutputChannelsConfig.DIG_PWM_4.HasValue
+                                ? _deviceConfig.OutputChannelsConfig.DIG_PWM_4.Value
                                 : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_5:
-                    return _deviceConfig != null && _deviceConfig.OutputChannels != null && 
-                            _deviceConfig.OutputChannels.Channel5.HasValue
-                                ? _deviceConfig.OutputChannels.Channel5.Value
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                            _deviceConfig.OutputChannelsConfig.DIG_PWM_5.HasValue
+                                ? _deviceConfig.OutputChannelsConfig.DIG_PWM_5.Value
                                 : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_6:
-                    return _deviceConfig != null && _deviceConfig.OutputChannels != null && 
-                            _deviceConfig.OutputChannels.Channel6.HasValue
-                                ? _deviceConfig.OutputChannels.Channel6.Value
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                            _deviceConfig.OutputChannelsConfig.DIG_PWM_6.HasValue
+                                ? _deviceConfig.OutputChannelsConfig.DIG_PWM_6.Value
                                 : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_7:
-                    return _deviceConfig != null && _deviceConfig.OutputChannels != null && 
-                            _deviceConfig.OutputChannels.Channel7.HasValue
-                                ? _deviceConfig.OutputChannels.Channel7.Value
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                            _deviceConfig.OutputChannelsConfig.DIG_PWM_7.HasValue
+                                ? _deviceConfig.OutputChannelsConfig.DIG_PWM_7.Value
                                 : SDIDriver.OutputChannelMode.Digital;
             }
             return SDIDriver.OutputChannelMode.Digital;
@@ -478,55 +478,55 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         }
         private void ConfigurePowerDown()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.PowerDown == null) return;
+            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.PowerDownConfig == null) return;
 
             _sdiDevice.ConfigurePowerDown(
-                powerDownState: _deviceConfig.PowerDown.Enabled.HasValue && _deviceConfig.PowerDown.Enabled.Value == true ? SDIDriver.PowerDownState.Enabled : SDIDriver.PowerDownState.Disabled,
-                powerDownLevel: _deviceConfig.PowerDown.Level.HasValue ? _deviceConfig.PowerDown.Level.Value : SDIDriver.PowerDownLevel.Half,
-                delayTimeMilliseconds: _deviceConfig.PowerDown.DelayTimeMilliseconds.HasValue ? _deviceConfig.PowerDown.DelayTimeMilliseconds.Value : (short)0
+                powerDownState: _deviceConfig.PowerDownConfig.Enabled.HasValue && _deviceConfig.PowerDownConfig.Enabled.Value == true ? SDIDriver.PowerDownState.Enabled : SDIDriver.PowerDownState.Disabled,
+                powerDownLevel: _deviceConfig.PowerDownConfig.Level.HasValue ? _deviceConfig.PowerDownConfig.Level.Value : SDIDriver.PowerDownLevel.Half,
+                delayTimeMilliseconds: _deviceConfig.PowerDownConfig.DelayTimeMilliseconds.HasValue ? _deviceConfig.PowerDownConfig.DelayTimeMilliseconds.Value : (short)0
             );
         }
 
         private void ConfigureMovementLimits()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.MovementLimits == null) return;
+            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.MovementLimitsConfig == null) return;
 
-            if (_deviceConfig.MovementLimits.Min.HasValue)
+            if (_deviceConfig.MovementLimitsConfig.Min.HasValue)
             {
-                _sdiDevice.SetIndicatorMovementLimitMinimum(_deviceConfig.MovementLimits.Min.Value);
+                _sdiDevice.SetIndicatorMovementLimitMinimum(_deviceConfig.MovementLimitsConfig.Min.Value);
             }
 
-            if (_deviceConfig.MovementLimits.Max.HasValue)
+            if (_deviceConfig.MovementLimitsConfig.Max.HasValue)
             {
-                _sdiDevice.SetIndicatorMovementLimitMaximum(_deviceConfig.MovementLimits.Max.Value);
+                _sdiDevice.SetIndicatorMovementLimitMaximum(_deviceConfig.MovementLimitsConfig.Max.Value);
             }
            
         }
 
         private void ConfigureStatorBaseAngles()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.StatorBaseAngles != null) return;
+            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.StatorBaseAnglesConfig != null) return;
             
-            if (_deviceConfig.StatorBaseAngles.S1.HasValue)
+            if (_deviceConfig.StatorBaseAnglesConfig.S1BaseAngleDegrees.HasValue)
             {
-                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S1, _deviceConfig.StatorBaseAngles.S1.Value);
+                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S1, (short)((_deviceConfig.StatorBaseAnglesConfig.S1BaseAngleDegrees.Value/360.000)* SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET));
             }
 
-            if (_deviceConfig.StatorBaseAngles.S2.HasValue)
+            if (_deviceConfig.StatorBaseAnglesConfig.S2BaseAngleDegrees.HasValue)
             {
-                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S2, _deviceConfig.StatorBaseAngles.S2.Value);
+                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S2, (short)((_deviceConfig.StatorBaseAnglesConfig.S1BaseAngleDegrees.Value / 360.000)* SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET));
             }
 
-            if (_deviceConfig.StatorBaseAngles.S3.HasValue)
+            if (_deviceConfig.StatorBaseAnglesConfig.S3BaseAngleDegrees.HasValue)
             {
-                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S3, _deviceConfig.StatorBaseAngles.S3.Value);
+                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S3, (short)((_deviceConfig.StatorBaseAnglesConfig.S1BaseAngleDegrees.Value / 360.000)* SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET));
             }
             
         }
 
         private void ConfigureOutputChannels()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.OutputChannels== null) return;
+            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.OutputChannelsConfig== null) return;
 
             _sdiDevice.ConfigureOutputChannels(
                 digPwm1: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_1),
@@ -542,11 +542,11 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
         private void ConfigureUpdateRateControl()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.UpdateRateControl== null) return;
+            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.UpdateRateControlConfig== null) return;
             
-            if (_deviceConfig.UpdateRateControl.Mode.HasValue)
+            if (_deviceConfig.UpdateRateControlConfig.Mode.HasValue)
             {
-                switch (_deviceConfig.UpdateRateControl.Mode.Value)
+                switch (_deviceConfig.UpdateRateControlConfig.Mode.Value)
                 {
                     case SDIDriver.UpdateRateControlModes.Limit:
                         ConfigureUpdateRateControlLimitMode();
@@ -557,14 +557,14 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                 }
             }
 
-            if (_deviceConfig.UpdateRateControl.StepUpdateDelayMillis.HasValue)
+            if (_deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.HasValue)
             {
-                _sdiDevice.SetUpdateRateControlSpeed(_deviceConfig.UpdateRateControl.StepUpdateDelayMillis.Value);
+                _sdiDevice.SetUpdateRateControlSpeed(_deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.Value);
             }
 
-            if (_deviceConfig.UpdateRateControl.UseShortestPath.HasValue)
+            if (_deviceConfig.UpdateRateControlConfig.UseShortestPath.HasValue)
             {
-                _sdiDevice.SetUpdateRateControlMiscellaneous(_deviceConfig.UpdateRateControl.UseShortestPath.Value);
+                _sdiDevice.SetUpdateRateControlMiscellaneous(_deviceConfig.UpdateRateControlConfig.UseShortestPath.Value);
             }
 
             if (_deviceConfig.DiagnosticLEDMode.HasValue)
@@ -576,23 +576,23 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
         private void ConfigureUpdateRateControlLimitMode()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.UpdateRateControl == null) return;
-            _sdiDevice.SetUpdateRateControlModeLimit(_deviceConfig.UpdateRateControl.LimitThreshold.HasValue 
-                ? _deviceConfig.UpdateRateControl.LimitThreshold.Value 
+            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.UpdateRateControlConfig == null) return;
+            _sdiDevice.SetUpdateRateControlModeLimit(_deviceConfig.UpdateRateControlConfig.LimitThreshold.HasValue 
+                ? _deviceConfig.UpdateRateControlConfig.LimitThreshold.Value 
                 : (byte)0);
         }
 
         private void ConfigureUpdateRateControlSmoothMode()
         {
-            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.UpdateRateControl == null) return;
+            if (_sdiDevice == null || _deviceConfig == null || _deviceConfig.UpdateRateControlConfig == null) return;
             _sdiDevice.SetUpdateRateControlModeSmooth(
                 smoothingMinimumThresholdValue:
-                    _deviceConfig.UpdateRateControl.SmoothingMinimumThreshold.HasValue
-                        ? _deviceConfig.UpdateRateControl.SmoothingMinimumThreshold.Value
+                    _deviceConfig.UpdateRateControlConfig.SmoothingMinimumThreshold.HasValue
+                        ? _deviceConfig.UpdateRateControlConfig.SmoothingMinimumThreshold.Value
                         : (byte)0,
                 smoothingMode:
-                    _deviceConfig.UpdateRateControl.SmoothingMode.HasValue
-                        ? _deviceConfig.UpdateRateControl.SmoothingMode.Value
+                    _deviceConfig.UpdateRateControlConfig.SmoothingMode.HasValue
+                        ? _deviceConfig.UpdateRateControlConfig.SmoothingMode.Value
                         : SDIDriver.UpdateRateControlSmoothingMode.Adaptive
             );
         }

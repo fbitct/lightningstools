@@ -30,11 +30,11 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         public ConnectionType? ConnectionType { get; set; }
         public string COMPort { get; set; }
         public string DOAAddress { get; set; }
-        public PowerDownConfig PowerDown { get; set; }
-        public StatorBaseAnglesConfig StatorBaseAngles { get; set; }
-        public MovementLimitsConfig MovementLimits { get; set; }
-        public OutputChannelConfig OutputChannels{ get; set; }
-        public UpdateRateControlConfig UpdateRateControl{ get; set; }
+        public PowerDownConfig PowerDownConfig { get; set; }
+        public StatorBaseAnglesConfig StatorBaseAnglesConfig { get; set; }
+        public MovementLimitsConfig MovementLimitsConfig { get; set; }
+        public OutputChannelsConfig OutputChannelsConfig{ get; set; }
+        public UpdateRateControlConfig UpdateRateControlConfig{ get; set; }
         public DiagnosticLEDMode? DiagnosticLEDMode { get; set; }
 
     }
@@ -50,9 +50,9 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
     [Serializable]
     public class StatorBaseAnglesConfig
     {
-        public short? S1 { get; set; }
-        public short? S2 { get; set; }
-        public short? S3 { get; set; }
+        public short? S1BaseAngleDegrees { get; set; }
+        public short? S2BaseAngleDegrees { get; set; }
+        public short? S3BaseAngleDegrees { get; set; }
     }
 
     [Serializable]
@@ -63,15 +63,15 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
     }
 
     [Serializable]
-    public class OutputChannelConfig
+    public class OutputChannelsConfig
     {
-        public OutputChannelMode? Channel1 { get; set; }
-        public OutputChannelMode? Channel2 { get; set; }
-        public OutputChannelMode? Channel3 { get; set; }
-        public OutputChannelMode? Channel4 { get; set; }
-        public OutputChannelMode? Channel5 { get; set; }
-        public OutputChannelMode? Channel6 { get; set; }
-        public OutputChannelMode? Channel7 { get; set; }
+        public OutputChannelMode? DIG_PWM_1 { get; set; }
+        public OutputChannelMode? DIG_PWM_2 { get; set; }
+        public OutputChannelMode? DIG_PWM_3 { get; set; }
+        public OutputChannelMode? DIG_PWM_4 { get; set; }
+        public OutputChannelMode? DIG_PWM_5 { get; set; }
+        public OutputChannelMode? DIG_PWM_6 { get; set; }
+        public OutputChannelMode? DIG_PWM_7 { get; set; }
     }
 
     [Serializable]
