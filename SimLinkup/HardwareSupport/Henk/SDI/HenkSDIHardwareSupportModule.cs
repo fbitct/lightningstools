@@ -674,36 +674,9 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             ConfigureUpdateRateControlMode();
             ConfigureUpdateRateControlSpeed();
             ConfigureUpdateRateControlMiscellaneous();
-            ConfigureDiagnosticLEDBehavio();
+            ConfigureDiagnosticLEDBehavior();
 
         }
-
-        private void ConfigureDiagnosticLEDBehavio()
-        {
-            if (_sdiDevice == null) return;
-
-            var diagnosticLEDBehavior = _deviceConfig != null &&
-                                        _deviceConfig.UpdateRateControlConfig != null &&
-                                        _deviceConfig.DiagnosticLEDMode.HasValue
-                                            ? _deviceConfig.DiagnosticLEDMode.Value
-                                            : SDIDriver.DiagnosticLEDMode.Heartbeat;
-
-            _sdiDevice.ConfigureDiagnosticLEDBehavior(diagnosticLEDBehavior);
-        }
-
-        private void ConfigureUpdateRateControlMiscellaneous()
-        {
-            if (_sdiDevice == null) return;
-            var useShortestPath = _deviceConfig != null &&
-                                    _deviceConfig.UpdateRateControlConfig != null &&
-                                    _deviceConfig.UpdateRateControlConfig.UseShortestPath.HasValue
-                                        ? _deviceConfig.UpdateRateControlConfig.UseShortestPath.Value
-                                        : DeviceFunction == "PITCH"
-                                            ? false
-                                            : true;
-            _sdiDevice.SetUpdateRateControlMiscellaneous(useShortestPath);
-        }
-
         private void ConfigureUpdateRateControlMode()
         {
             if (_sdiDevice == null) return;
@@ -723,23 +696,11 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                     ConfigureUpdateRateControlSmoothMode();
                     break;
             }
-           
-        }
-        private void ConfigureUpdateRateControlSpeed()
-        {
-            if (_sdiDevice == null) return;
-            var stepUpdateDelayMillis = _deviceConfig != null &&
-                                        _deviceConfig.UpdateRateControlConfig != null &&
-                                        _deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.HasValue
-                                            ? (short)_deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.Value
-                                            : SDIDriver.Device.UPDATE_RATE_CONTROL_MIN_STEP_UPDATE_DELAY_MILLIS; //use the fastest updates by default 
-
-            _sdiDevice.SetUpdateRateControlSpeed(stepUpdateDelayMillis);
         }
         private void ConfigureUpdateRateControlLimitMode()
         {
             if (_sdiDevice == null) return;
-            var limitThreshold =_deviceConfig != null &&
+            var limitThreshold = _deviceConfig != null &&
                                 _deviceConfig.UpdateRateControlConfig != null &&
                                 _deviceConfig.UpdateRateControlConfig.LimitThreshold.HasValue
                                     ? _deviceConfig.UpdateRateControlConfig.LimitThreshold.Value
@@ -751,9 +712,9 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         private void ConfigureUpdateRateControlSmoothMode()
         {
             if (_sdiDevice == null) return;
-            
-            var smoothingMinimumThresholdValue = _deviceConfig !=null && 
-                                                 _deviceConfig.UpdateRateControlConfig !=null &&
+
+            var smoothingMinimumThresholdValue = _deviceConfig != null &&
+                                                 _deviceConfig.UpdateRateControlConfig != null &&
                                                  _deviceConfig.UpdateRateControlConfig.SmoothingMinimumThreshold.HasValue
                                                     ? _deviceConfig.UpdateRateControlConfig.SmoothingMinimumThreshold.Value
                                                     : (byte)0;
@@ -765,6 +726,44 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                                     : SDIDriver.UpdateRateControlSmoothingMode.Adaptive;
 
             _sdiDevice.SetUpdateRateControlModeSmooth(smoothingMinimumThresholdValue, smoothingMode);
+        }
+
+        private void ConfigureUpdateRateControlSpeed()
+        {
+            if (_sdiDevice == null) return;
+            var stepUpdateDelayMillis = _deviceConfig != null &&
+                                        _deviceConfig.UpdateRateControlConfig != null &&
+                                        _deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.HasValue
+                                            ? (short)_deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.Value
+                                            : SDIDriver.Device.UPDATE_RATE_CONTROL_MIN_STEP_UPDATE_DELAY_MILLIS; //use the fastest updates by default 
+
+            _sdiDevice.SetUpdateRateControlSpeed(stepUpdateDelayMillis);
+        }
+
+        private void ConfigureUpdateRateControlMiscellaneous()
+        {
+            if (_sdiDevice == null) return;
+            var useShortestPath = _deviceConfig != null &&
+                                    _deviceConfig.UpdateRateControlConfig != null &&
+                                    _deviceConfig.UpdateRateControlConfig.UseShortestPath.HasValue
+                                        ? _deviceConfig.UpdateRateControlConfig.UseShortestPath.Value
+                                        : DeviceFunction == "PITCH"
+                                            ? false
+                                            : true;
+            _sdiDevice.SetUpdateRateControlMiscellaneous(useShortestPath);
+        }
+
+        private void ConfigureDiagnosticLEDBehavior()
+        {
+            if (_sdiDevice == null) return;
+
+            var diagnosticLEDBehavior = _deviceConfig != null &&
+                                        _deviceConfig.UpdateRateControlConfig != null &&
+                                        _deviceConfig.DiagnosticLEDMode.HasValue
+                                            ? _deviceConfig.DiagnosticLEDMode.Value
+                                            : SDIDriver.DiagnosticLEDMode.Heartbeat;
+
+            _sdiDevice.ConfigureDiagnosticLEDBehavior(diagnosticLEDBehavior);
         }
 
         #endregion
