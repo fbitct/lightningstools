@@ -702,8 +702,9 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             if (_sdiDevice == null) return;
             var limitThreshold = _deviceConfig != null &&
                                 _deviceConfig.UpdateRateControlConfig != null &&
-                                _deviceConfig.UpdateRateControlConfig.LimitThreshold.HasValue
-                                    ? _deviceConfig.UpdateRateControlConfig.LimitThreshold.Value
+                                _deviceConfig.UpdateRateControlConfig.ModeSettings is LimitModeSettings &&
+                                (_deviceConfig.UpdateRateControlConfig.ModeSettings as LimitModeSettings).LimitThreshold.HasValue
+                                    ? (_deviceConfig.UpdateRateControlConfig.ModeSettings as LimitModeSettings).LimitThreshold.Value
                                     : (byte)0;
 
             _sdiDevice.SetUpdateRateControlModeLimit(limitThreshold);
@@ -715,14 +716,16 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
             var smoothingMinimumThresholdValue = _deviceConfig != null &&
                                                  _deviceConfig.UpdateRateControlConfig != null &&
-                                                 _deviceConfig.UpdateRateControlConfig.SmoothingMinimumThreshold.HasValue
-                                                    ? _deviceConfig.UpdateRateControlConfig.SmoothingMinimumThreshold.Value
+                                                 _deviceConfig.UpdateRateControlConfig.ModeSettings is SmoothingModeSettings &&
+                                                 (_deviceConfig.UpdateRateControlConfig.ModeSettings as SmoothingModeSettings).SmoothingMinimumThreshold.HasValue
+                                                    ? (_deviceConfig.UpdateRateControlConfig.ModeSettings as SmoothingModeSettings).SmoothingMinimumThreshold.Value
                                                     : (byte)0;
 
             var smoothingMode = _deviceConfig != null &&
                                 _deviceConfig.UpdateRateControlConfig != null &&
-                                _deviceConfig.UpdateRateControlConfig.SmoothingMode.HasValue
-                                    ? _deviceConfig.UpdateRateControlConfig.SmoothingMode.Value
+                                _deviceConfig.UpdateRateControlConfig.ModeSettings is SmoothingModeSettings &&
+                                (_deviceConfig.UpdateRateControlConfig.ModeSettings as SmoothingModeSettings).SmoothingMode.HasValue
+                                    ? (_deviceConfig.UpdateRateControlConfig.ModeSettings as SmoothingModeSettings).SmoothingMode.Value
                                     : SDIDriver.UpdateRateControlSmoothingMode.Adaptive;
 
             _sdiDevice.SetUpdateRateControlModeSmooth(smoothingMinimumThresholdValue, smoothingMode);

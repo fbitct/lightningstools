@@ -74,20 +74,38 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         public OutputChannelConfig DIG_PWM_7 { get; set; }
         public OutputChannelConfig PWM_OUT { get; set; }
     }
+
     [Serializable]
     public class OutputChannelConfig
     {
         public OutputChannelMode ? Mode { get; set; }
         public byte? InitialValue { get; set; }
     }
+
     [Serializable]
     public class UpdateRateControlConfig
     {
         public UpdateRateControlModes? Mode { get; set; }
-        public byte? LimitThreshold { get; set; }
-        public byte? SmoothingMinimumThreshold { get; set; }
-        public UpdateRateControlSmoothingMode? SmoothingMode { get; set; }
+        public UpdateRateControlModeSettings ModeSettings { get; set; }
         public ushort? StepUpdateDelayMillis { get; set; }
         public bool? UseShortestPath { get; set; }
+    }
+
+    [Serializable]
+    [XmlInclude(typeof(LimitModeSettings))]
+    [XmlInclude(typeof(SmoothingModeSettings))]
+    public abstract class UpdateRateControlModeSettings { }
+
+    [Serializable]
+    public class LimitModeSettings:UpdateRateControlModeSettings
+    {
+        public byte? LimitThreshold { get; set; }
+    }
+
+    [Serializable]
+    public class SmoothingModeSettings: UpdateRateControlModeSettings
+    {
+        public byte? SmoothingMinimumThreshold { get; set; }
+        public UpdateRateControlSmoothingMode? SmoothingMode { get; set; }
     }
 }
