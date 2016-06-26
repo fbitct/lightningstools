@@ -7,12 +7,11 @@ namespace SDI
         private bool _isDisposed = false;
         private Phcc.Device _phccDevice;
         private byte _sdiAddressOnDOA;
-        public PhccCommandDispatcher(string portName, byte sdiAddressOnDOA, bool openPort=true)
+        public PhccCommandDispatcher(Phcc.Device phccDevice, byte sdiAddressOnDOA)
         {
-            _phccDevice = new Phcc.Device(portName, openPort);
+            _phccDevice = phccDevice;
             _sdiAddressOnDOA = sdiAddressOnDOA;
         }
-        
 
         public string SendCommand(CommandSubaddress subaddress, byte data)
         {

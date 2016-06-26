@@ -8,24 +8,20 @@ namespace SDI
     {
         private readonly object _serialPortLock = new object();
         private bool _isDisposed;
-        private string _portName;
+        private string _COMPort;
         private SerialPort _serialPort;
 
-        public SerialPortConnection(){}
-        public SerialPortConnection(string portName) : this(portName, true){}
-        public SerialPortConnection(string portName, bool openPort): this()
+        private SerialPortConnection(){}
+        public SerialPortConnection(string COMPort) :this()
         {
-            _portName = portName;
-            if (openPort)
-            {
-                EnsurePortIsReady();
-            }
+            _COMPort = COMPort;
         }
+
         public event EventHandler<SerialPortDataReceivedEventArgs> DataReceived;
 
         public string COMPort
         {
-            get { return _portName; }
+            get { return _COMPort; }
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -35,12 +31,13 @@ namespace SDI
                         "value");
                 }
                 ClosePort();
-                _portName = value;
+                _COMPort = value;
             }
         }
 
         public void DiscardInputBuffer()
         {
+            EnsurePortIsReady();
             lock (_serialPortLock)
             {
                 _serialPort.DiscardInBuffer();
@@ -91,25 +88,18 @@ namespace SDI
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        private void InitializeSerialPort(bool useHandshaking=false)
+        private void InitializeSerialPort()
         {
             lock (_serialPortLock)
             {
                 ClosePort();
                 _serialPort = new SerialPort();
-                _serialPort.PortName = _portName;
+                _serialPort.PortName = _COMPort;
                 _serialPort.BaudRate = 115200;
                 _serialPort.DataBits = 8;
                 _serialPort.Parity = Parity.None;
                 _serialPort.StopBits = StopBits.One;
-                if (useHandshaking)
-                {
-                    _serialPort.Handshake = Handshake.RequestToSend;
-                }
-                else
-                {
-                    _serialPort.Handshake = Handshake.None;
-                }
+                _serialPort.Handshake = Handshake.None;
                 _serialPort.ReceivedBytesThreshold = 1;
                 _serialPort.RtsEnable = true;
                 _serialPort.ReadTimeout = 500;

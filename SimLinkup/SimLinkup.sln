@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils.Resources", "..\F4U
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Compression", "..\Common\Compression\Common.Compression.csproj", "{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDI", "..\SDI\SDI.csproj", "{7326F627-65F7-4163-A579-36AF2091B357}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -205,6 +207,10 @@ Global
 		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}.Debug|x86.Build.0 = Debug|x86
 		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}.Release|x86.ActiveCfg = Release|x86
 		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}.Release|x86.Build.0 = Release|x86
+		{7326F627-65F7-4163-A579-36AF2091B357}.Debug|x86.ActiveCfg = Debug|x86
+		{7326F627-65F7-4163-A579-36AF2091B357}.Debug|x86.Build.0 = Debug|x86
+		{7326F627-65F7-4163-A579-36AF2091B357}.Release|x86.ActiveCfg = Release|x86
+		{7326F627-65F7-4163-A579-36AF2091B357}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

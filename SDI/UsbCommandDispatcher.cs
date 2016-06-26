@@ -12,9 +12,9 @@ namespace SDI
         {
             SerialPortConnection = serialPortConnection;
         }
-        public UsbCommandDispatcher(string portName, bool openPort=true)
+        public UsbCommandDispatcher(string COMPort)
         {
-            SerialPortConnection = new SerialPortConnection(portName, openPort);
+            SerialPortConnection = new SerialPortConnection(COMPort);
         }
 
         public string SendCommand(CommandSubaddress subaddress, byte data)

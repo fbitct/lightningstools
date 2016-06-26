@@ -15,48 +15,36 @@ namespace SDI
     [Synchronization]
     public sealed class Device : ContextBoundObject, IDisposable
     {
+
+
         private bool _isDisposed;
         private ICommandDispatcher _commandDispatcher;
-
         /// <summary>
         ///   Creates an instance of the <see cref = "Device" /> class.
         /// </summary>
         public Device(){}
 
         /// <summary>
-        ///   Creates an instance of the <see cref = "Device" /> class.
+        ///   Creates an instance of the <see cref = "Device" /> class that will communicate with the SDI board over USB.
         /// </summary>
-        /// <param name = "portName">The name of the COM port to use for 
+        /// <param name = "COMPort">The name of the COM port to use for 
         ///   communicating with the device (i.e. "COM1", "COM2",
         ///   etc.)</param>
-        public Device(string portName) : this(portName, true){}
-
-        /// <summary>
-        ///   Creates an instance of the <see cref = "Device" /> class.
-        /// </summary>
-        /// <param name = "portName">The name of the COM port to use for 
-        ///   communicating with the device (i.e. "COM1", "COM2",
-        ///   etc.)</param>
-        /// <param name = "openPort">Specifies whether to open the COM port immediately or wait till the first operation that requires doing so.</param>
-        public Device(string portName, bool openPort): this()
+        public Device(string COMPort): this()
         {
-            PortName = portName;
-            _commandDispatcher = new UsbCommandDispatcher(portName, openPort);
+            this.COMPort = COMPort;
+            _commandDispatcher = new UsbCommandDispatcher(COMPort);
         }
 
         /// <summary>
         ///   Creates an instance of the <see cref = "Device" /> class.
         /// </summary>
-        /// <param name = "portName">The name of the COM port to use for 
-        ///   communicating with the device (i.e. "COM1", "COM2",
-        ///   etc.)</param>
-        /// <param name = "openPort">Specifies whether to open the COM port immediately or wait till the first operation that requires doing so.</param>
+        /// <param name = "phccDevice"><see cref="Phcc.Device"/> object which will be used to communicate with DOA peripherals</param>
         /// <param name = "doaAddress">Specifies the address of the SDI device on the PHCC DOA bus.</param>
-
-        public Device(string portName, bool openPort, byte doaAddress): this()
+        public Device(Phcc.Device phccDevice, byte doaAddress): this()
         {
-            PortName = portName;
-            _commandDispatcher = new PhccCommandDispatcher(portName, doaAddress, openPort);
+            this.PhccDevice = phccDevice;
+            _commandDispatcher = new PhccCommandDispatcher(phccDevice, doaAddress);
         }
 
         /// <summary>
@@ -64,10 +52,23 @@ namespace SDI
         ///   the device transmits data back to the host (PC).
         /// </summary>
         public event EventHandler<DeviceDataReceivedEventArgs> DeviceDataReceived;
-        public string PortName { get; internal set; }
-        #region Protocol
+        public ConnectionType ConnectionType { get; set; }
+        public string COMPort { get; set; }
+        public Phcc.Device PhccDevice { get; set; }
 
+        #region Protocol
         
+        #region Public constants
+        public const int POWER_DOWN_MAX_DELAY_TIME_MILLIS = 2016;
+        public const short STATOR_BASE_ANGLE_MAX_OFFSET = 1023; //10 bits of precision allowed
+        public const byte UPDATE_RATE_CONTROL_LIMIT_MODE_MAX_LIMIT_THRESHOLD = 63; //6 bits
+        public const byte UPDATE_RATE_CONTROL_SMOOTH_MODE_MAX_SMOOTHING_MINIMUM_THRESHOLD = 15; //4 bits
+        public const short UPDATE_RATE_CONTROL_MIN_STEP_UPDATE_DELAY_MILLIS = 8;
+        public const short UPDATE_RATE_CONTROL_MAX_STEP_UPDATE_DELAY_MILLIS = 256;
+        public const byte DEMO_MODE_MAX_MOVEMENT_STEP_SIZE = 15; //4 bits
+        public const short WATCHDOG_MAX_COUNTDOWN = 63; //6 bits
+        #endregion
+
         public void MoveIndicatorFine(Quadrant quadrant, byte position)
         {
             switch (quadrant)
@@ -96,10 +97,9 @@ namespace SDI
 
         public void ConfigurePowerDown(PowerDownState powerDownState, PowerDownLevel powerDownLevel, short delayTimeMilliseconds)
         {
-            const uint MAX_POWER_DOWN_DELAY = 2016;
-            if (delayTimeMilliseconds <0 || delayTimeMilliseconds > MAX_POWER_DOWN_DELAY)
+            if (delayTimeMilliseconds <0 || delayTimeMilliseconds > POWER_DOWN_MAX_DELAY_TIME_MILLIS)
             {
-                throw new ArgumentOutOfRangeException("delayTimeMilliseconds", delayTimeMilliseconds, string.Format(CultureInfo.InvariantCulture, "Value must be >=0 and <= {0}", MAX_POWER_DOWN_DELAY));
+                throw new ArgumentOutOfRangeException("delayTimeMilliseconds", delayTimeMilliseconds, string.Format(CultureInfo.InvariantCulture, "Value must be >=0 and <= {0}", POWER_DOWN_MAX_DELAY_TIME_MILLIS));
             };
             var data =(byte)
                 (
@@ -113,13 +113,12 @@ namespace SDI
 
         public void SetStatorBaseAngle(StatorSignals statorSignal, short offset)
         {
-            const ushort MAX_OFFSET = 1023; //10 bits of precision allowed
             const ushort LSB_BITMASK = 0xFF; //bits 0-7
             const ushort MSB_BITMASK = 0x300; //bits 8-9
 
-            if (offset <0 || offset > MAX_OFFSET)
+            if (offset <0 || offset > STATOR_BASE_ANGLE_MAX_OFFSET)
             {
-                throw new ArgumentOutOfRangeException("offset", string.Format(CultureInfo.InvariantCulture, "Must be >=0 and <= {0}", MAX_OFFSET));
+                throw new ArgumentOutOfRangeException("offset", string.Format(CultureInfo.InvariantCulture, "Must be >=0 and <= {0}", STATOR_BASE_ANGLE_MAX_OFFSET));
             }
             byte lsb = (byte)(offset & LSB_BITMASK);
             byte msb = (byte)((offset & MSB_BITMASK) >>8);
@@ -251,20 +250,18 @@ namespace SDI
 
         public void SetUpdateRateControlModeLimit(byte limitThreshold)
         {
-            const byte MAX_LIMIT_THRESHOLD = 63; //6 bits
-            if (limitThreshold > MAX_LIMIT_THRESHOLD)
+            if (limitThreshold > UPDATE_RATE_CONTROL_LIMIT_MODE_MAX_LIMIT_THRESHOLD)
             {
-                throw new ArgumentOutOfRangeException("limitThreshold", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_LIMIT_THRESHOLD));
+                throw new ArgumentOutOfRangeException("limitThreshold", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", UPDATE_RATE_CONTROL_LIMIT_MODE_MAX_LIMIT_THRESHOLD));
             }
             var data = (byte)((byte)UpdateRateControlModes.Limit | limitThreshold);
             SendCommand(CommandSubaddress.UPDATE_RATE_CONTROL, data);
         }
         public void SetUpdateRateControlModeSmooth(byte smoothingMinimumThresholdValue, UpdateRateControlSmoothingMode smoothingMode)
         {
-            const byte MAX_SMOOTHING_MINIMUM_THRESHOLD = 15; //4 bits
-            if ((smoothingMinimumThresholdValue > MAX_SMOOTHING_MINIMUM_THRESHOLD))
+            if ((smoothingMinimumThresholdValue > UPDATE_RATE_CONTROL_SMOOTH_MODE_MAX_SMOOTHING_MINIMUM_THRESHOLD))
             {
-                throw new ArgumentOutOfRangeException("smoothingMinimumThresholdValue", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_SMOOTHING_MINIMUM_THRESHOLD));
+                throw new ArgumentOutOfRangeException("smoothingMinimumThresholdValue", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", UPDATE_RATE_CONTROL_SMOOTH_MODE_MAX_SMOOTHING_MINIMUM_THRESHOLD));
             }
             var data = (byte)((byte)UpdateRateControlModes.Smooth  | 
                 (byte)(smoothingMinimumThresholdValue <<2) | 
@@ -272,13 +269,11 @@ namespace SDI
             SendCommand(CommandSubaddress.UPDATE_RATE_CONTROL, data);
         }
 
-        public void SetUpdateRateControlSpeed(ushort stepUpdateDelayMillis)
+        public void SetUpdateRateControlSpeed(short stepUpdateDelayMillis)
         {
-            const ushort MAX_STEP_UPDATE_DELAY = 256; 
-           
-            if (stepUpdateDelayMillis <8 || stepUpdateDelayMillis > MAX_STEP_UPDATE_DELAY)
+            if (stepUpdateDelayMillis < UPDATE_RATE_CONTROL_MIN_STEP_UPDATE_DELAY_MILLIS || stepUpdateDelayMillis > UPDATE_RATE_CONTROL_MAX_STEP_UPDATE_DELAY_MILLIS)
             {
-                throw new ArgumentOutOfRangeException("stepUpdateDelayMillis", string.Format(CultureInfo.InvariantCulture, "Must be >=0 and <= {0}", MAX_STEP_UPDATE_DELAY));
+                throw new ArgumentOutOfRangeException("stepUpdateDelayMillis", string.Format(CultureInfo.InvariantCulture, "Must be >=0 and <= {0}", UPDATE_RATE_CONTROL_MAX_STEP_UPDATE_DELAY_MILLIS));
             }
             var data = (byte)((byte)UpdateRateControlModes.Speed | ((stepUpdateDelayMillis-8)/8));
             SendCommand(CommandSubaddress.UPDATE_RATE_CONTROL, data);
@@ -295,10 +290,9 @@ namespace SDI
         }
         public void ConfigureDemoMode(DemoMovementSpeeds movementSpeed, byte movementStepSize, DemoModus modus, bool start)
         {
-            const byte MAX_MOVEMENT_STEP_SIZE = 15; //4 bits
-            if (movementStepSize > MAX_MOVEMENT_STEP_SIZE)
+            if (movementStepSize > DEMO_MODE_MAX_MOVEMENT_STEP_SIZE)
             {
-                throw new ArgumentOutOfRangeException("movementStepSize", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_MOVEMENT_STEP_SIZE));
+                throw new ArgumentOutOfRangeException("movementStepSize", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", DEMO_MODE_MAX_MOVEMENT_STEP_SIZE));
             }
             var data = (byte)
                        (
@@ -329,10 +323,9 @@ namespace SDI
         }
         public void ConfigureWatchdog(bool enable, byte countdown)
         {
-            const ushort MAX_COUNTDOWN = 63; //6 bits
-            if (countdown > MAX_COUNTDOWN)
+            if (countdown > WATCHDOG_MAX_COUNTDOWN)
             {
-                throw new ArgumentOutOfRangeException("countdown", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", MAX_COUNTDOWN));
+                throw new ArgumentOutOfRangeException("countdown", string.Format(CultureInfo.InvariantCulture, "Must be <= {0}", WATCHDOG_MAX_COUNTDOWN));
             }
             var data = (byte)((enable ? 1 : 0) << 7) | countdown;
             SendCommand(CommandSubaddress.WATCHDOG_CONTROL, (byte)data);

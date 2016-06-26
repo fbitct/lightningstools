@@ -73,6 +73,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionType.cs" />
     <Compile Include="DeviceDataReceivedEventArgs.cs" />
     <Compile Include="DemoBits.cs" />
     <Compile Include="DemoModus.cs" />

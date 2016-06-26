@@ -467,7 +467,7 @@ namespace SDITestTool
         {
             get
             {
-                return _sdiDevice != null && !string.IsNullOrWhiteSpace(_sdiDevice.PortName);
+                return _sdiDevice != null && !string.IsNullOrWhiteSpace(_sdiDevice.COMPort);
             }
         }
         private bool IsPitch
@@ -854,7 +854,7 @@ namespace SDITestTool
 
         private void nudUpdateRateControlSpeed_ValueChanged(object sender, EventArgs e)
         {
-            var stepUpdateDelayMillis = (ushort)nudUpdateRateControlSpeed.Value;
+            var stepUpdateDelayMillis = (short)nudUpdateRateControlSpeed.Value;
             if (DeviceIsValid)
             {
                 try

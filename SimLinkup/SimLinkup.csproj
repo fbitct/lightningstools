@@ -120,6 +120,8 @@
     <Compile Include="HardwareSupport\DirectInput\DirectInputHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Gould\GouldHS070D51341HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Gould\GouldHS070D51341HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Henk\SDI\HenkSDIHardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Henk\SDI\HenkSDIHardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Lilbern\Lilbern3239HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Lilbern\Lilbern3239HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Malwin\Malwin19581HardwareSupportModule.cs" />
@@ -363,6 +365,9 @@
       <DependentUpon>SignalsView.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
+    <None Include="henksdi.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -508,11 +513,18 @@
       <Project>{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}</Project>
       <Name>PHCC</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SDI\SDI.csproj">
+      <Project>{7326f627-65f7-4163-a579-36af2091b357}</Project>
+      <Name>SDI</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Scripts\Scripts.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="HardwareSupport\Henk\ADI\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
