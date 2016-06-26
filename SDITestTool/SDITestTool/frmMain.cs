@@ -1189,7 +1189,7 @@ namespace SDITestTool
         }
         private void cboPWM_OUT_Mode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateChannelDigitalValue(cboPWM_OUT_Value, lblPWM_OUT_Hex, nudPWM_OUT_DutyCycle, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
+            UpdateChannelDigitalValue(cboPWM_OUT_Value, lblPWM_OUT_Hex, nudPWM_OUT_DutyCycle, OutputChannels.PWM_OUT);
             UpdateUIControlsEnabledOrDisabledState();
         }
 
@@ -1223,7 +1223,7 @@ namespace SDITestTool
         }
         private void cboPWM_OUT_Value_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateChannelDigitalValue(cboPWM_OUT_Value, lblPWM_OUT_Hex, nudPWM_OUT_DutyCycle, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
+            UpdateChannelDigitalValue(cboPWM_OUT_Value, lblPWM_OUT_Hex, nudPWM_OUT_DutyCycle, OutputChannels.PWM_OUT);
         }
 
         private void nudDIG_PWM_1_DutyCycle_ValueChanged(object sender, EventArgs e)
@@ -1256,12 +1256,12 @@ namespace SDITestTool
         }
         private void nudPWM_OUT_DutyCycle_ValueChanged(object sender, EventArgs e)
         {
-            UpdateChannelDutyCycle(nudPWM_OUT_DutyCycle, lblPWM_OUT_Hex, cboPWM_OUT_Value, OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM);
+            UpdateChannelDutyCycle(nudPWM_OUT_DutyCycle, lblPWM_OUT_Hex, cboPWM_OUT_Value, OutputChannels.PWM_OUT);
         }
 
         private void UpdateChannelDigitalValue(ComboBox digitalValueComboBox, Label hexValueLabel, NumericUpDown dutyCycleNumericUpDownControl,OutputChannels outputChannel)
         {
-            byte value = (digitalValueComboBox.SelectedItem as string) == "ON" ? (byte)0xFF : (byte)0x00;
+            byte value = (digitalValueComboBox.SelectedItem as string) == "ON" ? (byte)0x01 : (byte)0x00;
             hexValueLabel.Text = string.Format("Hex:0x{0}", value.ToString("X").PadLeft(2, '0'));
             if (dutyCycleNumericUpDownControl.Value != value)
             {
@@ -1278,7 +1278,7 @@ namespace SDITestTool
             byte value = (byte)dutyCycleNumericUpDownControl.Value;
             hexValueLabel.Text = string.Format("Hex:0x{0}", value.ToString("X").PadLeft(2, '0'));
 
-            if (value == 0xFF && digitalValueComboBox.SelectedIndex != 1)
+            if (value == 0x01 && digitalValueComboBox.SelectedIndex != 1)
             {
                 digitalValueComboBox.SelectedIndex = 1;
             }

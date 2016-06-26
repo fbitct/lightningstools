@@ -17,7 +17,7 @@ namespace SDI
         /// <summary>
         ///  On-board Op-Amp buffered PWM
         /// </summary>
-        ONBOARD_OPAMP_BUFFERED_PWM = 1,
+        PWM_OUT = 1,
         /// <summary>
         ///  User defined output #1
         /// </summary>

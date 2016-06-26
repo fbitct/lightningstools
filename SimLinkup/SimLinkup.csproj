@@ -367,6 +367,7 @@
     <Compile Include="Util.cs" />
     <None Include="henksdi.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>

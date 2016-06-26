@@ -50,9 +50,9 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
     [Serializable]
     public class StatorBaseAnglesConfig
     {
-        public short? S1BaseAngleDegrees { get; set; }
-        public short? S2BaseAngleDegrees { get; set; }
-        public short? S3BaseAngleDegrees { get; set; }
+        public ushort? S1BaseAngleDegrees { get; set; }
+        public ushort? S2BaseAngleDegrees { get; set; }
+        public ushort? S3BaseAngleDegrees { get; set; }
     }
 
     [Serializable]
@@ -65,15 +65,21 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
     [Serializable]
     public class OutputChannelsConfig
     {
-        public OutputChannelMode? DIG_PWM_1 { get; set; }
-        public OutputChannelMode? DIG_PWM_2 { get; set; }
-        public OutputChannelMode? DIG_PWM_3 { get; set; }
-        public OutputChannelMode? DIG_PWM_4 { get; set; }
-        public OutputChannelMode? DIG_PWM_5 { get; set; }
-        public OutputChannelMode? DIG_PWM_6 { get; set; }
-        public OutputChannelMode? DIG_PWM_7 { get; set; }
+        public OutputChannelConfig DIG_PWM_1 { get; set; }
+        public OutputChannelConfig DIG_PWM_2 { get; set; }
+        public OutputChannelConfig DIG_PWM_3 { get; set; }
+        public OutputChannelConfig DIG_PWM_4 { get; set; }
+        public OutputChannelConfig DIG_PWM_5 { get; set; }
+        public OutputChannelConfig DIG_PWM_6 { get; set; }
+        public OutputChannelConfig DIG_PWM_7 { get; set; }
+        public OutputChannelConfig PWM_OUT { get; set; }
     }
-
+    [Serializable]
+    public class OutputChannelConfig
+    {
+        public OutputChannelMode ? Mode { get; set; }
+        public byte? InitialValue { get; set; }
+    }
     [Serializable]
     public class UpdateRateControlConfig
     {
@@ -81,7 +87,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         public byte? LimitThreshold { get; set; }
         public byte? SmoothingMinimumThreshold { get; set; }
         public UpdateRateControlSmoothingMode? SmoothingMode { get; set; }
-        public short? StepUpdateDelayMillis { get; set; }
+        public ushort? StepUpdateDelayMillis { get; set; }
         public bool? UseShortestPath { get; set; }
     }
 }

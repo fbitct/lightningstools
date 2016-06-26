@@ -241,7 +241,7 @@ namespace SDI
                 case OutputChannels.DIG_PWM_7:
                     SendCommand(CommandSubaddress.DIG_PWM_7, value);
                     break;
-                case OutputChannels.ONBOARD_OPAMP_BUFFERED_PWM:
+                case OutputChannels.PWM_OUT:
                     SendCommand(CommandSubaddress.ONBOARD_PWM, value);
                     break;
                 default:
