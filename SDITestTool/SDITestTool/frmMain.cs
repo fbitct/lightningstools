@@ -125,6 +125,8 @@ namespace SDITestTool
             try
             {
                 _sdiDevice = new Device(selectedPort);
+                _sdiDevice.ConfigureUsbDebug(enable: false);
+                _sdiDevice.ConfigureWatchdog(enable: false, countdown: 0);
                 var identification = _sdiDevice.Identify().TrimEnd();
                 if (!string.IsNullOrWhiteSpace(identification))
                 {
@@ -133,9 +135,7 @@ namespace SDITestTool
             }
             catch (Exception ex)
             {
-#if (!DEBUG)
                 DisposeSDIDevice();
-#endif
                 lblIdentification.Text = "Identification:";
                 _log.Debug(ex);
             }

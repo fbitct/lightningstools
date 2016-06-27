@@ -42,6 +42,8 @@ namespace ADITestTool
             EnumerateSerialPorts();
             cbPitchDeviceSerialPort.Sorted = true;
             cbRollDeviceSerialPort.Sorted = true;
+            cbPitchDeviceSerialPort.Items.Clear();
+            cbRollDeviceSerialPort.Items.Clear();
             foreach (var port in _serialPorts)
             {
                 cbPitchDeviceSerialPort.Items.Add(port);
@@ -92,6 +94,10 @@ namespace ADITestTool
             try
             {
                 sdiDevice = new Device(selectedPort);
+                sdiDevice.ConfigureWatchdog(enable: false, countdown: 0);
+                sdiDevice.DisableWatchdog();
+                sdiDevice.ConfigureUsbDebug(enable: false);
+
                 var identification = sdiDevice.Identify().TrimEnd();
                 if (!string.IsNullOrWhiteSpace(identification))
                 {
@@ -213,14 +219,14 @@ namespace ADITestTool
         {
             get
             {
-                return _pitchSdiDevice != null && !string.IsNullOrWhiteSpace(_pitchSdiDevice.PortName);
+                return _pitchSdiDevice != null && !string.IsNullOrWhiteSpace(_pitchSdiDevice.COMPort);
             }
         }
         private bool RollDeviceIsValid
         {
             get
             {
-                return _rollSdiDevice != null && !string.IsNullOrWhiteSpace(_rollSdiDevice.PortName);
+                return _rollSdiDevice != null && !string.IsNullOrWhiteSpace(_rollSdiDevice.COMPort);
             }
         }
         private bool IsPitch(string deviceIdentification)
