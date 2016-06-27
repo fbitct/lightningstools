@@ -27,7 +27,7 @@ namespace F4Utils.SimSupport
 
             //determine how many seconds it's been since our last "current heading" datum snapshot?
             var dT = (float)((curTime.Subtract(_lastHeadingSample.Timestamp)).TotalMilliseconds);
-
+            if (dT < 100) return _lastIndicatedRateOfTurn;
             //determine the change in heading since our last snapshot
             var currentHeading = currentMagneticHeadingDecimalDegrees;
             var headingDelta = Common.Math.Util.AngleDelta((float)_lastHeadingSample.Value, currentHeading);
