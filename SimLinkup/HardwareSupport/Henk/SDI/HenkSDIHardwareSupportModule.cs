@@ -181,16 +181,15 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Synchro Control";
-            thisSignal.FriendlyName = "Synchro Position (Degrees)";
-            thisSignal.Id = string.Format("HenkSDI[{0}]__Synchro_Position", _deviceAddress.ToString("X").PadLeft(3, '0'));
+            thisSignal.FriendlyName = "Synchro Position (0-1023)";
+            thisSignal.Id = string.Format("HenkSDI[{0}]__Synchro_Position", "0x" + _deviceAddress.ToString("X").PadLeft(2, '0'));
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
-            thisSignal.IsAngle = true;
             thisSignal.MinValue = 0;
-            thisSignal.MaxValue = 360;
+            thisSignal.MaxValue = 1023;
             return thisSignal;
         }
         private List<DigitalSignal> CreateInputSignalsForDigitalOutputChannels()
@@ -212,13 +211,13 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             thisSignal.CollectionName = "Digital/PWM Output Channels";
             if (channelNumber < 8)
             {
-                thisSignal.FriendlyName = string.Format("DIG_PWM_{0} ({1})", channelNumber, "PWM");
-                thisSignal.Id = string.Format("HenkSDI[{0}]__DIG_PWM_{1}", channelNumber, _deviceAddress.ToString("X").PadLeft(2, '0'));
+                thisSignal.FriendlyName = string.Format("DIG_PWM_{0} ({1}) (% duty cycle)", channelNumber, "PWM");
+                thisSignal.Id = string.Format("HenkSDI[{0}]__DIG_PWM_{1}", "0x" + _deviceAddress.ToString("X").PadLeft(2, '0'), channelNumber);
             }
             else
             {
-                thisSignal.FriendlyName = string.Format("PWM_OUT (PWM)");
-                thisSignal.Id = string.Format("HenkSDI[{0}]__PWM_OUT", _deviceAddress.ToString("X").PadLeft(2, '0'));
+                thisSignal.FriendlyName = string.Format("PWM_OUT (PWM) (% duty cycle)");
+                thisSignal.Id = string.Format("HenkSDI[{0}]__PWM_OUT","0x"+ _deviceAddress.ToString("X").PadLeft(2, '0'));
             }
 
             thisSignal.Index = channelNumber;
@@ -227,8 +226,8 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
             thisSignal.IsPercentage = true;
-            thisSignal.MinValue = 0;
-            thisSignal.MaxValue = 1;
+            thisSignal.MinValue = 0; //0% duty cycle
+            thisSignal.MaxValue = 1; //100% duty cycle
             return thisSignal;
         }
         private DigitalSignal CreateInputSignalForOutputChannelConfiguredAsDigital(int channelNumber)
@@ -236,8 +235,8 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             var thisSignal = new DigitalSignal();
             thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Digital/PWM Output Channels";
-            thisSignal.FriendlyName = string.Format("DIG_PWM_{0} ({1})", channelNumber, "Digital");
-            thisSignal.Id = string.Format("HenkSDI[{0}]__DIG_PWM_{1}", channelNumber, _deviceAddress.ToString("X").PadLeft(2, '0'));
+            thisSignal.FriendlyName = string.Format("DIG_PWM_{0} ({1}) (0=OFF, 1=ON)", channelNumber, "Digital");
+            thisSignal.Id = string.Format("HenkSDI[{0}]__DIG_PWM_{1}", "0x" + _deviceAddress.ToString("X").PadLeft(2, '0'), channelNumber);
             thisSignal.Index = channelNumber;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;

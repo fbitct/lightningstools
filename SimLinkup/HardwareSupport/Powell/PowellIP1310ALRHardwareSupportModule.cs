@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 namespace SimLinkup.HardwareSupport.Powell
 {
-    public class PowellIP1310ALRHardwareSupportModule : HardwareSupportModuleBase, IDisposable
+    public class PowellIP1310ALRHardwareSupportModule: HardwareSupportModuleBase, IDisposable
     {
         #region Class variables
 
@@ -89,6 +89,7 @@ namespace SimLinkup.HardwareSupport.Powell
 
         public static IHardwareSupportModule[] GetInstances()
         {
+            return null; 
             var toReturn = new List<IHardwareSupportModule>();
             try
             {
