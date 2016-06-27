@@ -240,12 +240,12 @@
     <Content Include="Content\Mapping\Astronautics128710primaryADI.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\GouldHS070D51341standbyCompass.mapping">
+    <None Include="Content\Mapping\GouldHS070D51341standbyCompass.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping">
+    </None>
+    <None Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="Content\Mapping\Malwin19581hydraulicPressureA.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -255,9 +255,9 @@
     <Content Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\PowellIP1310ALRazimuthindicator.mapping">
+    <None Include="Content\Mapping\PowellIP1310ALRazimuthindicator.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="Content\Mapping\Simtek100181altimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -273,12 +273,12 @@
     <Content Include="Content\Mapping\Simtek100285altimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\Simtek100294fuelquantityindicator.mapping">
+    <None Include="Content\Mapping\Simtek100294fuelquantityindicator.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek100295fuelflowindicator.mapping">
+    </None>
+    <None Include="Content\Mapping\Simtek100295fuelflowindicator.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="Content\Mapping\Simtek10033501standbyADI.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -297,12 +297,12 @@
     <Content Include="Content\Mapping\Simtek101088nozzlePositionIndicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\Simtek10108902fuelquantityindicator.mapping">
+    <None Include="Content\Mapping\Simtek10108902fuelquantityindicator.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek101090epuFuel.mapping">
+    </None>
+    <None Include="Content\Mapping\Simtek101090epuFuel.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="Content\Mapping\Simtek101091oilPressure.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -312,6 +312,7 @@
     <Content Include="Content\Mapping\HenkF16ADISupportBoard.mapping">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Content\Mapping\Simtek101079standbyCompass.mapping" />
     <None Include="packages.config" />
     <None Include="PowellIP1310ALRHardwareSupportModule.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
