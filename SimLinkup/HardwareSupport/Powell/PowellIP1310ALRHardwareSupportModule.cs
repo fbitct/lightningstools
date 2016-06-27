@@ -89,8 +89,8 @@ namespace SimLinkup.HardwareSupport.Powell
 
         public static IHardwareSupportModule[] GetInstances()
         {
-            return null; 
             var toReturn = new List<IHardwareSupportModule>();
+            return toReturn.ToArray();
             try
             {
                 var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
