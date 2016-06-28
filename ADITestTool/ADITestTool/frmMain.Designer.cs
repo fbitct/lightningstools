@@ -28,10 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.lblDeviceAddress = new System.Windows.Forms.Label();
-            this.epErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.epErrorProvider = new System.Windows.Forms.ErrorProvider();
             this.gbPitchRawDataControl = new System.Windows.Forms.GroupBox();
             this.lblPitchSubAddr = new System.Windows.Forms.Label();
             this.txtPitchSubAddr = new System.Windows.Forms.TextBox();
@@ -102,11 +101,9 @@
             this.gbPitchRawDataControl.Controls.Add(this.btnPitchSendRaw);
             this.gbPitchRawDataControl.Controls.Add(this.lblPitchDataByte);
             this.gbPitchRawDataControl.Controls.Add(this.txtPitchDataByte);
-            this.gbPitchRawDataControl.Location = new System.Drawing.Point(6, 6);
-            this.gbPitchRawDataControl.Margin = new System.Windows.Forms.Padding(6);
+            this.gbPitchRawDataControl.Location = new System.Drawing.Point(3, 3);
             this.gbPitchRawDataControl.Name = "gbPitchRawDataControl";
-            this.gbPitchRawDataControl.Padding = new System.Windows.Forms.Padding(6);
-            this.gbPitchRawDataControl.Size = new System.Drawing.Size(304, 293);
+            this.gbPitchRawDataControl.Size = new System.Drawing.Size(152, 152);
             this.gbPitchRawDataControl.TabIndex = 0;
             this.gbPitchRawDataControl.TabStop = false;
             this.gbPitchRawDataControl.Text = "Raw Data Control (Pitch)";
@@ -114,31 +111,28 @@
             // lblPitchSubAddr
             // 
             this.lblPitchSubAddr.AutoSize = true;
-            this.lblPitchSubAddr.Location = new System.Drawing.Point(37, 118);
-            this.lblPitchSubAddr.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblPitchSubAddr.Location = new System.Drawing.Point(18, 61);
             this.lblPitchSubAddr.Name = "lblPitchSubAddr";
-            this.lblPitchSubAddr.Size = new System.Drawing.Size(133, 25);
+            this.lblPitchSubAddr.Size = new System.Drawing.Size(66, 13);
             this.lblPitchSubAddr.TabIndex = 2;
             this.lblPitchSubAddr.Text = "S&ubaddress:";
             this.lblPitchSubAddr.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtPitchSubAddr
             // 
-            this.txtPitchSubAddr.Location = new System.Drawing.Point(181, 112);
-            this.txtPitchSubAddr.Margin = new System.Windows.Forms.Padding(6);
+            this.txtPitchSubAddr.Location = new System.Drawing.Point(90, 58);
             this.txtPitchSubAddr.MaxLength = 4;
             this.txtPitchSubAddr.Name = "txtPitchSubAddr";
-            this.txtPitchSubAddr.Size = new System.Drawing.Size(88, 31);
+            this.txtPitchSubAddr.Size = new System.Drawing.Size(46, 20);
             this.txtPitchSubAddr.TabIndex = 3;
             this.txtPitchSubAddr.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txtPitchSubAddr.Leave += new System.EventHandler(this.txtPitchSubAddr_Leave);
             // 
             // btnPitchSendRaw
             // 
-            this.btnPitchSendRaw.Location = new System.Drawing.Point(42, 224);
-            this.btnPitchSendRaw.Margin = new System.Windows.Forms.Padding(6);
+            this.btnPitchSendRaw.Location = new System.Drawing.Point(21, 116);
             this.btnPitchSendRaw.Name = "btnPitchSendRaw";
-            this.btnPitchSendRaw.Size = new System.Drawing.Size(227, 44);
+            this.btnPitchSendRaw.Size = new System.Drawing.Size(114, 23);
             this.btnPitchSendRaw.TabIndex = 6;
             this.btnPitchSendRaw.Text = "&Send";
             this.btnPitchSendRaw.UseVisualStyleBackColor = true;
@@ -147,21 +141,19 @@
             // lblPitchDataByte
             // 
             this.lblPitchDataByte.AutoSize = true;
-            this.lblPitchDataByte.Location = new System.Drawing.Point(55, 168);
-            this.lblPitchDataByte.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblPitchDataByte.Location = new System.Drawing.Point(28, 87);
             this.lblPitchDataByte.Name = "lblPitchDataByte";
-            this.lblPitchDataByte.Size = new System.Drawing.Size(112, 25);
+            this.lblPitchDataByte.Size = new System.Drawing.Size(57, 13);
             this.lblPitchDataByte.TabIndex = 4;
             this.lblPitchDataByte.Text = "Data &Byte:";
             this.lblPitchDataByte.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtPitchDataByte
             // 
-            this.txtPitchDataByte.Location = new System.Drawing.Point(181, 162);
-            this.txtPitchDataByte.Margin = new System.Windows.Forms.Padding(6);
+            this.txtPitchDataByte.Location = new System.Drawing.Point(90, 84);
             this.txtPitchDataByte.MaxLength = 4;
             this.txtPitchDataByte.Name = "txtPitchDataByte";
-            this.txtPitchDataByte.Size = new System.Drawing.Size(88, 31);
+            this.txtPitchDataByte.Size = new System.Drawing.Size(46, 20);
             this.txtPitchDataByte.TabIndex = 5;
             this.txtPitchDataByte.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txtPitchDataByte.Leave += new System.EventHandler(this.txtPitchDataByte_Leave);
@@ -169,39 +161,38 @@
             // lblPitchDeviceSerialPort
             // 
             this.lblPitchDeviceSerialPort.AutoSize = true;
-            this.lblPitchDeviceSerialPort.Location = new System.Drawing.Point(17, 17);
-            this.lblPitchDeviceSerialPort.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblPitchDeviceSerialPort.Location = new System.Drawing.Point(8, 9);
             this.lblPitchDeviceSerialPort.Name = "lblPitchDeviceSerialPort";
-            this.lblPitchDeviceSerialPort.Size = new System.Drawing.Size(212, 25);
+            this.lblPitchDeviceSerialPort.Size = new System.Drawing.Size(106, 13);
             this.lblPitchDeviceSerialPort.TabIndex = 5;
             this.lblPitchDeviceSerialPort.Text = "Pitch SDI Serial &Port:";
             // 
             // cbPitchDeviceSerialPort
             // 
             this.cbPitchDeviceSerialPort.FormattingEnabled = true;
-            this.cbPitchDeviceSerialPort.Location = new System.Drawing.Point(238, 13);
-            this.cbPitchDeviceSerialPort.Margin = new System.Windows.Forms.Padding(6);
+            this.cbPitchDeviceSerialPort.Location = new System.Drawing.Point(119, 7);
             this.cbPitchDeviceSerialPort.Name = "cbPitchDeviceSerialPort";
-            this.cbPitchDeviceSerialPort.Size = new System.Drawing.Size(238, 33);
+            this.cbPitchDeviceSerialPort.Size = new System.Drawing.Size(121, 21);
             this.cbPitchDeviceSerialPort.TabIndex = 4;
             this.cbPitchDeviceSerialPort.SelectedIndexChanged += new System.EventHandler(this.cbPitchDeviceSerialPort_SelectedIndexChanged);
             // 
             // lblPitchDeviceIdentification
             // 
             this.lblPitchDeviceIdentification.AutoSize = true;
-            this.lblPitchDeviceIdentification.Location = new System.Drawing.Point(530, 17);
-            this.lblPitchDeviceIdentification.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblPitchDeviceIdentification.Location = new System.Drawing.Point(265, 9);
             this.lblPitchDeviceIdentification.Name = "lblPitchDeviceIdentification";
-            this.lblPitchDeviceIdentification.Size = new System.Drawing.Size(139, 25);
+            this.lblPitchDeviceIdentification.Size = new System.Drawing.Size(70, 13);
             this.lblPitchDeviceIdentification.TabIndex = 6;
             this.lblPitchDeviceIdentification.Text = "Identification:";
             // 
             // gbMain
             // 
             this.gbMain.Controls.Add(this.tabControl1);
-            this.gbMain.Location = new System.Drawing.Point(3, 90);
+            this.gbMain.Location = new System.Drawing.Point(2, 47);
+            this.gbMain.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.gbMain.Name = "gbMain";
-            this.gbMain.Size = new System.Drawing.Size(1060, 461);
+            this.gbMain.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gbMain.Size = new System.Drawing.Size(530, 240);
             this.gbMain.TabIndex = 11;
             this.gbMain.TabStop = false;
             // 
@@ -210,10 +201,11 @@
             this.tabControl1.Controls.Add(this.tabADI);
             this.tabControl1.Controls.Add(this.tabRawData);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(3, 27);
+            this.tabControl1.Location = new System.Drawing.Point(2, 15);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1054, 431);
+            this.tabControl1.Size = new System.Drawing.Size(526, 223);
             this.tabControl1.TabIndex = 0;
             // 
             // tabADI
@@ -234,140 +226,142 @@
             this.tabADI.Controls.Add(this.chkAuxFlagVisible);
             this.tabADI.Controls.Add(this.chkLocFlagVisible);
             this.tabADI.Controls.Add(this.chkGsFlagVisible);
-            this.tabADI.Location = new System.Drawing.Point(4, 34);
+            this.tabADI.Location = new System.Drawing.Point(4, 22);
+            this.tabADI.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tabADI.Name = "tabADI";
-            this.tabADI.Padding = new System.Windows.Forms.Padding(3);
-            this.tabADI.Size = new System.Drawing.Size(1046, 393);
+            this.tabADI.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabADI.Size = new System.Drawing.Size(518, 197);
             this.tabADI.TabIndex = 5;
             this.tabADI.Text = "ADI";
             this.tabADI.UseVisualStyleBackColor = true;
             // 
             // nudRollIndication
             // 
-            this.nudRollIndication.Location = new System.Drawing.Point(346, 305);
+            this.nudRollIndication.Location = new System.Drawing.Point(173, 159);
+            this.nudRollIndication.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.nudRollIndication.Maximum = new decimal(new int[] {
             1023,
             0,
             0,
             0});
             this.nudRollIndication.Name = "nudRollIndication";
-            this.nudRollIndication.Size = new System.Drawing.Size(120, 31);
+            this.nudRollIndication.Size = new System.Drawing.Size(60, 20);
             this.nudRollIndication.TabIndex = 15;
             this.nudRollIndication.ValueChanged += new System.EventHandler(this.nudRollIndication_ValueChanged);
             // 
             // nudSpherePitchIndication
             // 
-            this.nudSpherePitchIndication.Location = new System.Drawing.Point(346, 268);
+            this.nudSpherePitchIndication.Location = new System.Drawing.Point(173, 139);
+            this.nudSpherePitchIndication.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.nudSpherePitchIndication.Maximum = new decimal(new int[] {
-            700,
-            0,
-            0,
-            0});
-            this.nudSpherePitchIndication.Minimum = new decimal(new int[] {
-            140,
+            1023,
             0,
             0,
             0});
             this.nudSpherePitchIndication.Name = "nudSpherePitchIndication";
-            this.nudSpherePitchIndication.Size = new System.Drawing.Size(120, 31);
+            this.nudSpherePitchIndication.Size = new System.Drawing.Size(60, 20);
             this.nudSpherePitchIndication.TabIndex = 14;
-            this.nudSpherePitchIndication.Value = new decimal(new int[] {
-            140,
-            0,
-            0,
-            0});
             this.nudSpherePitchIndication.ValueChanged += new System.EventHandler(this.nudSpherePitchIndication_ValueChanged);
             // 
             // nudRateOfTurnIndicator
             // 
-            this.nudRateOfTurnIndicator.Location = new System.Drawing.Point(346, 231);
+            this.nudRateOfTurnIndicator.Location = new System.Drawing.Point(173, 120);
+            this.nudRateOfTurnIndicator.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.nudRateOfTurnIndicator.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.nudRateOfTurnIndicator.Name = "nudRateOfTurnIndicator";
-            this.nudRateOfTurnIndicator.Size = new System.Drawing.Size(120, 31);
+            this.nudRateOfTurnIndicator.Size = new System.Drawing.Size(60, 20);
             this.nudRateOfTurnIndicator.TabIndex = 13;
             this.nudRateOfTurnIndicator.ValueChanged += new System.EventHandler(this.nudRateOfTurnIndicator_ValueChanged);
             // 
             // nudGlideslopeIndicatorVertical
             // 
-            this.nudGlideslopeIndicatorVertical.Location = new System.Drawing.Point(346, 194);
+            this.nudGlideslopeIndicatorVertical.Location = new System.Drawing.Point(173, 101);
+            this.nudGlideslopeIndicatorVertical.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.nudGlideslopeIndicatorVertical.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.nudGlideslopeIndicatorVertical.Name = "nudGlideslopeIndicatorVertical";
-            this.nudGlideslopeIndicatorVertical.Size = new System.Drawing.Size(120, 31);
+            this.nudGlideslopeIndicatorVertical.Size = new System.Drawing.Size(60, 20);
             this.nudGlideslopeIndicatorVertical.TabIndex = 12;
             this.nudGlideslopeIndicatorVertical.ValueChanged += new System.EventHandler(this.nudGlideslopeIndicatorVertical_ValueChanged);
             // 
             // nudGlideslopeIndicatorHorizontal
             // 
-            this.nudGlideslopeIndicatorHorizontal.Location = new System.Drawing.Point(346, 157);
+            this.nudGlideslopeIndicatorHorizontal.Location = new System.Drawing.Point(173, 82);
+            this.nudGlideslopeIndicatorHorizontal.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.nudGlideslopeIndicatorHorizontal.Maximum = new decimal(new int[] {
             255,
             0,
             0,
             0});
             this.nudGlideslopeIndicatorHorizontal.Name = "nudGlideslopeIndicatorHorizontal";
-            this.nudGlideslopeIndicatorHorizontal.Size = new System.Drawing.Size(120, 31);
+            this.nudGlideslopeIndicatorHorizontal.Size = new System.Drawing.Size(60, 20);
             this.nudGlideslopeIndicatorHorizontal.TabIndex = 11;
             this.nudGlideslopeIndicatorHorizontal.ValueChanged += new System.EventHandler(this.nudGlideslopeIndicatorHorizontal_ValueChanged);
             // 
             // lblSphereRollIndication
             // 
             this.lblSphereRollIndication.AutoSize = true;
-            this.lblSphereRollIndication.Location = new System.Drawing.Point(32, 308);
+            this.lblSphereRollIndication.Location = new System.Drawing.Point(16, 160);
+            this.lblSphereRollIndication.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblSphereRollIndication.Name = "lblSphereRollIndication";
-            this.lblSphereRollIndication.Size = new System.Drawing.Size(240, 25);
+            this.lblSphereRollIndication.Size = new System.Drawing.Size(120, 13);
             this.lblSphereRollIndication.TabIndex = 10;
             this.lblSphereRollIndication.Text = "Sphere ROLL indication";
             // 
             // lblSpherePitchIndication
             // 
             this.lblSpherePitchIndication.AutoSize = true;
-            this.lblSpherePitchIndication.Location = new System.Drawing.Point(32, 271);
+            this.lblSpherePitchIndication.Location = new System.Drawing.Point(16, 141);
+            this.lblSpherePitchIndication.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblSpherePitchIndication.Name = "lblSpherePitchIndication";
-            this.lblSpherePitchIndication.Size = new System.Drawing.Size(247, 25);
+            this.lblSpherePitchIndication.Size = new System.Drawing.Size(124, 13);
             this.lblSpherePitchIndication.TabIndex = 9;
             this.lblSpherePitchIndication.Text = "Sphere PITCH indication";
             // 
             // lblRateOfTurnIndicator
             // 
             this.lblRateOfTurnIndicator.AutoSize = true;
-            this.lblRateOfTurnIndicator.Location = new System.Drawing.Point(32, 234);
+            this.lblRateOfTurnIndicator.Location = new System.Drawing.Point(16, 122);
+            this.lblRateOfTurnIndicator.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblRateOfTurnIndicator.Name = "lblRateOfTurnIndicator";
-            this.lblRateOfTurnIndicator.Size = new System.Drawing.Size(219, 25);
+            this.lblRateOfTurnIndicator.Size = new System.Drawing.Size(111, 13);
             this.lblRateOfTurnIndicator.TabIndex = 8;
             this.lblRateOfTurnIndicator.Text = "Rate of Turn Indicator";
             // 
             // lblGlideslopeIndicatorVertical
             // 
             this.lblGlideslopeIndicatorVertical.AutoSize = true;
-            this.lblGlideslopeIndicatorVertical.Location = new System.Drawing.Point(32, 197);
+            this.lblGlideslopeIndicatorVertical.Location = new System.Drawing.Point(16, 102);
+            this.lblGlideslopeIndicatorVertical.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblGlideslopeIndicatorVertical.Name = "lblGlideslopeIndicatorVertical";
-            this.lblGlideslopeIndicatorVertical.Size = new System.Drawing.Size(280, 25);
+            this.lblGlideslopeIndicatorVertical.Size = new System.Drawing.Size(138, 13);
             this.lblGlideslopeIndicatorVertical.TabIndex = 7;
             this.lblGlideslopeIndicatorVertical.Text = "Glideslope Indicator Vertical";
             // 
             // lblGlideslopeIndicatorHorizontal
             // 
             this.lblGlideslopeIndicatorHorizontal.AutoSize = true;
-            this.lblGlideslopeIndicatorHorizontal.Location = new System.Drawing.Point(32, 160);
+            this.lblGlideslopeIndicatorHorizontal.Location = new System.Drawing.Point(16, 83);
+            this.lblGlideslopeIndicatorHorizontal.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblGlideslopeIndicatorHorizontal.Name = "lblGlideslopeIndicatorHorizontal";
-            this.lblGlideslopeIndicatorHorizontal.Size = new System.Drawing.Size(305, 25);
+            this.lblGlideslopeIndicatorHorizontal.Size = new System.Drawing.Size(150, 13);
             this.lblGlideslopeIndicatorHorizontal.TabIndex = 6;
             this.lblGlideslopeIndicatorHorizontal.Text = "Glideslope Indicator Horizontal";
             // 
             // chkEnableRollAndPitch
             // 
             this.chkEnableRollAndPitch.AutoSize = true;
-            this.chkEnableRollAndPitch.Location = new System.Drawing.Point(375, 94);
+            this.chkEnableRollAndPitch.Location = new System.Drawing.Point(188, 49);
+            this.chkEnableRollAndPitch.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chkEnableRollAndPitch.Name = "chkEnableRollAndPitch";
-            this.chkEnableRollAndPitch.Size = new System.Drawing.Size(266, 29);
+            this.chkEnableRollAndPitch.Size = new System.Drawing.Size(137, 17);
             this.chkEnableRollAndPitch.TabIndex = 5;
             this.chkEnableRollAndPitch.Text = "ENABLE Roll and Pitch";
             this.chkEnableRollAndPitch.UseVisualStyleBackColor = true;
@@ -376,9 +370,10 @@
             // chkEnableGlideslope
             // 
             this.chkEnableGlideslope.AutoSize = true;
-            this.chkEnableGlideslope.Location = new System.Drawing.Point(375, 59);
+            this.chkEnableGlideslope.Location = new System.Drawing.Point(188, 31);
+            this.chkEnableGlideslope.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chkEnableGlideslope.Name = "chkEnableGlideslope";
-            this.chkEnableGlideslope.Size = new System.Drawing.Size(235, 29);
+            this.chkEnableGlideslope.Size = new System.Drawing.Size(120, 17);
             this.chkEnableGlideslope.TabIndex = 4;
             this.chkEnableGlideslope.Text = "ENABLE Glideslope";
             this.chkEnableGlideslope.UseVisualStyleBackColor = true;
@@ -387,9 +382,10 @@
             // chkEnableFlagsAndRot
             // 
             this.chkEnableFlagsAndRot.AutoSize = true;
-            this.chkEnableFlagsAndRot.Location = new System.Drawing.Point(375, 24);
+            this.chkEnableFlagsAndRot.Location = new System.Drawing.Point(188, 12);
+            this.chkEnableFlagsAndRot.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chkEnableFlagsAndRot.Name = "chkEnableFlagsAndRot";
-            this.chkEnableFlagsAndRot.Size = new System.Drawing.Size(278, 29);
+            this.chkEnableFlagsAndRot.Size = new System.Drawing.Size(143, 17);
             this.chkEnableFlagsAndRot.TabIndex = 3;
             this.chkEnableFlagsAndRot.Text = "ENABLE Flags and ROT";
             this.chkEnableFlagsAndRot.UseVisualStyleBackColor = true;
@@ -398,9 +394,10 @@
             // chkAuxFlagVisible
             // 
             this.chkAuxFlagVisible.AutoSize = true;
-            this.chkAuxFlagVisible.Location = new System.Drawing.Point(37, 94);
+            this.chkAuxFlagVisible.Location = new System.Drawing.Point(18, 49);
+            this.chkAuxFlagVisible.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chkAuxFlagVisible.Name = "chkAuxFlagVisible";
-            this.chkAuxFlagVisible.Size = new System.Drawing.Size(205, 29);
+            this.chkAuxFlagVisible.Size = new System.Drawing.Size(104, 17);
             this.chkAuxFlagVisible.TabIndex = 2;
             this.chkAuxFlagVisible.Text = "AUX Flag Visible";
             this.chkAuxFlagVisible.UseVisualStyleBackColor = true;
@@ -409,9 +406,10 @@
             // chkLocFlagVisible
             // 
             this.chkLocFlagVisible.AutoSize = true;
-            this.chkLocFlagVisible.Location = new System.Drawing.Point(37, 59);
+            this.chkLocFlagVisible.Location = new System.Drawing.Point(18, 31);
+            this.chkLocFlagVisible.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chkLocFlagVisible.Name = "chkLocFlagVisible";
-            this.chkLocFlagVisible.Size = new System.Drawing.Size(205, 29);
+            this.chkLocFlagVisible.Size = new System.Drawing.Size(103, 17);
             this.chkLocFlagVisible.TabIndex = 1;
             this.chkLocFlagVisible.Text = "LOC Flag Visible";
             this.chkLocFlagVisible.UseVisualStyleBackColor = true;
@@ -420,9 +418,10 @@
             // chkGsFlagVisible
             // 
             this.chkGsFlagVisible.AutoSize = true;
-            this.chkGsFlagVisible.Location = new System.Drawing.Point(37, 24);
+            this.chkGsFlagVisible.Location = new System.Drawing.Point(18, 12);
+            this.chkGsFlagVisible.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chkGsFlagVisible.Name = "chkGsFlagVisible";
-            this.chkGsFlagVisible.Size = new System.Drawing.Size(192, 29);
+            this.chkGsFlagVisible.Size = new System.Drawing.Size(97, 17);
             this.chkGsFlagVisible.TabIndex = 0;
             this.chkGsFlagVisible.Text = "GS Flag Visible";
             this.chkGsFlagVisible.UseVisualStyleBackColor = true;
@@ -432,9 +431,10 @@
             // 
             this.tabRawData.Controls.Add(this.gbRollRawDataControl);
             this.tabRawData.Controls.Add(this.gbPitchRawDataControl);
-            this.tabRawData.Location = new System.Drawing.Point(4, 34);
+            this.tabRawData.Location = new System.Drawing.Point(4, 22);
+            this.tabRawData.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tabRawData.Name = "tabRawData";
-            this.tabRawData.Size = new System.Drawing.Size(1046, 393);
+            this.tabRawData.Size = new System.Drawing.Size(518, 197);
             this.tabRawData.TabIndex = 4;
             this.tabRawData.Text = "Raw Data";
             this.tabRawData.UseVisualStyleBackColor = true;
@@ -446,11 +446,9 @@
             this.gbRollRawDataControl.Controls.Add(this.btnRollSendRaw);
             this.gbRollRawDataControl.Controls.Add(this.lblRollDataByte);
             this.gbRollRawDataControl.Controls.Add(this.txtRollDataByte);
-            this.gbRollRawDataControl.Location = new System.Drawing.Point(322, 6);
-            this.gbRollRawDataControl.Margin = new System.Windows.Forms.Padding(6);
+            this.gbRollRawDataControl.Location = new System.Drawing.Point(161, 3);
             this.gbRollRawDataControl.Name = "gbRollRawDataControl";
-            this.gbRollRawDataControl.Padding = new System.Windows.Forms.Padding(6);
-            this.gbRollRawDataControl.Size = new System.Drawing.Size(304, 293);
+            this.gbRollRawDataControl.Size = new System.Drawing.Size(152, 152);
             this.gbRollRawDataControl.TabIndex = 7;
             this.gbRollRawDataControl.TabStop = false;
             this.gbRollRawDataControl.Text = "Raw Data Control (Roll)";
@@ -458,31 +456,28 @@
             // lblRollSubAddr
             // 
             this.lblRollSubAddr.AutoSize = true;
-            this.lblRollSubAddr.Location = new System.Drawing.Point(37, 118);
-            this.lblRollSubAddr.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblRollSubAddr.Location = new System.Drawing.Point(18, 61);
             this.lblRollSubAddr.Name = "lblRollSubAddr";
-            this.lblRollSubAddr.Size = new System.Drawing.Size(133, 25);
+            this.lblRollSubAddr.Size = new System.Drawing.Size(66, 13);
             this.lblRollSubAddr.TabIndex = 2;
             this.lblRollSubAddr.Text = "S&ubaddress:";
             this.lblRollSubAddr.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtRollSubAddr
             // 
-            this.txtRollSubAddr.Location = new System.Drawing.Point(181, 112);
-            this.txtRollSubAddr.Margin = new System.Windows.Forms.Padding(6);
+            this.txtRollSubAddr.Location = new System.Drawing.Point(90, 58);
             this.txtRollSubAddr.MaxLength = 4;
             this.txtRollSubAddr.Name = "txtRollSubAddr";
-            this.txtRollSubAddr.Size = new System.Drawing.Size(88, 31);
+            this.txtRollSubAddr.Size = new System.Drawing.Size(46, 20);
             this.txtRollSubAddr.TabIndex = 3;
             this.txtRollSubAddr.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txtRollSubAddr.Leave += new System.EventHandler(this.txtRollSubAddr_Leave);
             // 
             // btnRollSendRaw
             // 
-            this.btnRollSendRaw.Location = new System.Drawing.Point(42, 224);
-            this.btnRollSendRaw.Margin = new System.Windows.Forms.Padding(6);
+            this.btnRollSendRaw.Location = new System.Drawing.Point(21, 116);
             this.btnRollSendRaw.Name = "btnRollSendRaw";
-            this.btnRollSendRaw.Size = new System.Drawing.Size(227, 44);
+            this.btnRollSendRaw.Size = new System.Drawing.Size(114, 23);
             this.btnRollSendRaw.TabIndex = 6;
             this.btnRollSendRaw.Text = "&Send";
             this.btnRollSendRaw.UseVisualStyleBackColor = true;
@@ -491,21 +486,19 @@
             // lblRollDataByte
             // 
             this.lblRollDataByte.AutoSize = true;
-            this.lblRollDataByte.Location = new System.Drawing.Point(55, 168);
-            this.lblRollDataByte.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblRollDataByte.Location = new System.Drawing.Point(28, 87);
             this.lblRollDataByte.Name = "lblRollDataByte";
-            this.lblRollDataByte.Size = new System.Drawing.Size(112, 25);
+            this.lblRollDataByte.Size = new System.Drawing.Size(57, 13);
             this.lblRollDataByte.TabIndex = 4;
             this.lblRollDataByte.Text = "Data &Byte:";
             this.lblRollDataByte.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtRollDataByte
             // 
-            this.txtRollDataByte.Location = new System.Drawing.Point(181, 162);
-            this.txtRollDataByte.Margin = new System.Windows.Forms.Padding(6);
+            this.txtRollDataByte.Location = new System.Drawing.Point(90, 84);
             this.txtRollDataByte.MaxLength = 4;
             this.txtRollDataByte.Name = "txtRollDataByte";
-            this.txtRollDataByte.Size = new System.Drawing.Size(88, 31);
+            this.txtRollDataByte.Size = new System.Drawing.Size(46, 20);
             this.txtRollDataByte.TabIndex = 5;
             this.txtRollDataByte.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txtRollDataByte.Leave += new System.EventHandler(this.txtRollDataByte_Leave);
@@ -513,39 +506,36 @@
             // lblRollDeviceSerialPort
             // 
             this.lblRollDeviceSerialPort.AutoSize = true;
-            this.lblRollDeviceSerialPort.Location = new System.Drawing.Point(17, 62);
-            this.lblRollDeviceSerialPort.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblRollDeviceSerialPort.Location = new System.Drawing.Point(8, 32);
             this.lblRollDeviceSerialPort.Name = "lblRollDeviceSerialPort";
-            this.lblRollDeviceSerialPort.Size = new System.Drawing.Size(201, 25);
+            this.lblRollDeviceSerialPort.Size = new System.Drawing.Size(100, 13);
             this.lblRollDeviceSerialPort.TabIndex = 13;
             this.lblRollDeviceSerialPort.Text = "Roll SDI Serial &Port:";
             // 
             // cbRollDeviceSerialPort
             // 
             this.cbRollDeviceSerialPort.FormattingEnabled = true;
-            this.cbRollDeviceSerialPort.Location = new System.Drawing.Point(238, 58);
-            this.cbRollDeviceSerialPort.Margin = new System.Windows.Forms.Padding(6);
+            this.cbRollDeviceSerialPort.Location = new System.Drawing.Point(119, 30);
             this.cbRollDeviceSerialPort.Name = "cbRollDeviceSerialPort";
-            this.cbRollDeviceSerialPort.Size = new System.Drawing.Size(238, 33);
+            this.cbRollDeviceSerialPort.Size = new System.Drawing.Size(121, 21);
             this.cbRollDeviceSerialPort.TabIndex = 12;
             this.cbRollDeviceSerialPort.SelectedIndexChanged += new System.EventHandler(this.cbRollDeviceSerialPort_SelectedIndexChanged);
             // 
             // lblRollDeviceIdentification
             // 
             this.lblRollDeviceIdentification.AutoSize = true;
-            this.lblRollDeviceIdentification.Location = new System.Drawing.Point(530, 62);
-            this.lblRollDeviceIdentification.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblRollDeviceIdentification.Location = new System.Drawing.Point(265, 32);
             this.lblRollDeviceIdentification.Name = "lblRollDeviceIdentification";
-            this.lblRollDeviceIdentification.Size = new System.Drawing.Size(139, 25);
+            this.lblRollDeviceIdentification.Size = new System.Drawing.Size(70, 13);
             this.lblRollDeviceIdentification.TabIndex = 14;
             this.lblRollDeviceIdentification.Text = "Identification:";
             // 
             // frmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1067, 554);
+            this.ClientSize = new System.Drawing.Size(534, 288);
             this.Controls.Add(this.lblRollDeviceSerialPort);
             this.Controls.Add(this.cbRollDeviceSerialPort);
             this.Controls.Add(this.lblRollDeviceIdentification);
@@ -555,7 +545,6 @@
             this.Controls.Add(this.lblPitchDeviceIdentification);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.Name = "frmMain";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
