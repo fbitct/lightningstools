@@ -11,7 +11,7 @@ namespace SDITestTool
 {
     public partial class frmMain : Form
     {
-        private Device _sdiDevice = new Device();
+        private Device _sdiDevice;
         private ReadOnlyCollection<string> _serialPorts;
         private ILog _log = LogManager.GetLogger(typeof(frmMain));
         public frmMain()
@@ -126,7 +126,6 @@ namespace SDITestTool
             {
                 _sdiDevice = new Device(selectedPort);
                 _sdiDevice.ConfigureUsbDebug(enable: false);
-                _sdiDevice.ConfigureWatchdog(enable: false, countdown: 0);
                 var identification = _sdiDevice.Identify().TrimEnd();
                 if (!string.IsNullOrWhiteSpace(identification))
                 {

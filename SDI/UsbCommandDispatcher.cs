@@ -19,6 +19,7 @@ namespace SDI
 
         public string SendCommand(CommandSubaddress subaddress, byte data)
         {
+            if (SerialPortConnection == null) return null;
             switch (subaddress)
             {
                 case CommandSubaddress.IDENTIFY:

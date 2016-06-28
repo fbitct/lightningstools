@@ -12,8 +12,7 @@ namespace SDI
     /// </summary>
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [ComSourceInterfaces(typeof(IDeviceEvents))]
-    [Synchronization]
-    public sealed class Device : ContextBoundObject, IDisposable
+    public sealed class Device : IDisposable
     {
 
 
