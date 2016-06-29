@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Net;
-using System.Threading;
 using System.Windows.Forms;
 using F4SharedMemoryRecorder.Properties;
 using log4net;
-using Microsoft.VisualBasic.Devices;
-using Microsoft.Win32;
 using F4SharedMemoryRecorder.Runtime;
-using System.IO;
 
 namespace F4SharedMemoryRecorder.UI.Forms
 {
@@ -92,6 +85,7 @@ namespace F4SharedMemoryRecorder.UI.Forms
                     _recording.PlaybackProgress += _recording_PlaybackProgress;
                     btnRecord.Enabled = true;
                     btnPlay.Enabled = false;
+                    btnLoop.Enabled = false;
                     btnStop.Enabled = false;
                     statusLabel.Text = Common.Win32.Paths.Util.Compact(_recording.FileName, 48);
                 };
@@ -135,6 +129,7 @@ namespace F4SharedMemoryRecorder.UI.Forms
                     _recording.PlaybackProgress += _recording_PlaybackProgress;
                     btnRecord.Enabled = false;
                     btnPlay.Enabled = true;
+                    btnLoop.Enabled = true;
                     btnStop.Enabled = false;
                     statusLabel.Text = Common.Win32.Paths.Util.Compact(_recording.FileName, 48);
                 };
@@ -149,6 +144,7 @@ namespace F4SharedMemoryRecorder.UI.Forms
             btnRecord.Enabled = false;
             btnPlay.Enabled = true;
             btnStop.Enabled = false;
+            btnLoop.Enabled = true;
         }
         private void _recording_PlaybackStarted(object sender, PlaybackStartedEventArgs e)
         {
@@ -157,6 +153,7 @@ namespace F4SharedMemoryRecorder.UI.Forms
             btnRecord.Enabled = false;
             btnPlay.Enabled = false;
             btnStop.Enabled = true;
+            btnLoop.Enabled = true;
         }
         private void _recording_RecordingStarted(object sender, RecordingStartedEventArgs e)
         {
@@ -165,6 +162,7 @@ namespace F4SharedMemoryRecorder.UI.Forms
             btnRecord.Enabled = false;
             btnPlay.Enabled = false;
             btnStop.Enabled = true;
+            btnLoop.Enabled = false;
         }
         private void _recording_PlaybackProgress(object sender, PlaybackProgressEventArgs e)
         {
@@ -270,6 +268,12 @@ namespace F4SharedMemoryRecorder.UI.Forms
             new AboutBox().ShowDialog(this);
         }
 
-
+        private void btnLoop_Click(object sender, EventArgs e)
+        {
+            if (_recording !=null)
+            {
+                _recording.LoopOnPlayback = btnLoop.Checked;
+            }
+        }
     }
 }

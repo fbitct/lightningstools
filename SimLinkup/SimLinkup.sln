@@ -73,6 +73,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Compression", "..\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDI", "..\SDI\SDI.csproj", "{7326F627-65F7-4163-A579-36AF2091B357}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SimLinkupSetup", "SimLinkupSetup\SimLinkupSetup.vdproj", "{B0E0274A-9EB9-4E42-BD7C-3E11FAE36FD9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20CF54EB-1FAA-4B0E-B3CF-BCE4C2AAEF02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -211,6 +215,10 @@ Global
 		{7326F627-65F7-4163-A579-36AF2091B357}.Debug|x86.Build.0 = Debug|x86
 		{7326F627-65F7-4163-A579-36AF2091B357}.Release|x86.ActiveCfg = Release|x86
 		{7326F627-65F7-4163-A579-36AF2091B357}.Release|x86.Build.0 = Release|x86
+		{B0E0274A-9EB9-4E42-BD7C-3E11FAE36FD9}.Debug|x86.ActiveCfg = Debug
+		{B0E0274A-9EB9-4E42-BD7C-3E11FAE36FD9}.Debug|x86.Build.0 = Debug
+		{B0E0274A-9EB9-4E42-BD7C-3E11FAE36FD9}.Release|x86.ActiveCfg = Release
+		{B0E0274A-9EB9-4E42-BD7C-3E11FAE36FD9}.Release|x86.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

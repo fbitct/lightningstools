@@ -1,17 +1,14 @@
 ﻿using log4net;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Common.Generic;
 using Common.MacroProgramming;
-using Common.Math;
 using Common.SimSupport;
 using Common.Strings;
 using F4KeyFile;
 using F4SharedMem;
 using F4SharedMem.Headers;
-using Util = F4Utils.Process.Util;
 
 namespace F4Utils.SimSupport
 {
@@ -48,18 +45,12 @@ namespace F4Utils.SimSupport
             get { return "Falcon BMS"; }
         }
 
-        private DateTime? _lastFalconSimRunningCheckTime;
-        private bool _falconWasRunningOnLastCheck = false;
         public override bool IsSimRunning
         {
             get
             {
-                if (!_lastFalconSimRunningCheckTime.HasValue ||  DateTime.Now.Subtract(_lastFalconSimRunningCheckTime.Value).Duration().TotalMilliseconds > 500)
-                {
-                    _lastFalconSimRunningCheckTime = DateTime.Now;
-                    _falconWasRunningOnLastCheck = Util.IsFalconRunning();
-                }
-                return _falconWasRunningOnLastCheck; 
+                EnsureSharedmemReaderIsCreated();
+                return _smReader.IsFalconRunning;
             }
         }
 
@@ -85,6 +76,7 @@ namespace F4Utils.SimSupport
 
         private void GetNextFlightDataFromSharedMem()
         {
+            EnsureSharedmemReaderIsCreated();
             _lastFlightData =_smReader !=null && IsSimRunning ? _smReader.GetCurrentData() : new FlightData();
         }
 
@@ -1439,7 +1431,7 @@ namespace F4Utils.SimSupport
                                Id = "F4_" + Enum.GetName(typeof(F4SimOutputs), simOutput) + indexString,
                                Index = index,
                                PublisherObject = this,
-                               Source =  (object) _smReader,
+                               Source =  (object) this,
                                SourceFriendlyName = "Falcon BMS",
                            };
             }
@@ -1454,7 +1446,7 @@ namespace F4Utils.SimSupport
                                Id = "F4_" + Enum.GetName(typeof(F4SimOutputs), simOutput) + indexString,
                                Index = index,
                                PublisherObject = this,
-                               Source = (object) _smReader,
+                               Source = (object) this,
                                SourceFriendlyName = "Falcon BMS",
                            };
             }
@@ -1467,7 +1459,7 @@ namespace F4Utils.SimSupport
                 Id = "F4_" + Enum.GetName(typeof(F4SimOutputs), simOutput) + indexString,
                 Index = index,
                 PublisherObject = this,
-                Source = (object)_smReader,
+                Source = (object)this,
                 SourceFriendlyName = "Falcon BMS",
                 IsAngle = isAngle,
                 IsPercentage = isPercentage,

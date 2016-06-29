@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace F4SharedMemoryRecorder.Runtime
@@ -24,6 +19,7 @@ namespace F4SharedMemoryRecorder.Runtime
         void Record();
         void Stop();
         void Play();
+        bool LoopOnPlayback { get; set; }
     }
     internal class RecordingStartedEventArgs:EventArgs{}
     internal class PlaybackStartedEventArgs : EventArgs { }
@@ -63,6 +59,7 @@ namespace F4SharedMemoryRecorder.Runtime
         public ushort SampleInterval { get; private set; }
         public ulong NumSamples { get; private set; }
         public ulong CurrentSample { get; private set; }
+        public bool LoopOnPlayback { get; set; }
         public void Record()
         {
             lock (_recordingLock)
@@ -145,13 +142,18 @@ namespace F4SharedMemoryRecorder.Runtime
             lock (_playbackLock)
             {
                 _playbackTimer.Stop();
-                Common.Util.DisposeObject(_gzipStreamBinaryReader);
-                Common.Util.DisposeObject(_gzipStream);
-                Common.Util.DisposeObject(_fileStream);
-                _gzipStreamBinaryReader = null;
-                _gzipStream = null;
-                _fileStream = null;
+                CloseFileOpenedForPlay();
             }
+        }
+
+        private void CloseFileOpenedForPlay()
+        {
+            Common.Util.DisposeObject(_gzipStreamBinaryReader);
+            Common.Util.DisposeObject(_gzipStream);
+            Common.Util.DisposeObject(_fileStream);
+            _gzipStreamBinaryReader = null;
+            _gzipStream = null;
+            _fileStream = null;
         }
 
         private void StopRecording()
@@ -202,8 +204,17 @@ namespace F4SharedMemoryRecorder.Runtime
                 CurrentSample++;
                 if (CurrentSample > NumSamples)
                 {
-                    Stop();
-                    return;
+                    if (LoopOnPlayback)
+                    {
+                        StopPlaying();
+                        Play();
+                        return;
+                    }
+                    else
+                    {
+                        Stop();
+                        return;
+                    }
                 }
                 var sample = ReadNextSampleFromFile();
                 WriteSampleToSharedMemory(sample);

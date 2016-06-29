@@ -370,10 +370,10 @@
       <DependentUpon>SignalsView.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
-    <None Include="henksdi.config">
+    <Resource Include="henksdi.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
-    </None>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

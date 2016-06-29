@@ -25,11 +25,18 @@ namespace SimLinkup.UI.UserControls
             _timer.Interval = 20;
             _timer.Tick += (s, e) =>
             {
-                UpdateVisualization();
+                pbVisualization.Invalidate();
             };
             _timer.Enabled = true;
+            pbVisualization.Paint += SignalsView_Paint;
 
         }
+
+        private void SignalsView_Paint(object sender, PaintEventArgs e)
+        {
+            UpdateVisualization();
+        }
+
         public ScriptingContext ScriptingContext { get; set; }
         public SignalList<Signal> Signals { get; set; }
 
@@ -248,8 +255,7 @@ namespace SimLinkup.UI.UserControls
                 }
 
             }
-            pbVisualization.Invalidate();
-            pbVisualization.Update();
+
         }
         private void UpdateModuleVisualization(Graphics graphics, Rectangle targetRectangle)
         {

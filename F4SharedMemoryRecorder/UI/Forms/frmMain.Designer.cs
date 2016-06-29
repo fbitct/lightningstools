@@ -17,6 +17,7 @@ namespace F4SharedMemoryRecorder.UI.Forms
             this.btnRecord = new System.Windows.Forms.ToolStripButton();
             this.btnPlay = new System.Windows.Forms.ToolStripButton();
             this.btnStop = new System.Windows.Forms.ToolStripButton();
+            this.btnLoop = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuFileNew = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,10 +42,11 @@ namespace F4SharedMemoryRecorder.UI.Forms
             this.tbToolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnRecord,
             this.btnPlay,
-            this.btnStop});
-            this.tbToolbar.Location = new System.Drawing.Point(0, 28);
+            this.btnStop,
+            this.btnLoop});
+            this.tbToolbar.Location = new System.Drawing.Point(0, 33);
             this.tbToolbar.Name = "tbToolbar";
-            this.tbToolbar.Size = new System.Drawing.Size(427, 27);
+            this.tbToolbar.Size = new System.Drawing.Size(480, 32);
             this.tbToolbar.TabIndex = 0;
             // 
             // btnRecord
@@ -53,7 +55,7 @@ namespace F4SharedMemoryRecorder.UI.Forms
             this.btnRecord.Image = ((System.Drawing.Image)(resources.GetObject("btnRecord.Image")));
             this.btnRecord.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRecord.Name = "btnRecord";
-            this.btnRecord.Size = new System.Drawing.Size(80, 24);
+            this.btnRecord.Size = new System.Drawing.Size(92, 29);
             this.btnRecord.Text = "&Record";
             this.btnRecord.Click += new System.EventHandler(this.btnRecord_Click);
             // 
@@ -63,7 +65,7 @@ namespace F4SharedMemoryRecorder.UI.Forms
             this.btnPlay.Image = ((System.Drawing.Image)(resources.GetObject("btnPlay.Image")));
             this.btnPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnPlay.Name = "btnPlay";
-            this.btnPlay.Size = new System.Drawing.Size(60, 24);
+            this.btnPlay.Size = new System.Drawing.Size(68, 29);
             this.btnPlay.Text = "&Play";
             this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
             // 
@@ -73,9 +75,20 @@ namespace F4SharedMemoryRecorder.UI.Forms
             this.btnStop.Image = ((System.Drawing.Image)(resources.GetObject("btnStop.Image")));
             this.btnStop.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(68, 24);
+            this.btnStop.Size = new System.Drawing.Size(79, 29);
             this.btnStop.Text = "St&op ";
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
+            // btnLoop
+            // 
+            this.btnLoop.CheckOnClick = true;
+            this.btnLoop.Enabled = false;
+            this.btnLoop.Image = ((System.Drawing.Image)(resources.GetObject("btnLoop.Image")));
+            this.btnLoop.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnLoop.Name = "btnLoop";
+            this.btnLoop.Size = new System.Drawing.Size(77, 29);
+            this.btnLoop.Text = "Loop";
+            this.btnLoop.Click += new System.EventHandler(this.btnLoop_Click);
             // 
             // menuStrip1
             // 
@@ -85,7 +98,8 @@ namespace F4SharedMemoryRecorder.UI.Forms
             this.mnuHelp});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(427, 28);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(480, 33);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -97,14 +111,14 @@ namespace F4SharedMemoryRecorder.UI.Forms
             this.toolStripMenuItem1,
             this.mnuFileExit});
             this.mnuFile.Name = "mnuFile";
-            this.mnuFile.Size = new System.Drawing.Size(44, 24);
+            this.mnuFile.Size = new System.Drawing.Size(50, 29);
             this.mnuFile.Text = "&File";
             // 
             // mnuFileNew
             // 
             this.mnuFileNew.Image = ((System.Drawing.Image)(resources.GetObject("mnuFileNew.Image")));
             this.mnuFileNew.Name = "mnuFileNew";
-            this.mnuFileNew.Size = new System.Drawing.Size(118, 26);
+            this.mnuFileNew.Size = new System.Drawing.Size(141, 30);
             this.mnuFileNew.Text = "&New";
             this.mnuFileNew.Click += new System.EventHandler(this.mnuFileNew_Click);
             // 
@@ -112,20 +126,20 @@ namespace F4SharedMemoryRecorder.UI.Forms
             // 
             this.mnuFileOpen.Image = global::F4SharedMemoryRecorder.Properties.Resources.Open;
             this.mnuFileOpen.Name = "mnuFileOpen";
-            this.mnuFileOpen.Size = new System.Drawing.Size(118, 26);
+            this.mnuFileOpen.Size = new System.Drawing.Size(141, 30);
             this.mnuFileOpen.Text = "&Open";
             this.mnuFileOpen.Click += new System.EventHandler(this.mnuFileOpen_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(115, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(138, 6);
             // 
             // mnuFileExit
             // 
             this.mnuFileExit.Image = ((System.Drawing.Image)(resources.GetObject("mnuFileExit.Image")));
             this.mnuFileExit.Name = "mnuFileExit";
-            this.mnuFileExit.Size = new System.Drawing.Size(118, 26);
+            this.mnuFileExit.Size = new System.Drawing.Size(141, 30);
             this.mnuFileExit.Text = "&Exit";
             this.mnuFileExit.Click += new System.EventHandler(this.mnuFileExit_Click);
             // 
@@ -134,13 +148,13 @@ namespace F4SharedMemoryRecorder.UI.Forms
             this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuHelpAbout});
             this.mnuHelp.Name = "mnuHelp";
-            this.mnuHelp.Size = new System.Drawing.Size(53, 24);
+            this.mnuHelp.Size = new System.Drawing.Size(61, 29);
             this.mnuHelp.Text = "&Help";
             // 
             // mnuHelpAbout
             // 
             this.mnuHelpAbout.Name = "mnuHelpAbout";
-            this.mnuHelpAbout.Size = new System.Drawing.Size(119, 24);
+            this.mnuHelpAbout.Size = new System.Drawing.Size(147, 30);
             this.mnuHelpAbout.Text = "&About";
             this.mnuHelpAbout.Click += new System.EventHandler(this.mnuHelpAbout_Click);
             // 
@@ -148,10 +162,11 @@ namespace F4SharedMemoryRecorder.UI.Forms
             // 
             this.slider.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.slider.Enabled = false;
-            this.slider.Location = new System.Drawing.Point(0, 58);
+            this.slider.Location = new System.Drawing.Point(0, 72);
+            this.slider.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.slider.Maximum = 100;
             this.slider.Name = "slider";
-            this.slider.Size = new System.Drawing.Size(427, 56);
+            this.slider.Size = new System.Drawing.Size(480, 69);
             this.slider.TabIndex = 2;
             this.slider.TabStop = false;
             this.slider.TickFrequency = 0;
@@ -162,9 +177,10 @@ namespace F4SharedMemoryRecorder.UI.Forms
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 110);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 143);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(427, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(480, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
@@ -176,9 +192,9 @@ namespace F4SharedMemoryRecorder.UI.Forms
             // 
             // frmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(427, 132);
+            this.ClientSize = new System.Drawing.Size(480, 165);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tbToolbar);
             this.Controls.Add(this.menuStrip1);
@@ -186,7 +202,7 @@ namespace F4SharedMemoryRecorder.UI.Forms
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
             this.Name = "frmMain";
             this.Text = "F4 Shared Memory Recorder";
@@ -222,6 +238,7 @@ namespace F4SharedMemoryRecorder.UI.Forms
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.ToolStripMenuItem mnuHelp;
         private System.Windows.Forms.ToolStripMenuItem mnuHelpAbout;
+        private System.Windows.Forms.ToolStripButton btnLoop;
     }
 }
 
