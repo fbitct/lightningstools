@@ -224,7 +224,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            thisSignal.State = OutputChannelInitialValue(OutputChannel(channelNumber)); 
             thisSignal.IsPercentage = true;
             thisSignal.MinValue = 0; //0% duty cycle
             thisSignal.MaxValue = 1; //100% duty cycle
@@ -241,7 +241,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            thisSignal.State = OutputChannelInitialValue(OutputChannel(channelNumber)) == 1;
             return thisSignal;
         }
         private static SDIDriver.OutputChannels[] AllOutputChannels
@@ -345,13 +345,19 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_1 != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_1.InitialValue.HasValue
                                 ? _deviceConfig.OutputChannelsConfig.DIG_PWM_1.InitialValue.Value
-                                : (byte)0;
+                                : DeviceFunction == "PITCH"
+                                    ? (byte)1 //ENABLE PITCH/ROLL
+                                    : (byte)0; 
                 case SDIDriver.OutputChannels.DIG_PWM_2:
                     return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_2 != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_2.InitialValue.HasValue
                                 ? _deviceConfig.OutputChannelsConfig.DIG_PWM_2.InitialValue.Value
-                                : (byte)0;
+                                : DeviceFunction == "PITCH"
+                                    ? (byte)1 //GS POWER ON/OFF
+                                    : DeviceFunction == "ROLL" 
+                                        ? (byte)1 //ROT POWER ON
+                                        : (byte)0;
                 case SDIDriver.OutputChannels.DIG_PWM_3:
                     return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_3 != null &&
@@ -498,7 +504,8 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             try
             {
                 var comPort = _deviceConfig.COMPort;
-                _sdiDevice = new SDIDriver.Device(COMPort: comPort);  
+                _sdiDevice = new SDIDriver.Device(COMPort: comPort);
+                _sdiDevice.ConfigureUsbDebug(enable: false);
             }
             catch (Exception e)
             {
