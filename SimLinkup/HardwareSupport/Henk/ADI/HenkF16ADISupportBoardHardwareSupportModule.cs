@@ -76,11 +76,25 @@ namespace SimLinkup.HardwareSupport.Henk
         private HenkF16ADISupportBoardHardwareSupportModule()
         {
             CreateInputSignals();
-            CreateOutputSignals();
             CreateInputEventHandlers();
+            CreateOutputSignals();
+            SetInitialOutputValues();
             RegisterForInputEvents();
         }
-
+        private void SetInitialOutputValues ()
+        {
+            UpdatePitchAndRollEnableOutputValue();
+            UpdatePitchOutputValues();
+            UpdateRollOutputValues();
+            UpdateGSPowerOutputValue();
+            UpdateHorizontalGSBarOutputValues();
+            UpdateVerticalGSBarOutputValues();
+            UpdateRateOfTurnAndFlagsPowerOnOffOutputValue();
+            UpdateRateOfTurnOutputValues();
+            UpdateAuxFlagOutputValue();
+            UpdateGSFlagOutputValue();
+            UpdateLOCFlagOutputValue();
+        }
         public override string FriendlyName
         {
             get { return "Henk F-16 ADI Support Board for ARU-50/A Primary ADI"; }
@@ -432,7 +446,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = -10.0;
+            thisSignal.State = -0.0; //centered
             thisSignal.MinValue = -10.0; //degrees
             thisSignal.MaxValue = 10.0; //degrees
             return thisSignal;
@@ -449,7 +463,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = -10.0;
+            thisSignal.State = -0.0f; //centered
             thisSignal.MinValue = -10.0; //degrees
             thisSignal.MaxValue = 10.0; //degrees
             return thisSignal;
@@ -484,7 +498,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            thisSignal.State = true;
             return thisSignal;
         }
 
@@ -499,7 +513,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            thisSignal.State = true;
             return thisSignal;
         }
 
@@ -514,7 +528,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            thisSignal.State = true;
             return thisSignal;
         }
         private DigitalSignal CreateOFFFlagInputSignal()
@@ -528,7 +542,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            thisSignal.State = true;
             return thisSignal;
         }
 
@@ -543,7 +557,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            thisSignal.State = true;
             return thisSignal;
         }
         private DigitalSignal CreatePitchAndRollEnableInputSignal()
@@ -617,7 +631,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = true;
+            thisSignal.State = false;
 
             return thisSignal;
 
@@ -633,7 +647,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = true;
+            thisSignal.State = false;
 
             return thisSignal;
         }
@@ -648,7 +662,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = true;
+            thisSignal.State = false;
 
             return thisSignal;
         }
@@ -710,9 +724,9 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (108.000 /255.000)*1023;
-            thisSignal.MinValue = 0; 
-            thisSignal.MaxValue = 1023; 
+            thisSignal.State = 432;
+            thisSignal.MinValue = 140; 
+            thisSignal.MaxValue = 702; 
 
             return thisSignal;
         }
@@ -746,7 +760,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.IsPercentage = true;
-            thisSignal.State = 0.0;//0%
+            thisSignal.State = 0.5;//50%
             thisSignal.MinValue = 0.0; //0%
             thisSignal.MaxValue = 1.0; //100%
             return thisSignal;
@@ -764,7 +778,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.IsPercentage = true;
-            thisSignal.State = 0;//0%
+            thisSignal.State = 0.5;//50%
             thisSignal.MinValue = 0.0; //0%
             thisSignal.MaxValue = 1.0; //100%
             return thisSignal;
@@ -896,7 +910,7 @@ namespace SimLinkup.HardwareSupport.Henk
         {
             if (_pitchInputSignal != null && _pitchOutputSignal !=null)
             {
-                _pitchOutputSignal.State = ((108.00 / 255.00) * 1023.000) + ((_pitchInputSignal.State / 90.000) * 255.000); 
+                _pitchOutputSignal.State = 432 + ((_pitchInputSignal.State / 90.000) * 255.000); 
             }
         }
 
@@ -912,7 +926,7 @@ namespace SimLinkup.HardwareSupport.Henk
         {
             if (_horizontalCommandBarInputSignal != null && _horizontalCommandBarOutputSignal !=null)
             {
-                _horizontalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? _horizontalCommandBarInputSignal.State : 0;
+                _horizontalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? (0.5 + (0.5 * (_horizontalCommandBarInputSignal.State/10.0f))) : 0.0f;
             }
         }
 
@@ -920,7 +934,7 @@ namespace SimLinkup.HardwareSupport.Henk
         {
             if (_verticalCommandBarInputSignal != null && _verticalCommandBarOutputSignal !=null)
             {
-                _verticalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? _verticalCommandBarInputSignal.State : 0;
+                _verticalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? (0.5 + (0.5 * (_horizontalCommandBarInputSignal.State / 10.0f))) : 0.0f;
             }
         }
 

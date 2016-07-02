@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4SharedMemoryRecorder", "F4SharedMemoryRecorder.csproj", "{F4C9C8D0-254A-40DB-8DE7-F3D98454B6D9}"
 EndProject
@@ -52,7 +52,9 @@ Global
 		{517D1B4D-E8C7-4331-BBE7-300FD6B78441}.Release|x86.ActiveCfg = Release|x86
 		{517D1B4D-E8C7-4331-BBE7-300FD6B78441}.Release|x86.Build.0 = Release|x86
 		{FBF3868B-8B5D-48CA-8CF2-F12A3E35C0F3}.Debug|x86.ActiveCfg = Debug
+		{FBF3868B-8B5D-48CA-8CF2-F12A3E35C0F3}.Debug|x86.Build.0 = Debug
 		{FBF3868B-8B5D-48CA-8CF2-F12A3E35C0F3}.Release|x86.ActiveCfg = Release
+		{FBF3868B-8B5D-48CA-8CF2-F12A3E35C0F3}.Release|x86.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

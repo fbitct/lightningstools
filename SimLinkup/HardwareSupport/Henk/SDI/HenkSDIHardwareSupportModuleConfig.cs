@@ -36,7 +36,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         public OutputChannelsConfig OutputChannelsConfig{ get; set; }
         public UpdateRateControlConfig UpdateRateControlConfig{ get; set; }
         public DiagnosticLEDMode? DiagnosticLEDMode { get; set; }
-
+        public int? InitialIndicatorPosition { get; set; }
     }
 
     [Serializable]

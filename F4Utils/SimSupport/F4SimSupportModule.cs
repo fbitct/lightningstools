@@ -38,6 +38,7 @@ namespace F4Utils.SimSupport
             EnsureSharedmemReaderIsCreated();
             CreateSimOutputsList();
             CreateSimCommandsList();
+            UpdateSimOutputValues();
         }
 
         public override string FriendlyName
@@ -271,16 +272,24 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal)output).State = showCommandBars;
                         break;
                     case F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION:
-                        SetOutput((AnalogSignal)output, (_lastFlightData.AdiIlsVerPos * DEGREES_PER_RADIAN) / GLIDESLOPE_DEVIATION_LIMIT_DEGREES);
+                        SetOutput((AnalogSignal)output, IsSimRunning
+                                                            ? (_lastFlightData.AdiIlsVerPos * DEGREES_PER_RADIAN) / GLIDESLOPE_DEVIATION_LIMIT_DEGREES
+                                                            : 0.0f);
                         break;
                     case F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION:
-                        SetOutput((AnalogSignal)output,(_lastFlightData.AdiIlsHorPos * DEGREES_PER_RADIAN) / LOCALIZER_DEVIATION_LIMIT_DEGREES);
+                        SetOutput((AnalogSignal)output, IsSimRunning
+                                                            ? (_lastFlightData.AdiIlsHorPos * DEGREES_PER_RADIAN) / LOCALIZER_DEVIATION_LIMIT_DEGREES
+                                                            : 0.0f);
                         break;
                     case F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION:
                         var rateOfTurn = _rateOfTurnCalculator.DetermineIndicatedRateOfTurn(_lastFlightData.yaw * DEGREES_PER_RADIAN);
                         var percentDeflection = rateOfTurn / (IndicatedRateOfTurnCalculator.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 1.5f);
                         if (percentDeflection > 1.0f) percentDeflection = 1.0f;
                         if (percentDeflection < -1.0f) percentDeflection = -1.0f;
+                        if (!IsSimRunning)
+                        {
+                            percentDeflection = 0.0f;
+                        }
                         SetOutput((AnalogSignal)output, percentDeflection);
                         break;
                     case F4SimOutputs.ADI__INCLINOMETER_POSITION:
@@ -297,11 +306,11 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.ADI__GS_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.ADI_GS) ==
-                                                          HsiBits.ADI_GS);
+                                                          HsiBits.ADI_GS) || !IsSimRunning; 
                         break;
                     case F4SimOutputs.ADI__LOC_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.ADI_LOC) ==
-                                                          HsiBits.ADI_LOC);
+                                                          HsiBits.ADI_LOC) || !IsSimRunning; 
                         break;
                     case F4SimOutputs.STBY_ADI__PITCH_DEGREES:
                         SetOutput((AnalogSignal)output,  _lastFlightData.pitch*DEGREES_PER_RADIAN);

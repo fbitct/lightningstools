@@ -66,7 +66,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
             try
             {
-                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory, "henksdi.config");
+                var hsmConfigFilePath = Path.Combine(Path.Combine(Path.Combine(Util.ApplicationDirectory, "Content"), "Mapping"),"henksdi.config");
                 var hsmConfig = HenkSDIHardwareSupportModuleConfig.Load(hsmConfigFilePath);
                 if (hsmConfig != null)
                 {
@@ -187,9 +187,17 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
-            thisSignal.MinValue = 0;
-            thisSignal.MaxValue = 1023;
+            thisSignal.State = DeviceFunction == "PITCH" 
+                                                    ? 432
+                                                    : DeviceFunction == "ROLL" 
+                                                        ? 512 
+                                                        : 0;
+            thisSignal.MinValue = DeviceFunction == "PITCH"
+                                                        ? 140
+                                                        : 0;
+            thisSignal.MaxValue = DeviceFunction == "PITCH"
+                                                        ? 702
+                                                        : 1024;
             return thisSignal;
         }
         private List<DigitalSignal> CreateInputSignalsForDigitalOutputChannels()
@@ -356,20 +364,24 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                                 : DeviceFunction == "PITCH"
                                     ? (byte)1 //GS POWER ON/OFF
                                     : DeviceFunction == "ROLL" 
-                                        ? (byte)1 //ROT POWER ON
+                                        ? (byte)1 //ROT & FLAGS POWER ON
                                         : (byte)0;
                 case SDIDriver.OutputChannels.DIG_PWM_3:
                     return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_3 != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_3.InitialValue.HasValue
                                 ? _deviceConfig.OutputChannelsConfig.DIG_PWM_3.InitialValue.Value
-                                : (byte)0;
+                                : DeviceFunction == "PITCH"
+                                    ? (byte)128 //center horizontal command bar
+                                    : (byte)0;
                 case SDIDriver.OutputChannels.DIG_PWM_4:
                     return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_4 != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_4.InitialValue.HasValue
                                 ? _deviceConfig.OutputChannelsConfig.DIG_PWM_4.InitialValue.Value
-                                : (byte)0;
+                                : DeviceFunction == "PITCH"
+                                    ? (byte)128 //center vertical command bar
+                                    : (byte)0;
                 case SDIDriver.OutputChannels.DIG_PWM_5:
                     return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_5 != null &&
@@ -404,22 +416,27 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             if (_positionInputSignal != null)
             {
                 var requestedPosition = _positionInputSignal.State;
-                if (requestedPosition >= 0 && requestedPosition <= 255)
-                {
-                    _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.One, (byte)requestedPosition);
-                }
-                else if (requestedPosition >= 256 && requestedPosition <= 511)
-                {
-                    _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Two, (byte)(requestedPosition - 256));
-                }
-                else if (requestedPosition >= 512 && requestedPosition <= 767)
-                {
-                    _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Three, (byte)(requestedPosition - 512));
-                }
-                else if (requestedPosition >= 768 && requestedPosition <= 1023)
-                {
-                    _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Four, (byte)(requestedPosition - 768));
-                }
+                MoveIndicatorToPosition((int)requestedPosition);
+            }
+        }
+        private void MoveIndicatorToPosition(int requestedPosition)
+        {
+
+            if (requestedPosition >= 0 && requestedPosition <= 255)
+            {
+                _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.One, (byte)requestedPosition);
+            }
+            else if (requestedPosition >= 256 && requestedPosition <= 511)
+            {
+                _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Two, (byte)(requestedPosition - 256));
+            }
+            else if (requestedPosition >= 512 && requestedPosition <= 767)
+            {
+                _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Three, (byte)(requestedPosition - 512));
+            }
+            else if (requestedPosition >= 768 && requestedPosition <= 1023)
+            {
+                _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Four, (byte)(requestedPosition - 768));
             }
         }
         private void InputSignalForDigitalOutputChannel_SignalChanged(object sender, DigitalSignalChangedEventArgs args)
@@ -447,11 +464,13 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         private void ConfigureDevice()
         {
             ConfigureDeviceConnection();
+            ConfigureDiagnosticLEDBehavior();
+            ConfigureStatorBaseAngles();
             ConfigurePowerDown();
             ConfigureMovementLimits();
-            ConfigureStatorBaseAngles();
-            ConfigureOutputChannels();
+            ConfigureDefaultIndicatorPosition();
             ConfigureUpdateRateControl();
+            ConfigureOutputChannels();
         }
         private void ConfigureDeviceConnection()
         {
@@ -680,8 +699,6 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             ConfigureUpdateRateControlMode();
             ConfigureUpdateRateControlSpeed();
             ConfigureUpdateRateControlMiscellaneous();
-            ConfigureDiagnosticLEDBehavior();
-
         }
         private void ConfigureUpdateRateControlMode()
         {
@@ -774,7 +791,15 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
             _sdiDevice.ConfigureDiagnosticLEDBehavior(diagnosticLEDBehavior);
         }
-
+        private void ConfigureDefaultIndicatorPosition()
+        {
+            if (_sdiDevice == null) return;
+            var initialIndicatorPosition = _deviceConfig != null &&
+                                        _deviceConfig.InitialIndicatorPosition.HasValue
+                                            ? _deviceConfig.InitialIndicatorPosition.Value
+                                            : 512;
+            MoveIndicatorToPosition(initialIndicatorPosition);
+        }
         #endregion
         #region Destructors
 
