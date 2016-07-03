@@ -2,7 +2,11 @@
 {
     internal enum AddressCodesForDataReadback:ushort
     {
-        ControlRegister= 0x8080,
+        X1ARegister =0x0000,
+        X1BRegister = 0x2000,
+        CRegister = 0x4000,
+        MRegister = 0x6000,
+        ControlRegister = 0x8080,
         OSF0Register= 0x8100,
         OSF1Register = 0x8180,
         OSF2Register=0x8200,

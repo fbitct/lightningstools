@@ -759,7 +759,7 @@ namespace AnalogDevices
         private ushort ReadbackX1BRegister(ChannelAddress channelNum)
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) (0x2000 | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
+                                (ushort) ((ushort)(AddressCodesForDataReadback.X1BRegister) | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
             var val = ReadSPI();
             if (DacPrecision == DacPrecision.FourteenBit)
             {
@@ -771,7 +771,7 @@ namespace AnalogDevices
         private ushort ReadbackCRegister(ChannelAddress channelNum)
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) (0x4000 | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
+                                (ushort) ((ushort)(AddressCodesForDataReadback.CRegister)| (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
             var val = ReadSPI();
             if (DacPrecision == DacPrecision.FourteenBit)
             {
@@ -783,7 +783,7 @@ namespace AnalogDevices
         private ushort ReadbackMRegister(ChannelAddress channelNum)
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) (0x6000 | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
+                                (ushort) ((ushort)(AddressCodesForDataReadback.MRegister) | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
             var val = ReadSPI();
             if (DacPrecision == DacPrecision.FourteenBit)
             {
@@ -795,7 +795,7 @@ namespace AnalogDevices
         private byte ReadbackControlRegister()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ControlRegister);
-            return (byte) (ReadSPI() & 0x1F);
+            return (byte) (ReadSPI() & (byte)BasicMasks.FiveBits);
         }
 
         private ushort ReadbackOSF0Register()
@@ -849,7 +849,7 @@ namespace AnalogDevices
         private byte ReadbackGPIORegister()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.GPIORegister);
-            return (byte) ((ReadSPI() & 0x03));
+            return (byte) ((ReadSPI() & (ushort)BasicMasks.TwoBits));
         }
 
         #endregion
@@ -858,7 +858,7 @@ namespace AnalogDevices
 
         private void WriteControlRegister(ushort newVal)
         {
-            newVal &= 0x07;
+            newVal &= (ushort)BasicMasks.ThreeBits;
             SendSpecialFunction(SpecialFunctionCode.WriteControlRegister, newVal);
         }
 
