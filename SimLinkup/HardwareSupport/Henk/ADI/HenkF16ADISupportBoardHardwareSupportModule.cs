@@ -446,7 +446,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = -0.0; //centered
+            thisSignal.State = 0.0; //centered
             thisSignal.MinValue = -10.0; //degrees
             thisSignal.MaxValue = 10.0; //degrees
             return thisSignal;
@@ -463,7 +463,7 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = -0.0f; //centered
+            thisSignal.State = 0.0f; //centered
             thisSignal.MinValue = -10.0; //degrees
             thisSignal.MaxValue = 10.0; //degrees
             return thisSignal;
@@ -918,7 +918,7 @@ namespace SimLinkup.HardwareSupport.Henk
         {
             if (_rollInputSignal != null && _rollOutputSignal != null)
             {
-                _rollOutputSignal.State = 512.000 - ((_rollInputSignal.State / 180.000) * 512.000);
+                _rollOutputSignal.State = 512.000 + ((_rollInputSignal.State / 180.000) * 512.000);
             }
         }
 
