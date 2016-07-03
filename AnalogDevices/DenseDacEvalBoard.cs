@@ -794,61 +794,61 @@ namespace AnalogDevices
 
         private byte ReadbackControlRegister()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (0x8080));
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ControlRegister);
             return (byte) (ReadSPI() & 0x1F);
         }
 
         private ushort ReadbackOSF0Register()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8100);
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF0Register);
             return (ushort) (ReadSPI() & 0x3FFF);
         }
 
         private ushort ReadbackOSF1Register()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8180);
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF1Register);
             return (ushort) (ReadSPI() & 0x3FFF);
         }
 
         private ushort ReadbackOSF2Register()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8200);
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF2Register);
             return (ushort) (ReadSPI() & 0x3FFF);
         }
 
         private byte ReadbackABSelect0Register()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8300);
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect0Register);
             return (byte) (ReadSPI() & 0xFF);
         }
 
         private byte ReadbackABSelect1Register()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8380);
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect1Register);
             return (byte) (ReadSPI() & 0xFF);
         }
 
         private byte ReadbackABSelect2Register()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8400);
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect2Register);
             return (byte) (ReadSPI() & 0xFF);
         }
 
         private byte ReadbackABSelect3Register()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8480);
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect3Register);
             return (byte) (ReadSPI() & 0xFF);
         }
 
         private byte ReadbackABSelect4Register()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8500);
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect4Register);
             return (byte) (ReadSPI() & 0xFF);
         }
 
         private byte ReadbackGPIORegister()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8580);
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.GPIORegister);
             return (byte) ((ReadSPI() & 0x03));
         }
 
