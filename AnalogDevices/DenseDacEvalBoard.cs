@@ -747,7 +747,7 @@ namespace AnalogDevices
         private ushort ReadbackX1ARegister(ChannelAddress channelNum)
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) ((((byte) channelNum) & 0x3F) << 7));
+                                (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7));
             var val = ReadSPI();
             if (DacPrecision == DacPrecision.FourteenBit)
             {
@@ -759,7 +759,7 @@ namespace AnalogDevices
         private ushort ReadbackX1BRegister(ChannelAddress channelNum)
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) (0x2000 | (ushort) ((((byte) channelNum) & 0x3F) << 7)));
+                                (ushort) (0x2000 | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
             var val = ReadSPI();
             if (DacPrecision == DacPrecision.FourteenBit)
             {
@@ -771,7 +771,7 @@ namespace AnalogDevices
         private ushort ReadbackCRegister(ChannelAddress channelNum)
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) (0x4000 | (ushort) ((((byte) channelNum) & 0x3F) << 7)));
+                                (ushort) (0x4000 | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
             var val = ReadSPI();
             if (DacPrecision == DacPrecision.FourteenBit)
             {
@@ -783,7 +783,7 @@ namespace AnalogDevices
         private ushort ReadbackMRegister(ChannelAddress channelNum)
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) (0x6000 | (ushort) ((((byte) channelNum) & 0x3F) << 7)));
+                                (ushort) (0x6000 | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
             var val = ReadSPI();
             if (DacPrecision == DacPrecision.FourteenBit)
             {
@@ -931,7 +931,7 @@ namespace AnalogDevices
 
         private void SendSpecialFunction(SpecialFunctionCode specialFunction, ushort data)
         {
-            SendSPI((uint) ((((byte) specialFunction & 0x3F) << 16) | data));
+            SendSPI((uint) ((((byte) specialFunction & (byte)BasicMasks.SixBits) << 16) | data));
         }
 
         private int SendSPI(UInt32 data)
