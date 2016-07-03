@@ -74,6 +74,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressCodesForDataReadback.cs" />
+    <Compile Include="BasicMasks.cs" />
     <Compile Include="ChannelAddress.cs" />
     <Compile Include="ChannelGroup.cs" />
     <Compile Include="ChannelMonitorOptions.cs" />

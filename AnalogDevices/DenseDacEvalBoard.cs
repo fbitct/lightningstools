@@ -393,7 +393,7 @@ namespace AnalogDevices
             {
                 toSend |= channelMask;
             }
-            toSend &= 0xFF;
+            toSend &= (byte)BasicMasks.OneByte;
             SendSpecialFunction(code, toSend);
         }
 
@@ -473,7 +473,7 @@ namespace AnalogDevices
                     code = SpecialFunctionCode.WriteToABSelectRegister4;
                     break;
             }
-            toSend &= 0xFF;
+            toSend &= (byte)BasicMasks.OneByte;
             SendSpecialFunction(code, toSend);
         }
 
@@ -561,11 +561,11 @@ namespace AnalogDevices
             WriteControlRegister(controlRegisterVal);
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI(0xC00000 | (uint) (((byte) channels & 0x3F) << 16) | newVal);
+                SendSPI(0xC00000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal);
             }
             else
             {
-                SendSPI((0xC00000 | (uint) (((byte) channels & 0x3F) << 16) | (uint) ((newVal & 0x3FFF) << 2)));
+                SendSPI((0xC00000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
             }
         }
 
@@ -576,11 +576,11 @@ namespace AnalogDevices
             WriteControlRegister(controlRegisterVal);
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI((0xC00000 | (uint) (((byte) channels & 0x3F) << 16) | newVal));
+                SendSPI((0xC00000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
             }
             else
             {
-                SendSPI((0xC00000 | (uint) (((byte) channels & 0x3F) << 16) | (uint) ((newVal & 0x3FFF) << 2)));
+                SendSPI((0xC00000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
             }
         }
 
@@ -597,11 +597,11 @@ namespace AnalogDevices
         {
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI((0x800000 | (uint) (((byte) channels & 0x3F) << 16) | newVal));
+                SendSPI((0x800000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
             }
             else
             {
-                SendSPI((0x800000 | (uint) (((byte) channels & 0x3F) << 16) | (uint) ((newVal & 0x3FFF) << 2)));
+                SendSPI((0x800000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
             }
         }
 
@@ -618,11 +618,11 @@ namespace AnalogDevices
         {
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI((0x400000 | (uint) (((byte) channels & 0x3F) << 16) | newVal));
+                SendSPI((0x400000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
             }
             else
             {
-                SendSPI((0x400000 | (uint) (((byte) channels & 0x3F) << 16) | (uint) ((newVal & 0x3FFF) << 2)));
+                SendSPI((0x400000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
             }
         }
 
@@ -751,7 +751,7 @@ namespace AnalogDevices
             var val = ReadSPI();
             if (DacPrecision == DacPrecision.FourteenBit)
             {
-                val &= 0x3FFF;
+                val &= (ushort)BasicMasks.FourteenBits;
             }
             return val;
         }
@@ -763,7 +763,7 @@ namespace AnalogDevices
             var val = ReadSPI();
             if (DacPrecision == DacPrecision.FourteenBit)
             {
-                val &= 0x3FFF;
+                val &= (ushort)BasicMasks.FourteenBits;
             }
             return val;
         }
@@ -775,7 +775,7 @@ namespace AnalogDevices
             var val = ReadSPI();
             if (DacPrecision == DacPrecision.FourteenBit)
             {
-                val &= 0x3FFF;
+                val &= (ushort)BasicMasks.FourteenBits;
             }
             return val;
         }
@@ -787,7 +787,7 @@ namespace AnalogDevices
             var val = ReadSPI();
             if (DacPrecision == DacPrecision.FourteenBit)
             {
-                val &= 0x3FFF;
+                val &= (ushort)BasicMasks.FourteenBits;
             }
             return val;
         }
@@ -801,49 +801,49 @@ namespace AnalogDevices
         private ushort ReadbackOSF0Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF0Register);
-            return (ushort) (ReadSPI() & 0x3FFF);
+            return (ushort) (ReadSPI() & (ushort)BasicMasks.FourteenBits);
         }
 
         private ushort ReadbackOSF1Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF1Register);
-            return (ushort) (ReadSPI() & 0x3FFF);
+            return (ushort) (ReadSPI() & (ushort)BasicMasks.FourteenBits);
         }
 
         private ushort ReadbackOSF2Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF2Register);
-            return (ushort) (ReadSPI() & 0x3FFF);
+            return (ushort) (ReadSPI() & (ushort)BasicMasks.FourteenBits);
         }
 
         private byte ReadbackABSelect0Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect0Register);
-            return (byte) (ReadSPI() & 0xFF);
+            return (byte) (ReadSPI() & (ushort)BasicMasks.OneByte);
         }
 
         private byte ReadbackABSelect1Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect1Register);
-            return (byte) (ReadSPI() & 0xFF);
+            return (byte) (ReadSPI() & (ushort)BasicMasks.OneByte);
         }
 
         private byte ReadbackABSelect2Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect2Register);
-            return (byte) (ReadSPI() & 0xFF);
+            return (byte) (ReadSPI() & (ushort)BasicMasks.OneByte);
         }
 
         private byte ReadbackABSelect3Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect3Register);
-            return (byte) (ReadSPI() & 0xFF);
+            return (byte) (ReadSPI() & (ushort)BasicMasks.OneByte);
         }
 
         private byte ReadbackABSelect4Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect4Register);
-            return (byte) (ReadSPI() & 0xFF);
+            return (byte) (ReadSPI() & (ushort)BasicMasks.OneByte);
         }
 
         private byte ReadbackGPIORegister()
@@ -864,19 +864,19 @@ namespace AnalogDevices
 
         private void WriteOSF0Register(ushort newVal)
         {
-            newVal &= 0x3FFF;
+            newVal &= (ushort)BasicMasks.FourteenBits;
             SendSpecialFunction(SpecialFunctionCode.WriteOSF0Register, newVal);
         }
 
         private void WriteOSF1Register(ushort newVal)
         {
-            newVal &= 0x3FFF;
+            newVal &= (ushort)BasicMasks.FourteenBits;
             SendSpecialFunction(SpecialFunctionCode.WriteOSF1Register, newVal);
         }
 
         private void WriteOSF2Register(ushort newVal)
         {
-            newVal &= 0x3FFF;
+            newVal &= (ushort)BasicMasks.FourteenBits;
             SendSpecialFunction(SpecialFunctionCode.WriteOSF2Register, newVal);
         }
 
@@ -981,7 +981,7 @@ namespace AnalogDevices
             var setupPacket = new UsbSetupPacket
             {
                 Request = bRequest,
-                Value = (short) (setupData & 0xFFFF),
+                Value = (short) (setupData & (uint)BasicMasks.SixteenBits),
                 Index = (short) ((setupData & 0xFF0000)/0x10000),
                 RequestType = (byte)UsbRequestType.TypeVendor,
                 Length = 0
