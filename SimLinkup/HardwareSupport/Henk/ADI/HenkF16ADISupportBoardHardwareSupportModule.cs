@@ -724,9 +724,9 @@ namespace SimLinkup.HardwareSupport.Henk
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 432;
+            thisSignal.State = 424;
             thisSignal.MinValue = 140; 
-            thisSignal.MaxValue = 702; 
+            thisSignal.MaxValue = 700; 
 
             return thisSignal;
         }
@@ -910,7 +910,7 @@ namespace SimLinkup.HardwareSupport.Henk
         {
             if (_pitchInputSignal != null && _pitchOutputSignal !=null)
             {
-                _pitchOutputSignal.State = 432 + ((_pitchInputSignal.State / 90.000) * 255.000); 
+                _pitchOutputSignal.State = 424 - ((_pitchInputSignal.State / 90.000) * 255.000); 
             }
         }
 

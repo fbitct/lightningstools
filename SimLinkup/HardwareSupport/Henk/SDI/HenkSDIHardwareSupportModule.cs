@@ -188,7 +188,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = DeviceFunction == "PITCH" 
-                                                    ? 432
+                                                    ? 424
                                                     : DeviceFunction == "ROLL" 
                                                         ? 512 
                                                         : 0;
@@ -196,8 +196,8 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                                                         ? 140
                                                         : 0;
             thisSignal.MaxValue = DeviceFunction == "PITCH"
-                                                        ? 702
-                                                        : 1024;
+                                                        ? 700
+                                                        : 1023;
             return thisSignal;
         }
         private List<DigitalSignal> CreateInputSignalsForDigitalOutputChannels()
@@ -421,38 +421,61 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         }
         private void MoveIndicatorToPosition(int requestedPosition)
         {
-
-            if (requestedPosition >= 0 && requestedPosition <= 255)
+            if (_sdiDevice == null) return;
+            try
             {
-                _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.One, (byte)requestedPosition);
+                if (requestedPosition >= 0 && requestedPosition <= 255)
+                {
+                    _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.One, (byte)requestedPosition);
+                }
+                else if (requestedPosition >= 256 && requestedPosition <= 511)
+                {
+                    _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Two, (byte)(requestedPosition - 256));
+                }
+                else if (requestedPosition >= 512 && requestedPosition <= 767)
+                {
+                    _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Three, (byte)(requestedPosition - 512));
+                }
+                else if (requestedPosition >= 768 && requestedPosition <= 1023)
+                {
+                    _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Four, (byte)(requestedPosition - 768));
+                }
             }
-            else if (requestedPosition >= 256 && requestedPosition <= 511)
+            catch (Exception e)
             {
-                _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Two, (byte)(requestedPosition - 256));
-            }
-            else if (requestedPosition >= 512 && requestedPosition <= 767)
-            {
-                _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Three, (byte)(requestedPosition - 512));
-            }
-            else if (requestedPosition >= 768 && requestedPosition <= 1023)
-            {
-                _sdiDevice.MoveIndicatorFine(SDIDriver.Quadrant.Four, (byte)(requestedPosition - 768));
+                _log.Error(e.Message, e);
             }
         }
         private void InputSignalForDigitalOutputChannel_SignalChanged(object sender, DigitalSignalChangedEventArgs args)
         {
+            if (_sdiDevice == null) return;
             var signal = (DigitalSignal)sender;
             var channelNumber = signal.Index;
             var outputChannel = OutputChannel(channelNumber);
-            _sdiDevice.SetOutputChannelValue(outputChannel, args.CurrentState == true ? byte.MaxValue : byte.MinValue);
+            try
+            {
+                _sdiDevice.SetOutputChannelValue(outputChannel, args.CurrentState == true ? byte.MaxValue : byte.MinValue);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
         }
 
         private void InputSignalForPWMOutputChannel_SignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
+            if (_sdiDevice == null) return;
             var signal = (AnalogSignal)sender;
             var channelNumber = signal.Index;
             var outputChannel = OutputChannel(channelNumber);
-            _sdiDevice.SetOutputChannelValue(outputChannel, (byte)(args.CurrentState * byte.MaxValue));
+            try
+            {
+                _sdiDevice.SetOutputChannelValue(outputChannel, (byte)(args.CurrentState * byte.MaxValue));
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
         }
 
         #endregion
@@ -600,7 +623,14 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                                             ? _deviceConfig.PowerDownConfig.DelayTimeMilliseconds.Value
                                             : (short)0;
 
-            _sdiDevice.ConfigurePowerDown(powerDownState, powerDownLevel, delayTimeMilliseconds);
+            try
+            {
+                _sdiDevice.ConfigurePowerDown(powerDownState, powerDownLevel, delayTimeMilliseconds);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
         }
 
         private void ConfigureMovementLimits()
@@ -622,9 +652,16 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                         : DeviceFunction == "PITCH"
                             ? (byte)175 //default maximum for PITCH device if not specified in config file
                             : (byte)255; //255=no maximum by default for anything except PITCH SDI device
-            
-            _sdiDevice.SetIndicatorMovementLimitMinimum(min);
-            _sdiDevice.SetIndicatorMovementLimitMaximum(max);
+
+            try
+            {
+                _sdiDevice.SetIndicatorMovementLimitMinimum(min);
+                _sdiDevice.SetIndicatorMovementLimitMaximum(max);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
         }
 
         private void ConfigureStatorBaseAngles()
@@ -661,9 +698,16 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                                                ? ((90.000 / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET)
                                                : ((240.00 / 360.000) * SDIDriver.Device.STATOR_BASE_ANGLE_MAX_OFFSET);
 
-            _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S1, (short)s1StatorBaseAngle);
-            _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S2, (short)s2StatorBaseAngle);
-            _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S3, (short)s3StatorBaseAngle);
+            try
+            {
+                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S1, (short)s1StatorBaseAngle);
+                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S2, (short)s2StatorBaseAngle);
+                _sdiDevice.SetStatorBaseAngle(SDIDriver.StatorSignals.S3, (short)s3StatorBaseAngle);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
 
 
         }
@@ -672,24 +716,31 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         {
             if (_sdiDevice == null) return;
 
-            _sdiDevice.ConfigureOutputChannels(
-                digPwm1: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_1),
-                digPwm2: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_2),
-                digPwm3: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_3),
-                digPwm4: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_4),
-                digPwm5: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_5),
-                digPwm6: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_6),
-                digPwm7: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_7)
-            );
-            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_1, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_1));
-            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_2, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_2));
-            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_3, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_3));
-            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_4, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_4));
-            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_5, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_5));
-            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_6, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_6));
-            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_7, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_7));
-            _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.PWM_OUT, OutputChannelInitialValue(SDIDriver.OutputChannels.PWM_OUT));
+            try
+            {
+                _sdiDevice.ConfigureOutputChannels(
+                    digPwm1: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_1),
+                    digPwm2: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_2),
+                    digPwm3: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_3),
+                    digPwm4: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_4),
+                    digPwm5: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_5),
+                    digPwm6: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_6),
+                    digPwm7: OutputChannelMode(SDIDriver.OutputChannels.DIG_PWM_7)
+                );
 
+                _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_1, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_1));
+                _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_2, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_2));
+                _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_3, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_3));
+                _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_4, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_4));
+                _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_5, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_5));
+                _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_6, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_6));
+                _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.DIG_PWM_7, OutputChannelInitialValue(SDIDriver.OutputChannels.DIG_PWM_7));
+                _sdiDevice.SetOutputChannelValue(SDIDriver.OutputChannels.PWM_OUT, OutputChannelInitialValue(SDIDriver.OutputChannels.PWM_OUT));
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
         }
 
         private void ConfigureUpdateRateControl()
@@ -729,8 +780,14 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                                 (_deviceConfig.UpdateRateControlConfig.ModeSettings as LimitModeSettings).LimitThreshold.HasValue
                                     ? (_deviceConfig.UpdateRateControlConfig.ModeSettings as LimitModeSettings).LimitThreshold.Value
                                     : (byte)0;
-
-            _sdiDevice.SetUpdateRateControlModeLimit(limitThreshold);
+            try
+            {
+                _sdiDevice.SetUpdateRateControlModeLimit(limitThreshold);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
         }
 
         private void ConfigureUpdateRateControlSmoothMode()
@@ -750,8 +807,14 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                                 (_deviceConfig.UpdateRateControlConfig.ModeSettings as SmoothingModeSettings).SmoothingMode.HasValue
                                     ? (_deviceConfig.UpdateRateControlConfig.ModeSettings as SmoothingModeSettings).SmoothingMode.Value
                                     : SDIDriver.UpdateRateControlSmoothingMode.Adaptive;
-
-            _sdiDevice.SetUpdateRateControlModeSmooth(smoothingMinimumThresholdValue, smoothingMode);
+            try
+            {
+                _sdiDevice.SetUpdateRateControlModeSmooth(smoothingMinimumThresholdValue, smoothingMode);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
         }
 
         private void ConfigureUpdateRateControlSpeed()
@@ -762,8 +825,14 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                                         _deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.HasValue
                                             ? (short)_deviceConfig.UpdateRateControlConfig.StepUpdateDelayMillis.Value
                                             : SDIDriver.Device.UPDATE_RATE_CONTROL_MIN_STEP_UPDATE_DELAY_MILLIS; //use the fastest updates by default 
-
-            _sdiDevice.SetUpdateRateControlSpeed(stepUpdateDelayMillis);
+            try
+            {
+                _sdiDevice.SetUpdateRateControlSpeed(stepUpdateDelayMillis);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
         }
 
         private void ConfigureUpdateRateControlMiscellaneous()
@@ -776,7 +845,14 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                                         : DeviceFunction == "PITCH"
                                             ? false
                                             : true;
-            _sdiDevice.SetUpdateRateControlMiscellaneous(useShortestPath);
+            try
+            {
+                _sdiDevice.SetUpdateRateControlMiscellaneous(useShortestPath);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
         }
 
         private void ConfigureDiagnosticLEDBehavior()
@@ -788,8 +864,14 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                                         _deviceConfig.DiagnosticLEDMode.HasValue
                                             ? _deviceConfig.DiagnosticLEDMode.Value
                                             : SDIDriver.DiagnosticLEDMode.Heartbeat;
-
-            _sdiDevice.ConfigureDiagnosticLEDBehavior(diagnosticLEDBehavior);
+            try
+            {
+                _sdiDevice.ConfigureDiagnosticLEDBehavior(diagnosticLEDBehavior);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
         }
         private void ConfigureDefaultIndicatorPosition()
         {
