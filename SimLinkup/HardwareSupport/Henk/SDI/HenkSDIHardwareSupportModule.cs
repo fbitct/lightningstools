@@ -489,11 +489,11 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             ConfigureDeviceConnection();
             ConfigureDiagnosticLEDBehavior();
             ConfigureStatorBaseAngles();
+            ConfigureOutputChannels();
             ConfigurePowerDown();
-            ConfigureMovementLimits();
             ConfigureDefaultIndicatorPosition();
             ConfigureUpdateRateControl();
-            ConfigureOutputChannels();
+            ConfigureMovementLimits();
         }
         private void ConfigureDeviceConnection()
         {
