@@ -416,10 +416,22 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             if (_positionInputSignal != null)
             {
                 var requestedPosition = _positionInputSignal.State;
-                MoveIndicatorToPosition((int)requestedPosition);
+                MoveIndicatorToPositionFine((int)requestedPosition);
             }
         }
-        private void MoveIndicatorToPosition(int requestedPosition)
+        private void MoveIndicatorToPositionCoarse(int requestedPosition)
+        {
+            if (_sdiDevice == null) return;
+            try
+            {
+                _sdiDevice.MoveIndicatorCoarse((byte)(requestedPosition/4));
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
+        }
+        private void MoveIndicatorToPositionFine(int requestedPosition)
         {
             if (_sdiDevice == null) return;
             try
@@ -454,7 +466,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             var outputChannel = OutputChannel(channelNumber);
             try
             {
-                _sdiDevice.SetOutputChannelValue(outputChannel, args.CurrentState == true ? byte.MaxValue : byte.MinValue);
+                _sdiDevice.SetOutputChannelValue(outputChannel, args.CurrentState == true ? (byte)0x01 : (byte)0x00);
             }
             catch (Exception e)
             {
@@ -487,13 +499,13 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         private void ConfigureDevice()
         {
             ConfigureDeviceConnection();
+            //ConfigureStatorBaseAngles();
             ConfigureDiagnosticLEDBehavior();
             ConfigureOutputChannels();
-            ConfigurePowerDown();
-            ConfigureUpdateRateControl();
-            ConfigureStatorBaseAngles();
             ConfigureDefaultIndicatorPosition();
             ConfigureMovementLimits();
+            ConfigurePowerDown();
+            ConfigureUpdateRateControl();
         }
         private void ConfigureDeviceConnection()
         {
@@ -547,6 +559,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             {
                 var comPort = _deviceConfig.COMPort;
                 _sdiDevice = new SDIDriver.Device(COMPort: comPort);
+                _sdiDevice.DisableWatchdog();
                 _sdiDevice.ConfigureUsbDebug(enable: false);
             }
             catch (Exception e)
@@ -582,6 +595,8 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
                 var phccDevice = new global::Phcc.Device(portName: comPort, openPort: false);
                 _sdiDevice = new SDIDriver.Device(phccDevice: phccDevice, address: addressByte);
+                _sdiDevice.DisableWatchdog();
+
             }
             catch (Exception e)
             {
@@ -880,7 +895,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                                         _deviceConfig.InitialIndicatorPosition.HasValue
                                             ? _deviceConfig.InitialIndicatorPosition.Value
                                             : 512;
-            MoveIndicatorToPosition(initialIndicatorPosition);
+            MoveIndicatorToPositionCoarse(initialIndicatorPosition);
         }
         #endregion
         #region Destructors

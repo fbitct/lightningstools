@@ -440,15 +440,15 @@ namespace SimLinkup.HardwareSupport.Henk
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Horizontal Command Bar (Degrees, -10.0= 00% deflected up, 0.0=centered, +10.0=100% deflected down)";
+            thisSignal.FriendlyName = "Horizontal Command Bar (Degrees, -1.0=100% deflected up, 0.0=centered, +1.0=100% deflected down)";
             thisSignal.Id = "HenkF16ADISupportBoard_Horizontal_Command_Bar_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.0; //centered
-            thisSignal.MinValue = -10.0; //degrees
-            thisSignal.MaxValue = 10.0; //degrees
+            thisSignal.MinValue = -1.0; //percent deflected up
+            thisSignal.MaxValue = 1.0; //percent deflected down
             return thisSignal;
         }
 
@@ -457,15 +457,15 @@ namespace SimLinkup.HardwareSupport.Henk
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Vertical Command Bar (Degrees, -10.0=100% deflected left; 0.0=centered, +10.0=100% deflected right )";
+            thisSignal.FriendlyName = "Vertical Command Bar (Degrees, -1.0=100% deflected left; 0.0=centered, +1.0=100% deflected right )";
             thisSignal.Id = "HenkF16ADISupportBoard_Vertical_Command_Bar_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.0f; //centered
-            thisSignal.MinValue = -10.0; //degrees
-            thisSignal.MaxValue = 10.0; //degrees
+            thisSignal.MinValue = -1.0; //percent deflected left
+            thisSignal.MaxValue = 1.0; //percent deflected right
             return thisSignal;
         }
 
@@ -926,7 +926,7 @@ namespace SimLinkup.HardwareSupport.Henk
         {
             if (_horizontalCommandBarInputSignal != null && _horizontalCommandBarOutputSignal !=null)
             {
-                _horizontalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? (0.5 + (0.5 * (_horizontalCommandBarInputSignal.State/10.0f))) : 0.0f;
+                _horizontalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? (0.5 + (0.5 * (_horizontalCommandBarInputSignal.State))) : 0.0f;
             }
         }
 
@@ -934,7 +934,7 @@ namespace SimLinkup.HardwareSupport.Henk
         {
             if (_verticalCommandBarInputSignal != null && _verticalCommandBarOutputSignal !=null)
             {
-                _verticalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? (0.5 + (0.5 * (_horizontalCommandBarInputSignal.State / 10.0f))) : 0.0f;
+                _verticalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? 1.00-(0.5 + (0.5 * (_horizontalCommandBarInputSignal.State))) : 0.0f;
             }
         }
 
