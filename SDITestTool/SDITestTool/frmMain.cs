@@ -125,6 +125,7 @@ namespace SDITestTool
             try
             {
                 _sdiDevice = new Device(selectedPort);
+                _sdiDevice.DisableWatchdog();
                 _sdiDevice.ConfigureUsbDebug(enable: false);
                 var identification = _sdiDevice.Identify().TrimEnd();
                 if (!string.IsNullOrWhiteSpace(identification))

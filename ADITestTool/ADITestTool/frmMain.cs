@@ -94,6 +94,7 @@ namespace ADITestTool
             try
             {
                 sdiDevice = new Device(selectedPort);
+                sdiDevice.DisableWatchdog();
                 sdiDevice.ConfigureUsbDebug(enable: false);
 
                 var identification = sdiDevice.Identify().TrimEnd();
