@@ -133,12 +133,12 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.ALTIMETER__BAROMETRIC_PRESSURE_INCHES_HG:
                         if ((((AltBits)_lastFlightData.altBits) & AltBits.CalType) == AltBits.CalType)
                         {
-                            var hg = _lastFlightData.AltCalReading / 100.0f;
+                            var hg = (_lastFlightData.AltCalReading !=0? _lastFlightData.AltCalReading : (2992)) / 100.0f;
                             SetOutput((AnalogSignal)output, hg);
                         }
                         else
                         {
-                            var hPa = _lastFlightData.AltCalReading;
+                            var hPa = _lastFlightData.AltCalReading !=0? _lastFlightData.AltCalReading: (1013.2075);
                             var hg = hPa * HPA_TO_HG;
                             SetOutput((AnalogSignal)output,hg );
 
