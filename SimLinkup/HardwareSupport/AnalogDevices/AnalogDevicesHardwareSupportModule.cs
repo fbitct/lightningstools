@@ -4,6 +4,7 @@ using Common.HardwareSupport;
 using Common.MacroProgramming;
 using log4net;
 using a = AnalogDevices;
+using System.IO;
 
 namespace SimLinkup.HardwareSupport.AnalogDevices
 {
@@ -29,11 +30,108 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
         }
 
-        private AnalogDevicesHardwareSupportModule(a.DenseDacEvalBoard device, int deviceIndex) : this()
+        private AnalogDevicesHardwareSupportModule(a.DenseDacEvalBoard device, int deviceIndex, DeviceConfig deviceConfig) : this()
         {
             _device = device;
             _deviceIndex = deviceIndex;
+            ConfigureDevice(device, deviceConfig);
             CreateOutputSignals(_device, deviceIndex, out _analogOutputSignals);
+        }
+        private void ConfigureDevice(a.DenseDacEvalBoard device, DeviceConfig deviceConfig)
+        {
+            if (device == null) device = new a.DenseDacEvalBoard(null);
+            device.Reset();
+            if (device.IsOverTemperature)
+            {
+                device.IsTemperatureShutdownEnabled = false;
+                //reset temperature shutdown after previous overtemperature event
+            }
+            device.IsTemperatureShutdownEnabled = true; //enable over-temperature auto shutdown
+
+            device.SetDacChannelDataSourceAllChannels(a.DacChannelDataSource.DataValueA);
+            device.DacPrecision =   deviceConfig !=null  && 
+                                    deviceConfig.DACPrecision.HasValue 
+                                        ? deviceConfig.DACPrecision.Value 
+                                        : a.DacPrecision.SixteenBit;
+
+            device.OffsetDAC0 = deviceConfig != null &&
+                                    deviceConfig.Calibration != null &&
+                                    deviceConfig.Calibration.OffsetDAC0.HasValue
+                                        ? deviceConfig.Calibration.OffsetDAC0.Value
+                                        : (ushort)0x2000;
+            device.OffsetDAC1 = deviceConfig != null &&
+                                    deviceConfig.Calibration != null &&
+                                    deviceConfig.Calibration.OffsetDAC1.HasValue
+                                        ? deviceConfig.Calibration.OffsetDAC1.Value
+                                        : (ushort)0x2000;
+            device.OffsetDAC2 = deviceConfig != null &&
+                                    deviceConfig.Calibration != null &&
+                                    deviceConfig.Calibration.OffsetDAC2.HasValue
+                                        ? deviceConfig.Calibration.OffsetDAC2.Value
+                                        : (ushort)0x2000;
+
+            for (var channel = a.ChannelAddress.Dac0; channel <= a.ChannelAddress.Dac39; channel++)
+            {
+                var dacChannelConfiguration = GetDACChannelConfiguration(channel, deviceConfig);
+                
+                device.SetDacChannelOffset(channel,   
+                                                dacChannelConfiguration !=null && 
+                                                dacChannelConfiguration.Calibration !=null && 
+                                                dacChannelConfiguration.Calibration.Offset.HasValue 
+                                                    ? dacChannelConfiguration.Calibration.Offset.Value
+                                                    : (ushort)0x8000);
+                device.SetDacChannelGain(channel, 
+                                                dacChannelConfiguration != null &&
+                                                dacChannelConfiguration.Calibration != null &&
+                                                dacChannelConfiguration.Calibration.Gain.HasValue
+                                                    ? dacChannelConfiguration.Calibration.Gain.Value
+                                                    : (ushort)0xFFFF);
+
+                device.SetDacChannelDataSource(channel, 
+                                                dacChannelConfiguration != null &&
+                                                dacChannelConfiguration.InitialState != null &&
+                                                dacChannelConfiguration.InitialState.DataSource.HasValue
+                                                    ? dacChannelConfiguration.InitialState.DataSource.Value
+                                                    : a.DacChannelDataSource.DataValueA);
+
+                device.SetDacChannelDataValueA(channel,
+                                                dacChannelConfiguration != null &&
+                                                dacChannelConfiguration.InitialState != null &&
+                                                dacChannelConfiguration.InitialState.DataValueA.HasValue
+                                                    ? dacChannelConfiguration.InitialState.DataValueA.Value
+                                                    : (ushort)0x0000);
+                device.SetDacChannelDataValueB(channel,
+                                                dacChannelConfiguration != null &&
+                                                dacChannelConfiguration.InitialState != null &&
+                                                dacChannelConfiguration.InitialState.DataValueB.HasValue
+                                                    ? dacChannelConfiguration.InitialState.DataValueB.Value
+                                                    : (ushort)0x0000);
+
+            }
+            device.UpdateAllDacOutputs();
+        }
+        private DACChannelConfiguration GetDACChannelConfiguration(a.ChannelAddress channel, DeviceConfig deviceConfig)
+        {
+            var type = typeof(DACChannelConfigurations);
+            DACChannelConfiguration toReturn = null;
+            try
+            { 
+                if (
+                        deviceConfig != null && 
+                        deviceConfig.DACChannelConfig != null
+                    )
+                {
+                    var propInfo = type.GetProperty(string.Format("DAC{0}", ((int)channel) - 8));
+                    toReturn = propInfo != null
+                                ? propInfo.GetMethod.Invoke(deviceConfig.DACChannelConfig, null) as DACChannelConfiguration
+                                : null;
+                }
+                
+            }
+            catch (Exception) { }
+            
+            return toReturn;
+
         }
 
         public override string FriendlyName
@@ -47,56 +145,38 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public static IHardwareSupportModule[] GetInstances()
         {
+
             var toReturn = new List<IHardwareSupportModule>();
             try
             {
+                var hsmConfigFilePath = Path.Combine(Path.Combine(Path.Combine(Util.ApplicationDirectory, "Content"), "Mapping"), "AnalogDevicesHardwareSupportModule.config");
+                var hsmConfig = AnalogDevicesHardwareSupportModuleConfig.Load(hsmConfigFilePath);
+                if (hsmConfig == null || hsmConfig.Devices ==null && hsmConfig.Devices.Length ==0)
+                {
+                    return toReturn.ToArray();
+                }
                 var index = 0;
-                var boards = a.DenseDacEvalBoard.Enumerate();
-                if (boards != null && boards.Length > 0)
-                {
-                    foreach (var device in boards)
-                    {
-                        if (device == null) continue;
-                        device.Reset();
-                        if (device.IsOverTemperature)
-                        {
-                            device.IsTemperatureShutdownEnabled = false;
-                                //reset temperature shutdown after previous overtemperature event
-                        }
-                        device.IsTemperatureShutdownEnabled = true; //enable over-temperature auto shutdown
+                var devices = a.DenseDacEvalBoard.Enumerate();
 
-                        device.SetDacChannelDataSourceAllChannels(a.DacChannelDataSource.DataValueA);
-                        device.DacPrecision = a.DacPrecision.SixteenBit;
-                        device.OffsetDAC0 = 0x2000;
-                        device.OffsetDAC1 = 0x2000;
-                        device.OffsetDAC2 = 0x2000;
-                        for (var j = 0; j < 40; j++)
-                        {
-                            device.SetDacChannelOffset((a.ChannelAddress) j + 8, 0x8000);
-                            device.SetDacChannelGain((a.ChannelAddress) j + 8, 0xFFFF);
-                            //TODO: does this next line causethe  "chatter" on the ADI?
-                            device.SetDacChannelDataSource((a.ChannelAddress) j + 8, a.DacChannelDataSource.DataValueA);
-                            device.SetDacChannelDataValueA((a.ChannelAddress) j + 8, 0x0000);
-                        }
-                        device.UpdateAllDacOutputs();
-
-                        IHardwareSupportModule thisHsm = new AnalogDevicesHardwareSupportModule(device, index);
-                        toReturn.Add(thisHsm);
-                        index++;
-                    }
-                }
-                else
+                foreach (var deviceConfig in hsmConfig.Devices)
                 {
-                    IHardwareSupportModule fakeHsm0 = new AnalogDevicesHardwareSupportModule(null, 0);
-                    IHardwareSupportModule fakeHsm1 = new AnalogDevicesHardwareSupportModule(null, 1);
-                    toReturn.Add(fakeHsm0);
-                    toReturn.Add(fakeHsm1);
+                    var thisDeviceConfig = hsmConfig.Devices.Length > index
+                                                    ? hsmConfig.Devices[index]
+                                                    : null;
+
+                    var device = devices != null && devices.Length > index ? devices[index]: null;
+                    var hsmInstance = new AnalogDevicesHardwareSupportModule(device, index, thisDeviceConfig);
+                    toReturn.Add(hsmInstance);
+                    index++;
                 }
+
             }
             catch (Exception e)
             {
                 _log.Error(e.Message, e);
             }
+
+            
             return toReturn.ToArray();
         }
 

@@ -30,9 +30,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
     [Serializable]
     public class DeviceConfig
     {
-        public DacPrecision? DacPrecision { get; set; }
-        public Device Calibration { get; set; }
-        DACChannelConfigurations DacChannelConfig { get; set; }
+        public DacPrecision? DACPrecision { get; set; }
+        public DeviceCalibration Calibration { get; set; }
+        public DACChannelConfigurations DACChannelConfig { get; set; }
 
     }
     [Serializable]
@@ -90,7 +90,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
     public class DACChannelConfiguration
     {
         public DACChannelCalibration Calibration { get; set; }
-        InitialDACChannelState InitialState { get; set; }
+        public InitialDACChannelState InitialState { get; set; }
     }
     [Serializable]
     public class InitialDACChannelState

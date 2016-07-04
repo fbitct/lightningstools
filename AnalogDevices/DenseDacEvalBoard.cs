@@ -31,7 +31,7 @@ namespace AnalogDevices
 
         public string SymbolicName
         {
-            get { return _usbDevice.UsbRegistryInfo.SymbolicName; }
+            get { return _usbDevice !=null && _usbDevice.UsbRegistryInfo !=null ? _usbDevice.UsbRegistryInfo.SymbolicName : null; }
         }
 
         public bool GeneralPurposeIOPinState
@@ -966,7 +966,14 @@ namespace AnalogDevices
         private void UsbControlTransfer(ref UsbSetupPacket setupPacket, object buffer, int bufferLength,
                                         out int lengthTransferred)
         {
-            _usbDevice.ControlTransfer(ref setupPacket, buffer, bufferLength, out lengthTransferred);
+            if (_usbDevice != null)
+            {
+                _usbDevice.ControlTransfer(ref setupPacket, buffer, bufferLength, out lengthTransferred);
+            }
+            else
+            {
+                lengthTransferred = bufferLength;
+            }
         }
 
         private int SendDeviceCommand(DeviceCommand command, UInt32 setupData)
