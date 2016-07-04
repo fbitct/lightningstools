@@ -960,7 +960,7 @@ namespace AnalogDevices
             
             int lengthTransferred;
             UsbControlTransfer(ref setupPacket, buf, buf.Length, out lengthTransferred);
-            return (ushort) (buf[0] + (ushort) (buf[1]*256));
+            return (ushort)(((ushort)buf[0]) |  (((ushort)buf[1])<<8));
         }
 
         private void UsbControlTransfer(ref UsbSetupPacket setupPacket, object buffer, int bufferLength,

@@ -31,7 +31,6 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         private AnalogDevicesHardwareSupportModule(a.DenseDacEvalBoard device, int deviceIndex) : this()
         {
-            //if (device == null) throw new ArgumentNullException("device");
             _device = device;
             _deviceIndex = deviceIndex;
             CreateOutputSignals(_device, deviceIndex, out _analogOutputSignals);
@@ -133,7 +132,6 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         private void CreateOutputSignals(a.DenseDacEvalBoard device, int deviceIndex, out AnalogSignal[] analogSignals)
         {
-            //if (device == null) throw new ArgumentNullException("device");
             var analogSignalsToReturn = new List<AnalogSignal>();
             for (var i = 0; i < 40; i++)
             {

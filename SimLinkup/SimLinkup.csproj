@@ -115,6 +115,7 @@
     <Compile Include="HardwareSupport\AMI\AMI9002780-02HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\AMI\AMI900278002HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\AnalogDevices\AnalogDevicesHardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\AnalogDevices\AnalogDevicesHardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Astronautics\Astronautics12871HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Astronautics\Astronautics12871HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\DirectInput\DirectInputHardwareSupportModule.cs" />
@@ -239,6 +240,9 @@
     </Content>
     <Content Include="Content\Mapping\Astronautics128710primaryADI.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mapping\AnalogDevicesHardwareSupportModule.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Content\Mapping\GouldHS070D51341standbyCompass.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

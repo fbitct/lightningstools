@@ -1,5 +1,8 @@
-﻿namespace AnalogDevices
+﻿using System;
+
+namespace AnalogDevices
 {
+    [Serializable]
     public enum ChannelGroup
     {
         Group0 = 0,
