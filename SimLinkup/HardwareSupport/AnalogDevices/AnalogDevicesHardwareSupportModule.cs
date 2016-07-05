@@ -22,7 +22,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private a.DenseDacEvalBoard _device;
         private bool _isDisposed;
         private int _deviceIndex;
-        private a.DacChannelDataSource _currentDacChannelDataSource = a.DacChannelDataSource.DataValueA;
+        private a.DacChannelDataSource _dacChannelDataSourceForPendingData = a.DacChannelDataSource.DataValueA;
         #endregion
 
         #region Constructors
@@ -239,10 +239,10 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         private void DAC_OutputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
-            UpdateOutputSignal((AnalogSignal) sender, args);
+            UpdateDACOutput((AnalogSignal) sender, _dacChannelDataSourceForPendingData);
         }
 
-        private void UpdateOutputSignal(AnalogSignal outputSignal, AnalogSignalChangedEventArgs args)
+        private void UpdateDACOutput(AnalogSignal outputSignal, a.DacChannelDataSource dacChannelDataSource)
         {
             if (outputSignal.Index.HasValue)
             {
@@ -250,14 +250,13 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 {
                     var value = (ushort)(((outputSignal.State + 10.0000) / 20.0000) * 0xFFFF);
                     var channelAddress = (a.ChannelAddress)outputSignal.SubSource;
-                    if (_currentDacChannelDataSource == a.DacChannelDataSource.DataValueA) //if current DAC channel data source is A
+                    if (dacChannelDataSource == a.DacChannelDataSource.DataValueA) 
                     {
-                        _device.SetDacChannelDataValueB(channelAddress, value); //load data into the B data value
+                        _device.SetDacChannelDataValueA(channelAddress, value); 
                     }
                     else
                     {
-                        _device.SetDacChannelDataValueA(channelAddress, value); //else load into the A data value
-                    }
+                        _device.SetDacChannelDataValueB(channelAddress, value);                     }
                 }
             }
         }
@@ -266,7 +265,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             foreach (var signal in _analogOutputSignals)
             {
-                UpdateOutputSignal(signal, new AnalogSignalChangedEventArgs(0, 0));
+                UpdateDACOutput(signal, _dacChannelDataSourceForPendingData);
             }
             Synchronize();
         }
@@ -282,10 +281,18 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         private void ToggleDACChannelDataSource()
         {
-            var newDACChannelDataSource = _currentDacChannelDataSource == a.DacChannelDataSource.DataValueA
-                                                                            ? a.DacChannelDataSource.DataValueB
-                                                                            : a.DacChannelDataSource.DataValueA;
-            _device.SetDacChannelDataSourceAllChannels(newDACChannelDataSource);
+            //tell device to use pending data source as data source for all DAC channels
+            _device.SetDacChannelDataSourceAllChannels(_dacChannelDataSourceForPendingData); 
+
+            //now set pending data source to alternate data source so signal updates will accumulate there
+            _dacChannelDataSourceForPendingData = _dacChannelDataSourceForPendingData == a.DacChannelDataSource.DataValueA
+                                                                                            ? a.DacChannelDataSource.DataValueB
+                                                                                            : a.DacChannelDataSource.DataValueA;
+            //populate the pending data source with all current values
+            foreach (var outputSignal in _analogOutputSignals)
+            {
+                UpdateDACOutput(outputSignal, _dacChannelDataSourceForPendingData);
+            }
         }
 
         #endregion
