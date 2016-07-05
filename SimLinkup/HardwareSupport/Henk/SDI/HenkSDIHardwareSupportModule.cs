@@ -564,6 +564,8 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             }
             catch (Exception e)
             {
+                Common.Util.DisposeObject(_sdiDevice);
+                _sdiDevice = null;
                 _log.Error(e.Message, e);
             }
         }
@@ -600,6 +602,8 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             }
             catch (Exception e)
             {
+                Common.Util.DisposeObject(_sdiDevice);
+                _sdiDevice = null;
                 _log.Error(e.Message, e);
             }
             
