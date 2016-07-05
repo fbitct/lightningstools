@@ -910,7 +910,7 @@ namespace SimLinkup.HardwareSupport.Henk
         {
             if (_pitchInputSignal != null && _pitchOutputSignal !=null)
             {
-                _pitchOutputSignal.State = 424 - ((_pitchInputSignal.State / 90.000) * 255.000); 
+                _pitchOutputSignal.State = 424 + ((_pitchInputSignal.State / 90.000) * 255.000); 
             }
         }
 
@@ -926,7 +926,7 @@ namespace SimLinkup.HardwareSupport.Henk
         {
             if (_horizontalCommandBarInputSignal != null && _horizontalCommandBarOutputSignal !=null)
             {
-                _horizontalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? (0.5 + (0.5 * (_horizontalCommandBarInputSignal.State))) : 0.0f;
+                _horizontalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? (0.5 + (0.5 * (_horizontalCommandBarInputSignal.State))) : 1.0f;
             }
         }
 
@@ -934,7 +934,7 @@ namespace SimLinkup.HardwareSupport.Henk
         {
             if (_verticalCommandBarInputSignal != null && _verticalCommandBarOutputSignal !=null)
             {
-                _verticalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? 1.00-(0.5 + (0.5 * (_horizontalCommandBarInputSignal.State))) : 0.0f;
+                _verticalCommandBarOutputSignal.State = _commandBarsVisibleInputSignal.State ? 1.00-(0.5 + (0.5 * (_verticalCommandBarInputSignal.State))) : 0.0f;
             }
         }
 

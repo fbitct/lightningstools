@@ -95,7 +95,6 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
     [Serializable]
     public class InitialDACChannelState
     {
-        public DacChannelDataSource? DataSource { get; set; }
         public ushort? DataValueA { get; set; }
         public ushort? DataValueB { get; set; }
     }

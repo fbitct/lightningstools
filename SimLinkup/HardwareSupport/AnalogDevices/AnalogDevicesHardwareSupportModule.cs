@@ -22,6 +22,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private a.DenseDacEvalBoard _device;
         private bool _isDisposed;
         private int _deviceIndex;
+        private a.DacChannelDataSource _currentDacChannelDataSource = a.DacChannelDataSource.DataValueA;
         #endregion
 
         #region Constructors
@@ -43,10 +44,10 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             device.Reset();
             if (device.IsOverTemperature)
             {
-                device.IsTemperatureShutdownEnabled = false;
-                //reset temperature shutdown after previous overtemperature event
+                device.IsThermalShutdownEnabled = false;
+                //reset temperature shutdown after previous over-temperature event
             }
-            device.IsTemperatureShutdownEnabled = true; //enable over-temperature auto shutdown
+            device.IsThermalShutdownEnabled = true; //enable over-temperature auto shutdown
 
             device.SetDacChannelDataSourceAllChannels(a.DacChannelDataSource.DataValueA);
             device.DacPrecision =   deviceConfig !=null  && 
@@ -59,11 +60,13 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                                     deviceConfig.Calibration.OffsetDAC0.HasValue
                                         ? deviceConfig.Calibration.OffsetDAC0.Value
                                         : (ushort)0x2000;
+
             device.OffsetDAC1 = deviceConfig != null &&
                                     deviceConfig.Calibration != null &&
                                     deviceConfig.Calibration.OffsetDAC1.HasValue
                                         ? deviceConfig.Calibration.OffsetDAC1.Value
                                         : (ushort)0x2000;
+
             device.OffsetDAC2 = deviceConfig != null &&
                                     deviceConfig.Calibration != null &&
                                     deviceConfig.Calibration.OffsetDAC2.HasValue
@@ -73,39 +76,34 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             for (var channel = a.ChannelAddress.Dac0; channel <= a.ChannelAddress.Dac39; channel++)
             {
                 var dacChannelConfiguration = GetDACChannelConfiguration(channel, deviceConfig);
-                
-                device.SetDacChannelOffset(channel,   
-                                                dacChannelConfiguration !=null && 
-                                                dacChannelConfiguration.Calibration !=null && 
-                                                dacChannelConfiguration.Calibration.Offset.HasValue 
-                                                    ? dacChannelConfiguration.Calibration.Offset.Value
-                                                    : (ushort)0x8000);
-                device.SetDacChannelGain(channel, 
-                                                dacChannelConfiguration != null &&
-                                                dacChannelConfiguration.Calibration != null &&
-                                                dacChannelConfiguration.Calibration.Gain.HasValue
-                                                    ? dacChannelConfiguration.Calibration.Gain.Value
-                                                    : (ushort)0xFFFF);
-
-                device.SetDacChannelDataSource(channel, 
-                                                dacChannelConfiguration != null &&
-                                                dacChannelConfiguration.InitialState != null &&
-                                                dacChannelConfiguration.InitialState.DataSource.HasValue
-                                                    ? dacChannelConfiguration.InitialState.DataSource.Value
-                                                    : a.DacChannelDataSource.DataValueA);
 
                 device.SetDacChannelDataValueA(channel,
-                                                dacChannelConfiguration != null &&
-                                                dacChannelConfiguration.InitialState != null &&
-                                                dacChannelConfiguration.InitialState.DataValueA.HasValue
-                                                    ? dacChannelConfiguration.InitialState.DataValueA.Value
-                                                    : (ushort)0x0000);
+                                dacChannelConfiguration != null &&
+                                dacChannelConfiguration.InitialState != null &&
+                                dacChannelConfiguration.InitialState.DataValueA.HasValue
+                                    ? dacChannelConfiguration.InitialState.DataValueA.Value
+                                    : (ushort)0x0000);
+
                 device.SetDacChannelDataValueB(channel,
-                                                dacChannelConfiguration != null &&
-                                                dacChannelConfiguration.InitialState != null &&
-                                                dacChannelConfiguration.InitialState.DataValueB.HasValue
-                                                    ? dacChannelConfiguration.InitialState.DataValueB.Value
-                                                    : (ushort)0x0000);
+                                dacChannelConfiguration != null &&
+                                dacChannelConfiguration.InitialState != null &&
+                                dacChannelConfiguration.InitialState.DataValueB.HasValue
+                                    ? dacChannelConfiguration.InitialState.DataValueB.Value
+                                    : (ushort)0x0000);
+
+                device.SetDacChannelOffset(channel,   
+                                dacChannelConfiguration !=null && 
+                                dacChannelConfiguration.Calibration !=null && 
+                                dacChannelConfiguration.Calibration.Offset.HasValue 
+                                    ? dacChannelConfiguration.Calibration.Offset.Value
+                                    : (ushort)0x8000);
+
+                device.SetDacChannelGain(channel, 
+                                dacChannelConfiguration != null &&
+                                dacChannelConfiguration.Calibration != null &&
+                                dacChannelConfiguration.Calibration.Gain.HasValue
+                                    ? dacChannelConfiguration.Calibration.Gain.Value
+                                    : (ushort)0xFFFF);
 
             }
             device.UpdateAllDacOutputs();
@@ -225,8 +223,8 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 thisSignal.Source = device;
                 thisSignal.SourceFriendlyName = this.FriendlyName;
                 thisSignal.SourceAddress = device != null ? device.SymbolicName : null;
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
+                thisSignal.SubSource = (a.ChannelAddress)i+8;
+                thisSignal.SubSourceFriendlyName = ((a.ChannelAddress)thisSignal.SubSource).ToString();
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0; //O Volts
                 thisSignal.SignalChanged += DAC_OutputSignalChanged;
@@ -251,10 +249,16 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             {
                 if (_device != null)
                 {
-                    _device.SetDacChannelDataSource((a.ChannelAddress)outputSignal.Index.Value + 8,
-                        a.DacChannelDataSource.DataValueA);
-                    _device.SetDacChannelDataValueA((a.ChannelAddress)outputSignal.Index.Value + 8,
-                        (ushort) (((outputSignal.State +10.0000)/20.0000)*0xFFFF));
+                    var value = (ushort)(((outputSignal.State + 10.0000) / 20.0000) * 0xFFFF);
+                    var channelAddress = (a.ChannelAddress)outputSignal.SubSource;
+                    if (_currentDacChannelDataSource == a.DacChannelDataSource.DataValueA) //if current DAC channel data source is A
+                    {
+                        _device.SetDacChannelDataValueB(channelAddress, value); //load data into the B data value
+                    }
+                    else
+                    {
+                        _device.SetDacChannelDataValueA(channelAddress, value); //else load into the A data value
+                    }
                 }
             }
         }
@@ -272,8 +276,17 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             if (_device != null)
             {
+                ToggleDACChannelDataSource();
                 _device.UpdateAllDacOutputs();
             }
+        }
+
+        private void ToggleDACChannelDataSource()
+        {
+            var newDACChannelDataSource = _currentDacChannelDataSource == a.DacChannelDataSource.DataValueA
+                                                                            ? a.DacChannelDataSource.DataValueB
+                                                                            : a.DacChannelDataSource.DataValueA;
+            _device.SetDacChannelDataSourceAllChannels(newDACChannelDataSource);
         }
 
         #endregion
