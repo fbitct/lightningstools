@@ -74,21 +74,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ABSelectRegisterBits.cs" />
     <Compile Include="AddressCodesForDataReadback.cs" />
     <Compile Include="BasicMasks.cs" />
     <Compile Include="ChannelAddress.cs" />
     <Compile Include="ChannelGroup.cs" />
     <Compile Include="ChannelMonitorOptions.cs" />
     <Compile Include="ChannelMonitorSource.cs" />
+    <Compile Include="ControlRegisterBits.cs" />
     <Compile Include="DacChannelDataSource.cs" />
     <Compile Include="DacPrecision.cs" />
     <Compile Include="DenseDacEvalBoard.cs" />
     <Compile Include="DeviceCommand.cs" />
     <Compile Include="DeviceType.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="GpioRegisterBits.cs" />
     <Compile Include="IhxFile.cs" />
     <Compile Include="IODirection.cs" />
+    <Compile Include="MonitorBits.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerialInterfaceModeBits.cs" />
     <Compile Include="SpecialFunctionCode.cs" />
   </ItemGroup>
   <ItemGroup>

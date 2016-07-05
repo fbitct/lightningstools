@@ -44,7 +44,7 @@ namespace AnalogDevicesTestTool
                 var availableDevices = AnalogDevices.DenseDacEvalBoard.Enumerate();
                 foreach (var device in availableDevices)
                 {
-                    device.IsTemperatureShutdownEnabled = true; //enable over temp protection automatically during device enumeration
+                    device.IsThermalShutdownEnabled = true; //enable over temp protection automatically during device enumeration
                 }
                 cboDevices.Items.AddRange(availableDevices);
                 cboDevices.DisplayMember = "SymbolicName";
@@ -192,7 +192,7 @@ namespace AnalogDevicesTestTool
                     txtOverTempStatus.BackColor = Color.Green;
                     txtOverTempStatus.ForeColor = Color.White;
                 }
-                var overTempShutdownEnabled = _selectedDevice.IsTemperatureShutdownEnabled;
+                var overTempShutdownEnabled = _selectedDevice.IsThermalShutdownEnabled;
                 chkOverTempShutdownEnabled.Checked = overTempShutdownEnabled;
             }
             else
@@ -578,7 +578,7 @@ namespace AnalogDevicesTestTool
         {
             if (_selectedDevice != null)
             {
-                _selectedDevice.IsTemperatureShutdownEnabled = chkOverTempShutdownEnabled.Checked;
+                _selectedDevice.IsThermalShutdownEnabled = chkOverTempShutdownEnabled.Checked;
             }
         }
 

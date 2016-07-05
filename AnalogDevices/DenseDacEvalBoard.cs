@@ -31,12 +31,26 @@ namespace AnalogDevices
 
         public string SymbolicName
         {
-            get { return _usbDevice !=null && _usbDevice.UsbRegistryInfo !=null ? _usbDevice.UsbRegistryInfo.SymbolicName : null; }
+            get
+            {
+                return  _usbDevice !=null && 
+                        _usbDevice.UsbRegistryInfo !=null 
+                            ? _usbDevice.UsbRegistryInfo.SymbolicName 
+                            : null;
+            }
         }
 
         public bool GeneralPurposeIOPinState
         {
-            get { return (ReadbackGPIORegister() & 0x01) == 0x01; }
+            get
+            {
+                if (GeneralPurposeIOPinDirection != IODirection.Input)
+                {
+                    throw new InvalidOperationException(
+                        "GeneralPurposeIOPinDirection must be set to Input in order to read the GeneralPurposeIOPinState property.");
+                }
+                return (ReadbackGPIORegister() & GpioRegisterBits.Data) == GpioRegisterBits.Data; //readback GPIO register and return bit F0
+            }
             set
             {
                 if (GeneralPurposeIOPinDirection != IODirection.Output)
@@ -44,7 +58,11 @@ namespace AnalogDevices
                     throw new InvalidOperationException(
                         "GeneralPurposeIOPinDirection must be set to Output in order to set the GeneralPurposeIOPinState property.");
                 }
-                SendSpecialFunction(SpecialFunctionCode.GPIOConfigureAndWrite, value ? (byte)0x03 : (byte)0x02);
+                SendSpecialFunction(SpecialFunctionCode.GPIOConfigureAndWrite,
+                    value
+                        ? (ushort)(GpioRegisterBits.Direction | GpioRegisterBits.Data) //sets bit F1=1 to configure GPIO as an output; sets bit F0=1 to write a 1 to the GPIO output 
+                        : (ushort)(GpioRegisterBits.Direction) //sets bit F1=1 to configure GPIO as an output, bit F0 will not be set so will be written as a 0 to the GPIO output
+                ); 
             }
         }
 
@@ -53,46 +71,35 @@ namespace AnalogDevices
             get
             {
                 var gpioRegisterVal = ReadbackGPIORegister();
-                var gpioIsOutput = ((gpioRegisterVal & 0x02) == 0x02);
-                if (gpioIsOutput)
-                {
-                    return IODirection.Output;
-                }
-                else
-                {
-                    return IODirection.Input;
-                }
+                return ((gpioRegisterVal & GpioRegisterBits.Direction) == GpioRegisterBits.Direction)//if bit F1 =1, GPIO pin is configured for output (else, is configured for input)
+                            ? IODirection.Output
+                            : IODirection.Input;
             }
             set
             {
-                switch (value)
-                {
-                    case IODirection.Output:
-                        SendSpecialFunction(SpecialFunctionCode.GPIOConfigureAndWrite, 0x03);
-                        break;
-                    case IODirection.Input:
-                        SendSpecialFunction(SpecialFunctionCode.GPIOConfigureAndWrite, 0x00);
-                        break;
-                }
+                SendSpecialFunction(SpecialFunctionCode.GPIOConfigureAndWrite, 
+                    value==IODirection.Output 
+                        ? (ushort)GpioRegisterBits.Direction
+                        : (ushort)BasicMasks.AllBitsZero);
             }
         }
 
         public ushort OffsetDAC0
         {
-            get { return ReadbackOSF0Register(); }
-            set { WriteOSF0Register(value); }
+            get { return ReadbackOFS0Register(); }
+            set { WriteOFS0Register(value); }
         }
 
         public ushort OffsetDAC1
         {
-            get { return ReadbackOSF1Register(); }
-            set { WriteOSF1Register(value); }
+            get { return ReadbackOFS1Register(); }
+            set { WriteOFS1Register(value); }
         }
 
         public ushort OffsetDAC2
         {
-            get { return ReadbackOSF2Register(); }
-            set { WriteOSF2Register(value); }
+            get { return ReadbackOFS2Register(); }
+            set { WriteOFS2Register(value); }
         }
 
         public ChannelMonitorOptions ChannelMonitorOptions
@@ -101,17 +108,17 @@ namespace AnalogDevices
             {
                 var source = ChannelMonitorSource.None;
                 byte channelNumberOrInputPinNumber = 0;
-                if ((_monitorFlags & 0x20) == 0x20)
+                if ((_monitorFlags & MonitorBits.MonitorEnable) == MonitorBits.MonitorEnable) //if bit F5 is set (monitor enable bit = 1), monitoring is enabled
                 {
-                    if ((_monitorFlags & 0x10) == 0x10) //if input pin monitoring is on
+                    if ((_monitorFlags & MonitorBits.SourceSelect) == MonitorBits.SourceSelect) //if bit F4 =1, input pin monitoring is selected
                     {
                         source = ChannelMonitorSource.InputPin;
-                        channelNumberOrInputPinNumber = (_monitorFlags & 0x01) == 0x01 ? (byte)0x1 : (byte)0x0;
+                        channelNumberOrInputPinNumber = (byte)(_monitorFlags & MonitorBits.InputPin); //if bit F0=0, MON_IN0 is selected for monitoring, else MON_IN1 is selected for monitoring
                     }
-                    else //Dac monitoring is on
+                    else //bit F4 =0; DAC channel monitoring is selected
                     {
                         source = ChannelMonitorSource.DacChannel;
-                        channelNumberOrInputPinNumber = (byte) (_monitorFlags & 0x0F);
+                        channelNumberOrInputPinNumber = (byte) (_monitorFlags & MonitorBits.DacChannel); //bits F0-F3 specify the monitored DAC channel
                     }
                 }
                 
@@ -122,25 +129,25 @@ namespace AnalogDevices
             set { SendNewChannelMonitorOptionsToDevice(value); }
         }
 
-        public bool IsTemperatureShutdownEnabled
+        public bool IsThermalShutdownEnabled
         {
             get
             {
-                ushort controlRegisterVal = ReadbackControlRegister();
-                return ((controlRegisterVal & 0x04) == 0x04);
+                var controlRegisterBits = ReadbackControlRegister();
+                return ((controlRegisterBits & ControlRegisterBits.ThermalShutdownEnabled) == ControlRegisterBits.ThermalShutdownEnabled); //if bit 1=1, thermal shutdown is enabled
             }
             set
             {
-                ushort controlRegisterVal = ReadbackControlRegister();
+                var controlRegisterBits = ReadbackControlRegister();
                 if (value)
                 {
-                    controlRegisterVal |= 0x04;
+                    controlRegisterBits |= ControlRegisterBits.ThermalShutdownEnabled;
                 }
                 else
                 {
-                    controlRegisterVal &= 0xFB;
+                    controlRegisterBits &= ~ControlRegisterBits.ThermalShutdownEnabled;
                 }
-                WriteControlRegister(controlRegisterVal);
+                WriteControlRegister(controlRegisterBits);
             }
         }
 
@@ -160,8 +167,8 @@ namespace AnalogDevices
         {
             get
             {
-                ushort controlRegisterVal = ReadbackControlRegister();
-                return (controlRegisterVal & 0x08) == 0x08;
+                var controlRegisterBits = ReadbackControlRegister();
+                return (controlRegisterBits & ControlRegisterBits.PacketErrorCheckErrorOccurred) == ControlRegisterBits.PacketErrorCheckErrorOccurred;
             }
         }
 
@@ -169,8 +176,8 @@ namespace AnalogDevices
         {
             get
             {
-                ushort controlRegisterVal = ReadbackControlRegister();
-                return (controlRegisterVal & 0x10) == 0x10;
+                var controlRegisterBits = ReadbackControlRegister();
+                return (controlRegisterBits & ControlRegisterBits.OverTemperature) == ControlRegisterBits.OverTemperature;
             }
         }
 
@@ -178,41 +185,41 @@ namespace AnalogDevices
 
         #region Dac Channel Data Source Selection
 
-        public void SetDacChannelDataSource(ChannelAddress channel, DacChannelDataSource value)
+        public void SetDacChannelDataSource(ChannelAddress channelAddress, DacChannelDataSource value)
         {
-            if ((int) channel < 8 || (int) channel > 47)
+            if ((int) channelAddress < 8 || (int) channelAddress > 47)
             {
-                if (channel == ChannelAddress.AllGroupsAllChannels)
+                if (channelAddress == ChannelAddress.AllGroupsAllChannels)
                 {
                     SetDacChannelDataSourceAllChannels(value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group0AllChannels)
+                else if (channelAddress == ChannelAddress.Group0AllChannels)
                 {
                     SetDacChannelDataSource(ChannelGroup.Group0, value, value, value, value, value, value, value, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group1AllChannels)
+                else if (channelAddress == ChannelAddress.Group1AllChannels)
                 {
                     SetDacChannelDataSource(ChannelGroup.Group1, value, value, value, value, value, value, value, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group2AllChannels)
+                else if (channelAddress == ChannelAddress.Group2AllChannels)
                 {
                     SetDacChannelDataSource(ChannelGroup.Group2, value, value, value, value, value, value, value, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group3AllChannels)
+                else if (channelAddress == ChannelAddress.Group3AllChannels)
                 {
                     SetDacChannelDataSource(ChannelGroup.Group3, value, value, value, value, value, value, value, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group4AllChannels)
+                else if (channelAddress == ChannelAddress.Group4AllChannels)
                 {
                     SetDacChannelDataSource(ChannelGroup.Group4, value, value, value, value, value, value, value, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group0Through4Channel0)
+                else if (channelAddress == ChannelAddress.Group0Through4Channel0)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group0Channel0, value);
                     SetDacChannelDataSource(ChannelAddress.Group1Channel0, value);
@@ -221,7 +228,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel0, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group0Through4Channel1)
+                else if (channelAddress == ChannelAddress.Group0Through4Channel1)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group0Channel1, value);
                     SetDacChannelDataSource(ChannelAddress.Group1Channel1, value);
@@ -230,7 +237,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel1, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group0Through4Channel2)
+                else if (channelAddress == ChannelAddress.Group0Through4Channel2)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group0Channel2, value);
                     SetDacChannelDataSource(ChannelAddress.Group1Channel2, value);
@@ -239,7 +246,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel2, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group0Through4Channel3)
+                else if (channelAddress == ChannelAddress.Group0Through4Channel3)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group0Channel3, value);
                     SetDacChannelDataSource(ChannelAddress.Group1Channel3, value);
@@ -248,7 +255,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel3, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group0Through4Channel4)
+                else if (channelAddress == ChannelAddress.Group0Through4Channel4)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group0Channel4, value);
                     SetDacChannelDataSource(ChannelAddress.Group1Channel4, value);
@@ -257,7 +264,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel4, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group0Through4Channel5)
+                else if (channelAddress == ChannelAddress.Group0Through4Channel5)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group0Channel5, value);
                     SetDacChannelDataSource(ChannelAddress.Group1Channel5, value);
@@ -266,7 +273,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel5, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group0Through4Channel6)
+                else if (channelAddress == ChannelAddress.Group0Through4Channel6)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group0Channel6, value);
                     SetDacChannelDataSource(ChannelAddress.Group1Channel6, value);
@@ -275,7 +282,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel6, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group0Through4Channel7)
+                else if (channelAddress == ChannelAddress.Group0Through4Channel7)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group0Channel7, value);
                     SetDacChannelDataSource(ChannelAddress.Group1Channel7, value);
@@ -284,7 +291,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel7, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group1Through4Channel0)
+                else if (channelAddress == ChannelAddress.Group1Through4Channel0)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group1Channel0, value);
                     SetDacChannelDataSource(ChannelAddress.Group2Channel0, value);
@@ -292,7 +299,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel0, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group1Through4Channel1)
+                else if (channelAddress == ChannelAddress.Group1Through4Channel1)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group1Channel1, value);
                     SetDacChannelDataSource(ChannelAddress.Group2Channel1, value);
@@ -300,7 +307,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel1, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group1Through4Channel2)
+                else if (channelAddress == ChannelAddress.Group1Through4Channel2)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group1Channel2, value);
                     SetDacChannelDataSource(ChannelAddress.Group2Channel2, value);
@@ -308,7 +315,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel2, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group1Through4Channel3)
+                else if (channelAddress == ChannelAddress.Group1Through4Channel3)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group1Channel3, value);
                     SetDacChannelDataSource(ChannelAddress.Group2Channel3, value);
@@ -316,7 +323,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel3, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group1Through4Channel4)
+                else if (channelAddress == ChannelAddress.Group1Through4Channel4)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group1Channel4, value);
                     SetDacChannelDataSource(ChannelAddress.Group2Channel4, value);
@@ -324,7 +331,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel4, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group1Through4Channel5)
+                else if (channelAddress == ChannelAddress.Group1Through4Channel5)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group1Channel5, value);
                     SetDacChannelDataSource(ChannelAddress.Group2Channel5, value);
@@ -332,7 +339,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel5, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group1Through4Channel6)
+                else if (channelAddress == ChannelAddress.Group1Through4Channel6)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group1Channel6, value);
                     SetDacChannelDataSource(ChannelAddress.Group2Channel6, value);
@@ -340,7 +347,7 @@ namespace AnalogDevices
                     SetDacChannelDataSource(ChannelAddress.Group4Channel6, value);
                     return;
                 }
-                else if (channel == ChannelAddress.Group1Through4Channel7)
+                else if (channelAddress == ChannelAddress.Group1Through4Channel7)
                 {
                     SetDacChannelDataSource(ChannelAddress.Group1Channel7, value);
                     SetDacChannelDataSource(ChannelAddress.Group2Channel7, value);
@@ -350,61 +357,63 @@ namespace AnalogDevices
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException("channel");
+                    throw new ArgumentOutOfRangeException("channelAddress");
                 }
             }
-            var channelNum = (byte) ((byte) channel - 8);
-            byte currentSourceSelections = 0x00;
-            var code = SpecialFunctionCode.NOP;
+            var channelNum = (byte) ((byte) channelAddress - 8);
+            var currentSourceSelections = ABSelectRegisterBits.AllChannelsA;
+
+            var specialFunctionCode = SpecialFunctionCode.NOP;
             if (channelNum < 8)
             {
-                code = SpecialFunctionCode.WriteToABSelectRegister0;
-                //currentSourceSelections = ReadbackABSelect0Register();
+                specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister0;
+                currentSourceSelections = ReadbackABSelect0Register();
             }
             else if (channelNum >= 8 && channelNum < 16)
             {
-                code = SpecialFunctionCode.WriteToABSelectRegister1;
-                //currentSourceSelections = ReadbackABSelect1Register();
+                specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister1;
+                currentSourceSelections = ReadbackABSelect1Register();
             }
             else if (channelNum >= 16 && channelNum < 24)
             {
-                code = SpecialFunctionCode.WriteToABSelectRegister2;
-                //currentSourceSelections = ReadbackABSelect2Register();
+                specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister2;
+                currentSourceSelections = ReadbackABSelect2Register();
             }
             else if (channelNum >= 24 && channelNum < 32)
             {
-                code = SpecialFunctionCode.WriteToABSelectRegister3;
-                //currentSourceSelections = ReadbackABSelect3Register();
+                specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister3;
+                currentSourceSelections = ReadbackABSelect3Register();
             }
             else if (channelNum >= 32 && channelNum <= 39)
             {
-                code = SpecialFunctionCode.WriteToABSelectRegister4;
-                //currentSourceSelections = ReadbackABSelect4Register();
+                specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister4;
+                currentSourceSelections = ReadbackABSelect4Register();
             }
-            var toSend = currentSourceSelections;
+            var newSourceSelections = currentSourceSelections;
 
-            var channelOffset = (byte) (channelNum%8);
-            var channelMask = (byte) (1 << channelOffset);
+            var channelOffset = (byte) (channelNum % 8);
+            var channelMask = (ABSelectRegisterBits) (1 << channelOffset);
+
             if (value == DacChannelDataSource.DataValueA)
             {
-                toSend &= (byte) (~channelMask);
+                newSourceSelections &= ~channelMask;
             }
             else
             {
-                toSend |= channelMask;
+                newSourceSelections |= channelMask;
             }
-            toSend &= (byte)BasicMasks.OneByte;
-            SendSpecialFunction(code, toSend);
+            newSourceSelections &= ABSelectRegisterBits.WritableBits; //ensure we only send 8 bits of data (one for each channel in the group)
+            SendSpecialFunction(specialFunctionCode, (ushort)newSourceSelections);
         }
 
-        public DacChannelDataSource GetDacChannelDataSource(ChannelAddress channel)
+        public DacChannelDataSource GetDacChannelDataSource(ChannelAddress channelAddress)
         {
-            if ((int) channel < 8 || (int) channel > 47)
+            if ((int) channelAddress < 8 || (int) channelAddress > 47)
             {
-                throw new ArgumentOutOfRangeException("channel");
+                throw new ArgumentOutOfRangeException("channelAddress");
             }
-            var channelNum = (byte) ((byte) channel - 8);
-            byte currentSourceSelections = 0x00;
+            var channelNum = (byte) ((byte) channelAddress - 8);
+            var currentSourceSelections = ABSelectRegisterBits.AllChannelsA;
             if (channelNum < 8)
             {
                 currentSourceSelections = ReadbackABSelect0Register();
@@ -425,10 +434,10 @@ namespace AnalogDevices
             {
                 currentSourceSelections = ReadbackABSelect4Register();
             }
-            var channelOffset = (byte) (channelNum%8);
-            var channelMask = (byte) (1 << channelOffset);
-            var sourceIsB = ((currentSourceSelections & channelMask) == channelMask);
-            if (sourceIsB)
+            var channelOffset = (byte) (channelNum % 8);
+            var channelMask = (ABSelectRegisterBits) (1 << channelOffset);
+            var sourceIsDataValueB = ((currentSourceSelections & channelMask) == channelMask);
+            if (sourceIsDataValueB)
             {
                 return DacChannelDataSource.DataValueB;
             }
@@ -444,37 +453,38 @@ namespace AnalogDevices
                                             DacChannelDataSource channel5, DacChannelDataSource channel6,
                                             DacChannelDataSource channel7)
         {
-            byte toSend = 0x00;
-            if (channel0 == DacChannelDataSource.DataValueB) toSend |= 0x01;
-            if (channel1 == DacChannelDataSource.DataValueB) toSend |= 0x02;
-            if (channel2 == DacChannelDataSource.DataValueB) toSend |= 0x03;
-            if (channel3 == DacChannelDataSource.DataValueB) toSend |= 0x04;
-            if (channel4 == DacChannelDataSource.DataValueB) toSend |= 0x05;
-            if (channel5 == DacChannelDataSource.DataValueB) toSend |= 0x06;
-            if (channel6 == DacChannelDataSource.DataValueB) toSend |= 0x07;
-            if (channel7 == DacChannelDataSource.DataValueB) toSend |= 0x08;
+            ABSelectRegisterBits abSelectRegisterBits = ABSelectRegisterBits.AllChannelsA;
 
-            var code = SpecialFunctionCode.NOP;
+            if (channel0 == DacChannelDataSource.DataValueB) abSelectRegisterBits |= ABSelectRegisterBits.Channel0;
+            if (channel1 == DacChannelDataSource.DataValueB) abSelectRegisterBits |= ABSelectRegisterBits.Channel1;
+            if (channel2 == DacChannelDataSource.DataValueB) abSelectRegisterBits |= ABSelectRegisterBits.Channel2;
+            if (channel3 == DacChannelDataSource.DataValueB) abSelectRegisterBits |= ABSelectRegisterBits.Channel3;
+            if (channel4 == DacChannelDataSource.DataValueB) abSelectRegisterBits |= ABSelectRegisterBits.Channel4;
+            if (channel5 == DacChannelDataSource.DataValueB) abSelectRegisterBits |= ABSelectRegisterBits.Channel5;
+            if (channel6 == DacChannelDataSource.DataValueB) abSelectRegisterBits |= ABSelectRegisterBits.Channel6;
+            if (channel7 == DacChannelDataSource.DataValueB) abSelectRegisterBits |= ABSelectRegisterBits.Channel7;
+
+            var specialFunctionCode = SpecialFunctionCode.NOP;
             switch (group)
             {
                 case ChannelGroup.Group0:
-                    code = SpecialFunctionCode.WriteToABSelectRegister0;
+                    specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister0;
                     break;
                 case ChannelGroup.Group1:
-                    code = SpecialFunctionCode.WriteToABSelectRegister1;
+                    specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister1;
                     break;
                 case ChannelGroup.Group2:
-                    code = SpecialFunctionCode.WriteToABSelectRegister2;
+                    specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister2;
                     break;
                 case ChannelGroup.Group3:
-                    code = SpecialFunctionCode.WriteToABSelectRegister3;
+                    specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister3;
                     break;
                 case ChannelGroup.Group4:
-                    code = SpecialFunctionCode.WriteToABSelectRegister4;
+                    specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister4;
                     break;
             }
-            toSend &= (byte)BasicMasks.OneByte;
-            SendSpecialFunction(code, toSend);
+            abSelectRegisterBits &= ABSelectRegisterBits.WritableBits; //ensure we only send 8 bits of data
+            SendSpecialFunction(specialFunctionCode, (ushort)abSelectRegisterBits);
         }
 
         public void SetDacChannelDataSourceAllChannels(DacChannelDataSource source)
@@ -482,10 +492,10 @@ namespace AnalogDevices
             switch (source)
             {
                 case DacChannelDataSource.DataValueA:
-                    SendSpecialFunction(SpecialFunctionCode.BlockWriteABSelectRegisters, 0x00);
+                    SendSpecialFunction(SpecialFunctionCode.BlockWriteABSelectRegisters, (ushort)ABSelectRegisterBits.AllChannelsA);
                     break;
                 case DacChannelDataSource.DataValueB:
-                    SendSpecialFunction(SpecialFunctionCode.BlockWriteABSelectRegisters, 0xFF);
+                    SendSpecialFunction(SpecialFunctionCode.BlockWriteABSelectRegisters, (ushort)ABSelectRegisterBits.AllChannelsB);
                     break;
                 default:
                     throw new ArgumentException("source");
@@ -498,16 +508,16 @@ namespace AnalogDevices
 
         public void PerformSoftPowerDown()
         {
-            ushort controlRegisterVal = ReadbackControlRegister();
-            controlRegisterVal |= 0x01;
-            WriteControlRegister(controlRegisterVal);
+            var controlRegisterBits = ReadbackControlRegister();
+            controlRegisterBits |= ControlRegisterBits.SoftPowerDown; //set bit F0=1 to perform soft power-down
+            WriteControlRegister(controlRegisterBits);
         }
 
         public void PerformSoftPowerUp()
         {
-            ushort controlRegisterVal = ReadbackControlRegister();
-            controlRegisterVal &= 0xFE;
-            WriteControlRegister(controlRegisterVal);
+            var controlRegisterBits = ReadbackControlRegister();
+            controlRegisterBits &= ~ControlRegisterBits.SoftPowerDown; //set bit F0=0 to perform soft power-up;
+            WriteControlRegister(controlRegisterBits);
         }
 
         public void Reset()
@@ -554,33 +564,34 @@ namespace AnalogDevices
             throw new ArgumentOutOfRangeException("channel");
         }
 
-        public void SetDacChannelDataValueA(ChannelAddress channels, ushort newVal)
+        public void SetDacChannelDataValueA(ChannelAddress channelAddress, ushort newVal)
         {
-            ushort controlRegisterVal = 0;//ReadbackControlRegister();
-            controlRegisterVal &= 0xFFFB;
-            WriteControlRegister(controlRegisterVal);
+            var controlRegisterBits = ReadbackControlRegister();
+            controlRegisterBits &= ~ControlRegisterBits.InputRegisterSelect; //set control register bit F2 =0 to select register X1A for input
+            WriteControlRegister(controlRegisterBits);
+
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI(0xC00000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal);
+                SendSPI((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | newVal);
             }
             else
             {
-                SendSPI((0xC00000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
+                SendSPI((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2));
             }
         }
 
         public void SetDacChannelDataValueB(ChannelAddress channels, ushort newVal)
         {
-            ushort controlRegisterVal = ReadbackControlRegister();
-            controlRegisterVal |= 4;
-            WriteControlRegister(controlRegisterVal);
+            var controlRegisterBits = ReadbackControlRegister();
+            controlRegisterBits |= ControlRegisterBits.InputRegisterSelect;//set control register bit F2 =1 to select register X1B for input
+            WriteControlRegister(controlRegisterBits);
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI((0xC00000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
+                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
             }
             else
             {
-                SendSPI((0xC00000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
+                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
             }
         }
 
@@ -597,11 +608,11 @@ namespace AnalogDevices
         {
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI((0x800000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
+                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
             }
             else
             {
-                SendSPI((0x800000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
+                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
             }
         }
 
@@ -618,11 +629,11 @@ namespace AnalogDevices
         {
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI((0x400000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
+                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
             }
             else
             {
-                SendSPI((0x400000 | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
+                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
             }
         }
 
@@ -683,7 +694,7 @@ namespace AnalogDevices
 
         private readonly byte[] _emptyBuf = new byte[0];
         private readonly UsbDevice _usbDevice;
-        private byte _monitorFlags;
+        private MonitorBits _monitorFlags;
         private bool _spiInitialized;
         private DacPrecision _thisDevicePrecision = DacPrecision.SixteenBit;
 
@@ -697,23 +708,24 @@ namespace AnalogDevices
 
             if (value.ChannelMonitorSource == ChannelMonitorSource.None)
             {
-                _monitorFlags &= 0xDF;
+                _monitorFlags &= ~MonitorBits.MonitorEnable; //set bit F5 to 0 (set monitor enable bit to 0, monitor disable)
             }
             else
             {
-                _monitorFlags |= 0x20;
+                _monitorFlags |= MonitorBits.MonitorEnable; //set bit F5 to 1 (set monitor enable bit to 1, monitor enable)
                 if (value.ChannelMonitorSource == ChannelMonitorSource.InputPin)
                 {
                     if (value.ChannelNumberOrInputPinNumber == 0)
                     {
-                        _monitorFlags |= 0x18;
-                        _monitorFlags &= 0xF0;
+                        _monitorFlags |= MonitorBits.SourceSelect; //set bit F4 to 1 (monitor input pin selected by F0) 
+                        _monitorFlags &= ~MonitorBits.InputPin; //set bit F0 to 0 (select MON_IN0 for monitoring)
+                        _monitorFlags &= ~MonitorBits.NotUsedWithInputPinMonitoring; //set bits F1-F3 to 0 (not used when F4 =1)
                     }
                     else if (value.ChannelNumberOrInputPinNumber == 1)
                     {
-                        _monitorFlags |= 0x18;
-                        _monitorFlags &= 0xF0;
-                        _monitorFlags |= (1);
+                        _monitorFlags |= MonitorBits.SourceSelect;//set bit F4 to 1 (monitor input pin selected by F0) 
+                        _monitorFlags |= MonitorBits.InputPin;//set bit F0 to 1 (select MON_IN1 for monitoring)
+                        _monitorFlags &= ~MonitorBits.NotUsedWithInputPinMonitoring; //set bits F1-F3 to 0 (not used when F4 =1)
                     }
                     else
                     {
@@ -723,16 +735,16 @@ namespace AnalogDevices
                 }
                 else if (value.ChannelMonitorSource == ChannelMonitorSource.DacChannel)
                 {
-                    _monitorFlags |= 0x20;
-                    _monitorFlags &= 0xE0;
-                    _monitorFlags |= (byte) (value.ChannelNumberOrInputPinNumber & 0x0F);
+                    _monitorFlags |= MonitorBits.MonitorEnable;//set bit F5 to 1 (set monitor enable bit to 1, monitor enable)
+                    _monitorFlags &= ~MonitorBits.DacChannel; //clear bits F0-F3 (DAC channel selection)
+                    _monitorFlags |= (MonitorBits) (value.ChannelNumberOrInputPinNumber & (byte)BasicMasks.FourBits); //set bits F0-F3 with the DAC channel number to monitor
                 }
                 else
                 {
                     throw new ArgumentOutOfRangeException("value", "value.ChannelMonitorSource is not valid.");
                 }
             }
-            SendSpecialFunction(SpecialFunctionCode.ConfigureMonitoring, _monitorFlags);
+            SendSpecialFunction(SpecialFunctionCode.ConfigureMonitoring, (ushort)_monitorFlags);
         }
 
         private void MonitorOptionsPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
@@ -792,89 +804,89 @@ namespace AnalogDevices
             return val;
         }
 
-        private byte ReadbackControlRegister()
+        private ControlRegisterBits ReadbackControlRegister()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ControlRegister);
-            return (byte) (ReadSPI() & (byte)BasicMasks.FiveBits);
+            return (ControlRegisterBits) (ReadSPI() & (ushort)ControlRegisterBits.ReadableBits);
         }
 
-        private ushort ReadbackOSF0Register()
+        private ushort ReadbackOFS0Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF0Register);
             return (ushort) (ReadSPI() & (ushort)BasicMasks.FourteenBits);
         }
 
-        private ushort ReadbackOSF1Register()
+        private ushort ReadbackOFS1Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF1Register);
             return (ushort) (ReadSPI() & (ushort)BasicMasks.FourteenBits);
         }
 
-        private ushort ReadbackOSF2Register()
+        private ushort ReadbackOFS2Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF2Register);
             return (ushort) (ReadSPI() & (ushort)BasicMasks.FourteenBits);
         }
 
-        private byte ReadbackABSelect0Register()
+        private ABSelectRegisterBits ReadbackABSelect0Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect0Register);
-            return (byte) (ReadSPI() & (ushort)BasicMasks.OneByte);
+            return (ABSelectRegisterBits) (ReadSPI() & (ushort)ABSelectRegisterBits.ReadableBits);
         }
 
-        private byte ReadbackABSelect1Register()
+        private ABSelectRegisterBits ReadbackABSelect1Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect1Register);
-            return (byte) (ReadSPI() & (ushort)BasicMasks.OneByte);
+            return (ABSelectRegisterBits)(ReadSPI() & (ushort)ABSelectRegisterBits.ReadableBits);
         }
 
-        private byte ReadbackABSelect2Register()
+        private ABSelectRegisterBits ReadbackABSelect2Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect2Register);
-            return (byte) (ReadSPI() & (ushort)BasicMasks.OneByte);
+            return (ABSelectRegisterBits)(ReadSPI() & (ushort)ABSelectRegisterBits.ReadableBits);
         }
 
-        private byte ReadbackABSelect3Register()
+        private ABSelectRegisterBits ReadbackABSelect3Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect3Register);
-            return (byte) (ReadSPI() & (ushort)BasicMasks.OneByte);
+            return (ABSelectRegisterBits)(ReadSPI() & (ushort)ABSelectRegisterBits.ReadableBits);
         }
 
-        private byte ReadbackABSelect4Register()
+        private ABSelectRegisterBits ReadbackABSelect4Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect4Register);
-            return (byte) (ReadSPI() & (ushort)BasicMasks.OneByte);
+            return (ABSelectRegisterBits)(ReadSPI() & (ushort)ABSelectRegisterBits.ReadableBits);
         }
 
-        private byte ReadbackGPIORegister()
+        private GpioRegisterBits ReadbackGPIORegister()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.GPIORegister);
-            return (byte) ((ReadSPI() & (ushort)BasicMasks.TwoBits));
+            return (GpioRegisterBits)((ReadSPI() & (ushort)GpioRegisterBits.ReadableBits));
         }
 
         #endregion
 
         #region Register Writing Functions
 
-        private void WriteControlRegister(ushort newVal)
+        private void WriteControlRegister(ControlRegisterBits controlRegisterBits)
         {
-            newVal &= (ushort)BasicMasks.ThreeBits;
-            SendSpecialFunction(SpecialFunctionCode.WriteControlRegister, newVal);
+            controlRegisterBits &= ControlRegisterBits.WritableBits;
+            SendSpecialFunction(SpecialFunctionCode.WriteControlRegister, (ushort) controlRegisterBits);
         }
 
-        private void WriteOSF0Register(ushort newVal)
+        private void WriteOFS0Register(ushort newVal)
         {
             newVal &= (ushort)BasicMasks.FourteenBits;
             SendSpecialFunction(SpecialFunctionCode.WriteOSF0Register, newVal);
         }
 
-        private void WriteOSF1Register(ushort newVal)
+        private void WriteOFS1Register(ushort newVal)
         {
             newVal &= (ushort)BasicMasks.FourteenBits;
             SendSpecialFunction(SpecialFunctionCode.WriteOSF1Register, newVal);
         }
 
-        private void WriteOSF2Register(ushort newVal)
+        private void WriteOFS2Register(ushort newVal)
         {
             newVal &= (ushort)BasicMasks.FourteenBits;
             SendSpecialFunction(SpecialFunctionCode.WriteOSF2Register, newVal);
