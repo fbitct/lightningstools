@@ -33,14 +33,13 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         private AnalogDevicesHardwareSupportModule(a.DenseDacEvalBoard device, int deviceIndex, DeviceConfig deviceConfig) : this()
         {
-            _device = device;
+            _device = device ?? new a.DenseDacEvalBoard(null);
             _deviceIndex = deviceIndex;
-            ConfigureDevice(device, deviceConfig);
+            ConfigureDevice(_device, deviceConfig);
             CreateOutputSignals(_device, deviceIndex, out _analogOutputSignals);
         }
         private void ConfigureDevice(a.DenseDacEvalBoard device, DeviceConfig deviceConfig)
         {
-            if (device == null) device = new a.DenseDacEvalBoard(null);
             device.Reset();
             if (device.IsOverTemperature)
             {
@@ -162,7 +161,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                                                     ? hsmConfig.Devices[index]
                                                     : null;
 
-                    var device = devices != null && devices.Length > index ? devices[index]: null;
+                    var device = devices != null && devices.Length > index ? devices[index]: new a.DenseDacEvalBoard(null);
                     var hsmInstance = new AnalogDevicesHardwareSupportModule(device, index, thisDeviceConfig);
                     toReturn.Add(hsmInstance);
                     index++;
