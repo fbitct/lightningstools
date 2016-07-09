@@ -151,6 +151,8 @@
     <Compile Include="HardwareSupport\Simtek\Simtek100295HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek10058201HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek10058201HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101079HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101079HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek101088HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek101088HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek10108902HardwareSupportModule.cs" />
@@ -324,6 +326,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Content\Mapping\Simtek101079standbyCompass.mapping" />
+    <Content Include="HardwareSupportModule.registry">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <None Include="PowellIP1310ALRHardwareSupportModule.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -381,6 +386,9 @@
       <DependentUpon>SignalsView.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
+    <Content Include="SimSupportModule.registry">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

@@ -6,7 +6,7 @@ using log4net;
 using LightningGauges.Renderers.F16;
 using System.Drawing;
 
-namespace SimLinkup.HardwareSupport.Henk
+namespace SimLinkup.HardwareSupport.Henk.ADI
 {
     //Henk F-16 ADI Support Board for ARU-50/A Primary ADI
     public class HenkF16ADISupportBoardHardwareSupportModule : HardwareSupportModuleBase, IDisposable
@@ -68,7 +68,7 @@ namespace SimLinkup.HardwareSupport.Henk
         private DigitalSignal _glideslopeIndicatorsPowerOnOffOutputSignal;
         private DigitalSignal _rateOfTurnAndFlagsPowerOnOffOutputSignal;
 
-        private IADI _renderer = new ADI();
+        private IADI _renderer = new LightningGauges.Renderers.F16.ADI();
         #endregion
 
         #region Constructors

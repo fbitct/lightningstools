@@ -209,8 +209,8 @@ namespace SimLinkup.Runtime
             if (_initialized) return;
             ScriptingContext = new ScriptingContext
             {
-                SimSupportModules = LoadSimSupportModules(),
-                HardwareSupportModules = LoadHardwareSupportModules()
+                SimSupportModules = GetRegisteredSimSupportModules(),
+                HardwareSupportModules = GetRegisteredHardwareSupportModules()
             };
 
             LoadScripts();
@@ -287,15 +287,30 @@ namespace SimLinkup.Runtime
             }
         }
 
-        public static SimSupportModule[] LoadSimSupportModules()
+        public static SimSupportModule[] GetRegisteredSimSupportModules()
         {
-            var modules = new SimSupportModuleLoader().LoadSimSupportModules(pathToScan:Util.ApplicationDirectory, recursiveScan:true);
-            return modules !=null ? modules.ToArray(): null;
+            var appDirectory = Util.ApplicationDirectory;
+
+            //get a list of sim support modules that are currently registered
+            var ssmRegistry =
+                SimSupportModuleRegistry.Load(Path.Combine(appDirectory, "SimSupportModule.registry"));
+            var modules = ssmRegistry.GetInstances();
+            if (modules != null)
+            {
+                return modules.ToArray();
+            }
+            return null;
         }
 
-        public static IHardwareSupportModule[] LoadHardwareSupportModules()
+        public static IHardwareSupportModule[] GetRegisteredHardwareSupportModules()
         {
-            var modules = new HardwareSupportModuleLoader().LoadHardwareSupportModules(pathToScan:Util.ApplicationDirectory, recursiveScan:true);
+            var appDirectory = Util.ApplicationDirectory;
+
+            //get a list of hardware support modules that are currently registered
+            var hsmRegistry =
+                HardwareSupportModuleRegistry.Load(Path.Combine(appDirectory, "HardwareSupportModule.registry"));
+
+            var modules = hsmRegistry.GetInstances();
             return modules != null ? modules.ToArray() : null;
         }
 
