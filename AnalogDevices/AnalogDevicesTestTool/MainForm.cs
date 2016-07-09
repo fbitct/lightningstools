@@ -1,13 +1,10 @@
 ﻿using log4net;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AnalogDevicesTestTool
@@ -27,9 +24,8 @@ namespace AnalogDevicesTestTool
             SetApplicationTitle();
             EnumerateDevices();
             AddEventHandlersForAllDACChannelSelectRadioButtions();
+            UpdateDeviceValuesInUI();
             SelectDACChannel0();
-            UpdateCalculatedOutputVoltage();
-            UpdateOverTemperatureValuesInUIFromDevice();
 
         }
         private void SetApplicationTitle()
@@ -67,9 +63,85 @@ namespace AnalogDevicesTestTool
             }
             
         }
-
-        void DACChannelSelectRadioButton_CheckedChanged(object sender, EventArgs e)
+        private void ReadbackSelectedDACChannelOffset()
         {
+            if (_selectedDevice != null)
+            {
+                var selectedDacChannel = DetermineSelectedDACChannelAddress();
+                var dacChannelOffset = _selectedDevice.GetDacChannelOffset(selectedDacChannel);
+                txtDACChannelOffset.Text = dacChannelOffset.ToString("X").PadLeft(4, '0');
+            }
+        }
+        private void ReadbackSelectedDACChannelGain()
+        {
+            if (_selectedDevice != null)
+            {
+                var selectedDacChannel = DetermineSelectedDACChannelAddress();
+                var dacChannelGain = _selectedDevice.GetDacChannelGain(selectedDacChannel);
+                txtDACChannelGain.Text = dacChannelGain.ToString("X").PadLeft(4, '0');
+            }
+        }
+        private void ReadbackSelectedDACChannelDataValueA()
+        {
+            if (_selectedDevice != null)
+            {
+                var selectedDacChannel = DetermineSelectedDACChannelAddress();
+                var dacChannelDataValueA= _selectedDevice.GetDacChannelDataValueA(selectedDacChannel);
+                txtDataValueA.Text = dacChannelDataValueA.ToString("X").PadLeft(4, '0');
+            }
+        }
+        private void ReadbackSelectedDACChannelDataValueB()
+        {
+            if (_selectedDevice != null)
+            {
+                var selectedDacChannel = DetermineSelectedDACChannelAddress();
+                var dacChannelDataValueB = _selectedDevice.GetDacChannelDataValueB(selectedDacChannel);
+                txtDataValueB.Text = dacChannelDataValueB.ToString("X").PadLeft(4, '0');
+            }
+        }
+        private void ReadbackSelectedDACChannelDataSource()
+        {
+            if (_selectedDevice != null)
+            {
+                var selectedDacChannel = DetermineSelectedDACChannelAddress();
+                var dacChannelDataSource = _selectedDevice.GetDacChannelDataSource(selectedDacChannel);
+                if (dacChannelDataSource == AnalogDevices.DacChannelDataSource.DataValueA)
+                {
+                    rdoDataValueA.Checked = true;
+                }
+                else
+                {
+                    rdoDataValueB.Checked = true;
+                }
+            }
+        }
+        private void ReadbackOffsetDAC0()
+        {
+            if (_selectedDevice != null)
+            {
+                var offsetDAC0= _selectedDevice.OffsetDAC0;
+                txtOffsetDAC0.Text = offsetDAC0.ToString("X").PadLeft(4, '0');
+            }
+        }
+        private void ReadbackOffsetDAC1()
+        {
+            if (_selectedDevice != null)
+            {
+                var offsetDAC1 = _selectedDevice.OffsetDAC1;
+                txtOffsetDAC1.Text = offsetDAC1.ToString("X").PadLeft(4, '0');
+            }
+        }
+        private void DACChannelSelectRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateUIValuesForSelectedDACChannel();
+        }
+        private void UpdateUIValuesForSelectedDACChannel()
+        {
+            ReadbackSelectedDACChannelDataSource();
+            ReadbackSelectedDACChannelDataValueA();
+            ReadbackSelectedDACChannelDataValueB();
+            ReadbackSelectedDACChannelOffset();
+            ReadbackSelectedDACChannelGain();
             UpdateCalculatedOutputVoltage();
         }
         private AnalogDevices.ChannelAddress DetermineSelectedDACChannelAddress()
@@ -170,10 +242,16 @@ namespace AnalogDevicesTestTool
         private void cboDevices_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedDevice = (AnalogDevices.DenseDacEvalBoard)cboDevices.SelectedItem;
-            UpdateOverTemperatureValuesInUIFromDevice();
-            UpdateGroupOffsetDataInDeviceToDefaultSpan();
+            UpdateDeviceValuesInUI();
             SelectDACChannel0();
+        }
+        private void UpdateDeviceValuesInUI()
+        {
+            UpdateGroupOffsetDataInUIToDeviceValues();
+            UpdateUIValuesForSelectedDACChannel();
             UpdateCalculatedOutputVoltage();
+            UpdateOverTemperatureValuesInUIFromDevice();
+
         }
         private void UpdateOverTemperatureValuesInUIFromDevice()
         {
@@ -210,15 +288,12 @@ namespace AnalogDevicesTestTool
                 DAC0RadioButton.Checked = true;
             }
         }
-        private void UpdateGroupOffsetDataInDeviceToDefaultSpan()
+        private void UpdateGroupOffsetDataInUIToDeviceValues()
         {
             if (_selectedDevice != null)
             {
-                _selectedDevice.OffsetDAC0 = 0x2000;
-                _selectedDevice.OffsetDAC1 = 0x2000;
-
-                txtOffsetDAC0.Text ="2000";
-                txtOffsetDAC1.Text = "2000";
+                txtOffsetDAC0.Text = _selectedDevice.OffsetDAC0.ToString("X").PadLeft(4,'0');
+                txtOffsetDAC1.Text = _selectedDevice.OffsetDAC0.ToString("X").PadLeft(4, '0');
             }
         }
 
@@ -325,6 +400,7 @@ namespace AnalogDevicesTestTool
             if (_selectedDevice != null)
             {
                 _selectedDevice.Reset();
+                UpdateDeviceValuesInUI();
             }
         }
 
