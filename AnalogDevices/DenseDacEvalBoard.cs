@@ -87,19 +87,34 @@ namespace AnalogDevices
         public ushort OffsetDAC0
         {
             get { return ReadbackOFS0Register(); }
-            set { WriteOFS0Register(value); }
+            set
+            {
+                SetCLRPinLow();
+                WriteOFS0Register(value);
+                SetCLRPinHigh();
+            }
         }
 
         public ushort OffsetDAC1
         {
             get { return ReadbackOFS1Register(); }
-            set { WriteOFS1Register(value); }
+            set
+            {
+                SetCLRPinLow();
+                WriteOFS1Register(value);
+                SetCLRPinHigh();
+            }
         }
 
         public ushort OffsetDAC2
         {
             get { return ReadbackOFS2Register(); }
-            set { WriteOFS2Register(value); }
+            set
+            {
+                SetCLRPinLow();
+                WriteOFS2Register(value);
+                SetCLRPinHigh();
+            }
         }
 
         public ChannelMonitorOptions ChannelMonitorOptions
@@ -523,7 +538,7 @@ namespace AnalogDevices
         public void Reset()
         {
             SetRESETPinHigh();
-            Thread.Sleep(50);
+            Thread.Sleep(1000);
             SetRESETPinLow();
         }
 
@@ -606,6 +621,7 @@ namespace AnalogDevices
 
         public void SetDacChannelOffset(ChannelAddress channels, ushort newVal)
         {
+            SetCLRPinLow();
             if (DacPrecision == DacPrecision.SixteenBit)
             {
                 SendSPI(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
@@ -614,6 +630,7 @@ namespace AnalogDevices
             {
                 SendSPI(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
             }
+            SetCLRPinHigh();
         }
 
         public ushort GetDacChannelGain(ChannelAddress channel)
@@ -627,6 +644,7 @@ namespace AnalogDevices
 
         public void SetDacChannelGain(ChannelAddress channels, ushort newVal)
         {
+            SetCLRPinLow();
             if (DacPrecision == DacPrecision.SixteenBit)
             {
                 SendSPI(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
@@ -635,6 +653,7 @@ namespace AnalogDevices
             {
                 SendSPI(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
             }
+            SetCLRPinHigh();
         }
 
         #endregion

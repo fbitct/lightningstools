@@ -399,7 +399,12 @@ namespace AnalogDevicesTestTool
         {
             if (_selectedDevice != null)
             {
+                var tempShutdownEnabled = chkOverTempShutdownEnabled.Checked;
                 _selectedDevice.Reset();
+                if (tempShutdownEnabled)
+                {
+                    _selectedDevice.IsThermalShutdownEnabled = true;
+                }
                 UpdateDeviceValuesInUI();
             }
         }
@@ -658,8 +663,14 @@ namespace AnalogDevicesTestTool
             }
         }
 
-       
-      
+        private void txtVREF0_Validated(object sender, EventArgs e)
+        {
+            UpdateCalculatedOutputVoltage();
+        }
 
+        private void txtVREF1_Validated(object sender, EventArgs e)
+        {
+            UpdateCalculatedOutputVoltage();
+        }
     }
 }
