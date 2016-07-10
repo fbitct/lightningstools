@@ -43,7 +43,7 @@ namespace F4SharedMem
                 {
                     return;
                 }
-                _headerFields.Add(data.GetType(), relevantHeaderFields);
+                _headerFields[data.GetType()]= relevantHeaderFields;
             }
             foreach (var currentField in relevantHeaderFields)
             {
@@ -54,7 +54,7 @@ namespace F4SharedMem
                     thisFlightDataField = typeof(FlightData).GetField(currentField.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                     if (thisFlightDataField !=null)
                     {
-                        _flightDataFields.Add(currentField.Name, thisFlightDataField);
+                        _flightDataFields[currentField.Name]=thisFlightDataField;
                     }
                 }
                     
