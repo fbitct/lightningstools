@@ -17,10 +17,10 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             get
             {
-                Task.Run(async () => { await SimulateSendingUSBCommandAsync(); }).Wait();
+                Task.Run(()=>SimulateSendingUSBCommandAsync()).Wait();
                 return _channelMonitorOptions;
             }
-            set { Task.Run(async () => { await SetChannelMonitorOptionsAsync(value); }).Wait(); }
+            set { Task.Run(()=>SetChannelMonitorOptionsAsync(value)).Wait(); }
         }
         public async Task SetChannelMonitorOptionsAsync(ChannelMonitorOptions value)
         {
@@ -33,8 +33,8 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private IODirection _generalPurposeIOPinDirection = IODirection.Output;
         public IODirection GeneralPurposeIOPinDirection
         {
-            get { return GetGeneralPurposeIOPinDirectionAsync().Result; }
-            set { Task.Run(async () => { await SetGeneralPurposeIOPinDirectionAsync(value); }).Wait(); }
+            get { return Task.Run(()=>GetGeneralPurposeIOPinDirectionAsync()).Result; }
+            set { Task.Run(()=>SetGeneralPurposeIOPinDirectionAsync(value)).Wait(); }
         }
         public async Task<IODirection> GetGeneralPurposeIOPinDirectionAsync()
         {
@@ -52,8 +52,8 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private bool _generalPurposeIOPinState = false;
         public bool GeneralPurposeIOPinState
         {
-            get { return GetGeneralPurposeIOPinStateAsync().Result; }
-            set { Task.Run(async () => { await SetGeneralPurposeIOPinStateAsync(value); }).Wait(); }
+            get { return Task.Run(() => GetGeneralPurposeIOPinStateAsync()).Result; }
+            set { Task.Run(()=>SetGeneralPurposeIOPinStateAsync(value)).Wait(); }
         }
         public async Task<bool> GetGeneralPurposeIOPinStateAsync()
         {
@@ -73,7 +73,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private bool _isOverTemperature = false;
         public bool IsOverTemperature
         {
-            get { return GetIsOverTemperatureAsync().Result; }
+            get { return Task.Run(() => GetIsOverTemperatureAsync()).Result; }
             internal set
             {
                 _isOverTemperature = value;
@@ -90,8 +90,8 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private bool _isThermalShutdownEnabled = false;
         public bool IsThermalShutdownEnabled
         {
-            get { return GetIsThermalShutdownEnabledAsync().Result; }
-            set { Task.Run(async () => { await SetIsThermalShutdownEnabledAsync(value); }).Wait(); }
+            get { return Task.Run(() => GetIsThermalShutdownEnabledAsync()).Result; }
+            set { Task.Run(()=>SetIsThermalShutdownEnabledAsync(value)).Wait(); }
         }
         public async Task<bool> GetIsThermalShutdownEnabledAsync()
         {
@@ -105,7 +105,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public void DisableThermalShutdown()
         {
-            Task.Run(async () => { await SetIsThermalShutdownEnabledAsync(false); }).Wait();
+            Task.Run(()=>SetIsThermalShutdownEnabledAsync(false).ConfigureAwait(false)).Wait();
         }
         public async Task DisableThermalShutdownAsync()
         {
@@ -113,7 +113,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public void EnableThermalShutdown()
         {
-            Task.Run(async () => { await SetIsThermalShutdownEnabledAsync(true); }).Wait();
+            Task.Run(()=>SetIsThermalShutdownEnabledAsync(true).ConfigureAwait(false)).Wait();
         }
         public async Task EnableThermalShutdownAsync()
         {
@@ -125,8 +125,8 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private ushort _offsetDAC0 = 1555;
         public ushort OffsetDAC0
         {
-            get { return GetOffsetDAC0Async().Result; }
-            set { Task.Run(async () => { await SetOffsetDAC0Async(value); }).Wait(); }
+            get { return Task.Run(() => GetOffsetDAC0Async()).Result; }
+            set { Task.Run(()=>SetOffsetDAC0Async(value)).Wait(); }
         }
         public async Task<ushort> GetOffsetDAC0Async()
         {
@@ -144,8 +144,8 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private ushort _offsetDAC1 = 1555;
         public ushort OffsetDAC1
         {
-            get { return GetOffsetDAC1Async().Result; }
-            set { Task.Run(async () => { await SetOffsetDAC1Async(value); }).Wait(); }
+            get { return Task.Run(() => GetOffsetDAC1Async()).Result; }
+            set { Task.Run(()=>SetOffsetDAC1Async(value)).Wait(); }
         }
         public async Task<ushort> GetOffsetDAC1Async()
         {
@@ -162,8 +162,8 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private ushort _offsetDAC2 = 1555;
         public ushort OffsetDAC2
         {
-            get { return GetOffsetDAC2Async().Result; }
-            set { Task.Run(async () => { await SetOffsetDAC2Async(value); }).Wait(); }
+            get { return Task.Run(() => GetOffsetDAC2Async()).Result; }
+            set { Task.Run(()=>SetOffsetDAC2Async(value)).Wait(); }
         }
         public async Task<ushort> GetOffsetDAC2Async()
         {
@@ -180,7 +180,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private bool _packetErrorCheckErrorOccurred = false;
         public bool PacketErrorCheckErrorOccurred
         {
-            get { return GetPacketErrorCheckErrorOccurredAsync().Result; }
+            get { return Task.Run(() => GetPacketErrorCheckErrorOccurredAsync()).Result; }
             internal set { _packetErrorCheckErrorOccurred = value; }
         }
         public async Task<bool> GetPacketErrorCheckErrorOccurredAsync()
@@ -193,7 +193,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private DacChannelDataSource[] _dacChannelDataSource = new DacChannelDataSource[40];
         public DacChannelDataSource GetDacChannelDataSource(ChannelAddress channel)
         {
-            return GetDacChannelDataSourceAsync(channel).Result;
+            return Task.Run(() => GetDacChannelDataSourceAsync(channel)).Result;
         }
         public async Task<DacChannelDataSource> GetDacChannelDataSourceAsync(ChannelAddress channel)
         {
@@ -202,7 +202,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public void SetDacChannelDataSource(ChannelAddress channel, DacChannelDataSource value)
         {
-            Task.Run(async () => { await SetDacChannelDataSourceAsync(channel, value); }).Wait();
+            Task.Run(()=>SetDacChannelDataSourceAsync(channel, value).ConfigureAwait(false)).Wait();
         }
         public async Task SetDacChannelDataSourceAsync(ChannelAddress channel, DacChannelDataSource value)
         {
@@ -213,7 +213,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void SetDacChannelDataSource(ChannelGroup group, DacChannelDataSource channel0, DacChannelDataSource channel1, DacChannelDataSource channel2, DacChannelDataSource channel3, DacChannelDataSource channel4, DacChannelDataSource channel5, DacChannelDataSource channel6, DacChannelDataSource channel7)
         {
-            Task.Run(async () => { await SetDacChannelDataSourceAsync(group, channel0, channel1, channel2, channel3, channel4, channel5, channel6, channel7); }).Wait();    
+            Task.Run(()=>SetDacChannelDataSourceAsync(group, channel0, channel1, channel2, channel3, channel4, channel5, channel6, channel7).ConfigureAwait(false)).Wait();    
         }
         public async Task SetDacChannelDataSourceAsync(ChannelGroup group, DacChannelDataSource channel0, DacChannelDataSource channel1, DacChannelDataSource channel2, DacChannelDataSource channel3, DacChannelDataSource channel4, DacChannelDataSource channel5, DacChannelDataSource channel6, DacChannelDataSource channel7)
         {
@@ -248,7 +248,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void SetDacChannelDataSourceAllChannels(DacChannelDataSource source)
         {
-            Task.Run(async () => { await SetDacChannelDataSourceAllChannelsAsync(source); }).Wait();
+            Task.Run(()=>SetDacChannelDataSourceAllChannelsAsync(source).ConfigureAwait(false)).Wait();
         }
         public async Task SetDacChannelDataSourceAllChannelsAsync(DacChannelDataSource source)
         {
@@ -264,11 +264,11 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private ushort[] _dacChannelDataValueA = new ushort[40];
         public ushort GetDacChannelDataValueA(ChannelAddress channel)
         {
-            return GetDacChannelDataValueAAsync(channel).Result;
+            return Task.Run(() => GetDacChannelDataValueAAsync(channel)).Result;
         }
         public void SetDacChannelDataValueA(ChannelAddress channel, ushort value)
         {
-            Task.Run(async () => { await SetDacChannelDataValueAAsync(channel, value); }).Wait();
+            Task.Run(()=>SetDacChannelDataValueAAsync(channel, value).ConfigureAwait(false)).Wait();
         }
         public async Task<ushort> GetDacChannelDataValueAAsync(ChannelAddress channel)
         {
@@ -285,11 +285,11 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private ushort[] _dacChannelDataValueB = new ushort[40];
         public ushort GetDacChannelDataValueB(ChannelAddress channel)
         {
-            return GetDacChannelDataValueBAsync(channel).Result;
+            return Task.Run(() => GetDacChannelDataValueBAsync(channel)).Result;
         }
         public void SetDacChannelDataValueB(ChannelAddress channel, ushort value)
         {
-            Task.Run(async () => { await SetDacChannelDataValueBAsync(channel, value); }).Wait();
+            Task.Run(()=>SetDacChannelDataValueBAsync(channel, value).ConfigureAwait(false)).Wait();
         }
         public async Task<ushort> GetDacChannelDataValueBAsync(ChannelAddress channel)
         {
@@ -306,7 +306,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private ushort[] _dacChannelOffset = new ushort[40];
         public ushort GetDacChannelOffset(ChannelAddress channel)
         {
-            return GetDacChannelOffsetAsync(channel).Result;
+            return Task.Run(() => GetDacChannelOffsetAsync(channel)).Result;
         }
         public async Task<ushort> GetDacChannelOffsetAsync(ChannelAddress channel)
         {
@@ -315,7 +315,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public void SetDacChannelOffset(ChannelAddress channel, ushort value)
         {
-            Task.Run(async () => { await SetDacChannelOffsetAsync(channel, value); }).Wait();
+            Task.Run(()=>SetDacChannelOffsetAsync(channel, value).ConfigureAwait(false)).Wait();
         }
         public async Task SetDacChannelOffsetAsync(ChannelAddress channel, ushort value)
         {
@@ -329,7 +329,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private ushort[] _dacChannelGain = new ushort[40];
         public ushort GetDacChannelGain(ChannelAddress channel)
         {
-            return GetDacChannelGainAsync(channel).Result;
+            return Task.Run(() => GetDacChannelGainAsync(channel)).Result;
         }
         public async Task<ushort> GetDacChannelGainAsync(ChannelAddress channel)
         {
@@ -338,7 +338,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public void SetDacChannelGain(ChannelAddress channel, ushort value)
         {
-            Task.Run(async () => { await SetDacChannelGainAsync(channel, value); }).Wait();
+            Task.Run(()=>SetDacChannelGainAsync(channel, value).ConfigureAwait(false)).Wait();
         }
         public async Task SetDacChannelGainAsync(ChannelAddress channel, ushort value)
         {
@@ -350,7 +350,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void PerformSoftPowerDown()
         {
-            Task.Run(async () => { await PerformSoftPowerDownAsync(); }).Wait();
+            Task.Run(()=>PerformSoftPowerDownAsync().ConfigureAwait(false)).Wait();
         }
         public async Task PerformSoftPowerDownAsync()
         {
@@ -360,7 +360,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void PerformSoftPowerUp()
         {
-            Task.Run(async () => { await PerformSoftPowerUpAsync(); }).Wait();
+            Task.Run(()=>PerformSoftPowerUpAsync().ConfigureAwait(false)).Wait();
         }
         public async Task PerformSoftPowerUpAsync()
         {
@@ -369,7 +369,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void PulseLDACPin()
         {
-            Task.Run(async () => { await PulseLDACPinAsync(); }).Wait();
+            Task.Run(()=>PulseLDACPinAsync().ConfigureAwait(false)).Wait();
         }
         public async Task PulseLDACPinAsync()
         {
@@ -379,7 +379,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void Reset()
         {
-            Task.Run(async () => { await ResetAsync(); }).Wait();
+            Task.Run(()=>ResetAsync().ConfigureAwait(false)).Wait();
         }
         public async Task ResetAsync()
         {
@@ -388,7 +388,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void ResumeAllDacOutputs()
         {
-            Task.Run(async () => { await ResumeAllDacOutputsAsync(); }).Wait();
+            Task.Run(()=>ResumeAllDacOutputsAsync().ConfigureAwait(false)).Wait();
         }
         public async Task ResumeAllDacOutputsAsync()
         {
@@ -397,7 +397,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void SetLDACPinHigh()
         {
-            Task.Run(async () => { await SetLDACPinHighAsync(); }).Wait();
+            Task.Run(()=>SetLDACPinHighAsync().ConfigureAwait(false)).Wait();
         }
         public async Task SetLDACPinHighAsync()
         {
@@ -406,7 +406,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void SetLDACPinLow()
         {
-            Task.Run(async () => { await SetLDACPinLowAsync(); }).Wait();
+            Task.Run(()=>SetLDACPinLowAsync().ConfigureAwait(false)).Wait();
         }
         public async Task SetLDACPinLowAsync()
         {
@@ -416,7 +416,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void SuspendAllDacOutputs()
         {
-            Task.Run(async () => { await SuspendAllDacOutputsAsync(); }).Wait();
+            Task.Run(()=>SuspendAllDacOutputsAsync().ConfigureAwait(false)).Wait();
         }
         public async Task SuspendAllDacOutputsAsync()
         {
@@ -426,7 +426,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void UpdateAllDacOutputs()
         {
-            Task.Run(async () => { await UpdateAllDacOutputsAsync(); }).Wait();
+            Task.Run(()=>UpdateAllDacOutputsAsync().ConfigureAwait(false)).Wait();
         }
         public async Task UpdateAllDacOutputsAsync()
         {
@@ -436,7 +436,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public long UploadFirmware(IhxFile ihxFile)
         {
-            return UploadFirmwareAsync(ihxFile).Result;
+            return Task.Run(() => UploadFirmwareAsync(ihxFile)).Result;
         }
         public async Task<long> UploadFirmwareAsync(IhxFile ihxFile)
         {

@@ -253,11 +253,11 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                     var channelAddress = (a.ChannelAddress)outputSignal.SubSource;
                     if (dacChannelDataSource == a.DacChannelDataSource.DataValueA) 
                     {
-                        _tasks.Add(Task.Run(()=> _device.SetDacChannelDataValueA(channelAddress, value))); 
+                        _tasks.Add(_device.SetDacChannelDataValueAAsync(channelAddress, value)); 
                     }
                     else
                     {
-                        _tasks.Add(Task.Run(()=>_device.SetDacChannelDataValueB(channelAddress, value)));
+                        _tasks.Add(_device.SetDacChannelDataValueAAsync(channelAddress, value));
                     }
                 }
             }
