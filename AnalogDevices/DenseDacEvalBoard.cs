@@ -478,17 +478,17 @@ namespace AnalogDevices
             newSourceSelections &= ABSelectRegisterBits.WritableBits; //ensure we only send 8 bits of data (one for each channel in the group)
             await SendSpecialFunctionAsync(specialFunctionCode, (ushort)newSourceSelections).ConfigureAwait(false);
         }
-        public DacChannelDataSource GetDacChannelDataSource(ChannelAddress channelAddress)
+        public DacChannelDataSource GetDacChannelDataSource(ChannelAddress channel)
         {
-            return GetDacChannelDataSourceAsync(channelAddress).Result;
+            return GetDacChannelDataSourceAsync(channel).Result;
         }
-        public async Task<DacChannelDataSource> GetDacChannelDataSourceAsync(ChannelAddress channelAddress)
+        public async Task<DacChannelDataSource> GetDacChannelDataSourceAsync(ChannelAddress channel)
         {
-            if ((int)channelAddress < 8 || (int)channelAddress > 47)
+            if ((int)channel < 8 || (int)channel > 47)
             {
                 throw new ArgumentOutOfRangeException("channelAddress");
             }
-            var channelNum = (byte)((byte)channelAddress - 8);
+            var channelNum = (byte)((byte)channel - 8);
             var currentSourceSelections = ABSelectRegisterBits.AllChannelsA;
             if (channelNum < 8)
             {
@@ -659,18 +659,18 @@ namespace AnalogDevices
         {
             return GetDacChannelDataValueAAsync(channel).Result;
         }
-        public async Task<ushort> GetDacChannelDataValueAAsync(ChannelAddress channelAddress)
+        public async Task<ushort> GetDacChannelDataValueAAsync(ChannelAddress channel)
         {
-            if ((int) channelAddress >= 8 && (int) channelAddress <= 47)
+            if ((int) channel >= 8 && (int) channel <= 47)
             {
-                return await ReadbackX1ARegisterAsync(channelAddress).ConfigureAwait(false);
+                return await ReadbackX1ARegisterAsync(channel).ConfigureAwait(false);
             }
             throw new ArgumentOutOfRangeException("channel");
         }
 
-        public ushort GetDacChannelDataValueB(ChannelAddress channelAddress)
+        public ushort GetDacChannelDataValueB(ChannelAddress channel)
         {
-            return GetDacChannelDataValueBAsync(channelAddress).Result;
+            return GetDacChannelDataValueBAsync(channel).Result;
         }
         public async Task<ushort> GetDacChannelDataValueBAsync(ChannelAddress channel)
         {
@@ -681,11 +681,11 @@ namespace AnalogDevices
             throw new ArgumentOutOfRangeException("channel");
         }
 
-        public void SetDacChannelDataValueA(ChannelAddress channelAddress, ushort newVal)
+        public void SetDacChannelDataValueA(ChannelAddress channel, ushort value)
         {
-            SetDacChannelDataValueAAsync(channelAddress, newVal).RunSynchronously();
+            SetDacChannelDataValueAAsync(channel, value).RunSynchronously();
         }
-        public async Task SetDacChannelDataValueAAsync(ChannelAddress channelAddress, ushort newVal)
+        public async Task SetDacChannelDataValueAAsync(ChannelAddress channelAddress, ushort value)
         {
             var controlRegisterBits = await ReadbackControlRegisterAsync().ConfigureAwait(false);
             controlRegisterBits &= ~ControlRegisterBits.InputRegisterSelect; //set control register bit F2 =0 to select register X1A for input
@@ -693,18 +693,18 @@ namespace AnalogDevices
 
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                await SendSPIAsync((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | newVal).ConfigureAwait(false);
+                await SendSPIAsync((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | value).ConfigureAwait(false);
             }
             else
             {
-                await SendSPIAsync((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)).ConfigureAwait(false);
+                await SendSPIAsync((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | (uint) ((value & (uint)BasicMasks.FourteenBits) << 2)).ConfigureAwait(false);
             }
         }
 
 
-        public void SetDacChannelDataValueB(ChannelAddress channelAddress, ushort newVal)
+        public void SetDacChannelDataValueB(ChannelAddress channel, ushort value)
         {
-            SetDacChannelDataValueBAsync(channelAddress, newVal).RunSynchronously();
+            SetDacChannelDataValueBAsync(channel, value).RunSynchronously();
         }
         public async Task SetDacChannelDataValueBAsync(ChannelAddress channelAddress, ushort newVal)
         {
@@ -734,20 +734,20 @@ namespace AnalogDevices
             throw new ArgumentOutOfRangeException("channel");
         }
 
-        public void SetDacChannelOffset(ChannelAddress channel, ushort newVal)
+        public void SetDacChannelOffset(ChannelAddress channel, ushort value)
         {
-            SetDacChannelOffsetAsync(channel, newVal).RunSynchronously();
+            SetDacChannelOffsetAsync(channel, value).RunSynchronously();
         }
-        public async Task SetDacChannelOffsetAsync(ChannelAddress channel, ushort newVal)
+        public async Task SetDacChannelOffsetAsync(ChannelAddress channel, ushort value)
         {
             await SetCLRPinLowAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | newVal)).ConfigureAwait(false);
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | value)).ConfigureAwait(false);
             }
             else
             {
-                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2))).ConfigureAwait(false);
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | (uint) ((value & (uint)BasicMasks.FourteenBits) << 2))).ConfigureAwait(false);
             }
             await SetCLRPinHighAsync().ConfigureAwait(false);
         }
@@ -765,20 +765,20 @@ namespace AnalogDevices
             throw new ArgumentOutOfRangeException("channel");
         }
 
-        public void SetDacChannelGain(ChannelAddress channel, ushort newVal)
+        public void SetDacChannelGain(ChannelAddress channel, ushort value)
         {
-            SetDacChannelGainAsync(channel, newVal).RunSynchronously();
+            SetDacChannelGainAsync(channel, value).RunSynchronously();
         }
-        public async Task SetDacChannelGainAsync(ChannelAddress channel, ushort newVal)
+        public async Task SetDacChannelGainAsync(ChannelAddress channel, ushort value)
         {
             await SetCLRPinLowAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | newVal)).ConfigureAwait(false);
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | value)).ConfigureAwait(false);
             }
             else
             {
-                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2))).ConfigureAwait(false);
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | (uint) ((value & (uint)BasicMasks.FourteenBits) << 2))).ConfigureAwait(false);
             }
             await SetCLRPinHighAsync().ConfigureAwait(false);
         }
@@ -907,10 +907,10 @@ namespace AnalogDevices
 
         #region Register Readback Functions
 
-        private async Task<ushort> ReadbackX1ARegisterAsync(ChannelAddress channelNum)
+        private async Task<ushort> ReadbackX1ARegisterAsync(ChannelAddress channel)
         {
             await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)).ConfigureAwait(false);
+                                (ushort) ((((byte) channel) & (byte)BasicMasks.SixBits) << 7)).ConfigureAwait(false);
             var val = await ReadSPIAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.FourteenBit)
             {
@@ -919,10 +919,10 @@ namespace AnalogDevices
             return val;
         }
 
-        private async Task<ushort> ReadbackX1BRegisterAsync(ChannelAddress channelNum)
+        private async Task<ushort> ReadbackX1BRegisterAsync(ChannelAddress channel)
         {
             await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) ((ushort)(AddressCodesForDataReadback.X1BRegister) | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7))).ConfigureAwait(false);
+                                (ushort) ((ushort)(AddressCodesForDataReadback.X1BRegister) | (ushort) ((((byte) channel) & (byte)BasicMasks.SixBits) << 7))).ConfigureAwait(false);
             var val = await ReadSPIAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.FourteenBit)
             {
@@ -931,10 +931,10 @@ namespace AnalogDevices
             return val;
         }
 
-        private async Task<ushort> ReadbackCRegisterAsync(ChannelAddress channelNum)
+        private async Task<ushort> ReadbackCRegisterAsync(ChannelAddress channel)
         {
             await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) ((ushort)(AddressCodesForDataReadback.CRegister)| (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7))).ConfigureAwait(false);
+                                (ushort) ((ushort)(AddressCodesForDataReadback.CRegister)| (ushort) ((((byte) channel) & (byte)BasicMasks.SixBits) << 7))).ConfigureAwait(false);
             var val = await ReadSPIAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.FourteenBit)
             {
@@ -943,10 +943,10 @@ namespace AnalogDevices
             return val;
         }
 
-        private async Task<ushort> ReadbackMRegisterAsync(ChannelAddress channelNum)
+        private async Task<ushort> ReadbackMRegisterAsync(ChannelAddress channel)
         {
             await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) ((ushort)(AddressCodesForDataReadback.MRegister) | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7))).ConfigureAwait(false);
+                                (ushort) ((ushort)(AddressCodesForDataReadback.MRegister) | (ushort) ((((byte) channel) & (byte)BasicMasks.SixBits) << 7))).ConfigureAwait(false);
             var val = await ReadSPIAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.FourteenBit)
             {
@@ -1028,20 +1028,20 @@ namespace AnalogDevices
             await SendSpecialFunctionAsync(SpecialFunctionCode.WriteControlRegister, (ushort)controlRegisterBits).ConfigureAwait(false);
         }
 
-        private async Task WriteOFS0RegisterAsync(ushort newVal)
+        private async Task WriteOFS0RegisterAsync(ushort value)
         {
-            newVal &= (ushort)BasicMasks.FourteenBits;
-            await SendSpecialFunctionAsync(SpecialFunctionCode.WriteOSF0Register, newVal).ConfigureAwait(false);
+            value &= (ushort)BasicMasks.FourteenBits;
+            await SendSpecialFunctionAsync(SpecialFunctionCode.WriteOSF0Register, value).ConfigureAwait(false);
         }
-        private async Task WriteOFS1RegisterAsync(ushort newVal)
+        private async Task WriteOFS1RegisterAsync(ushort value)
         {
-            newVal &= (ushort)BasicMasks.FourteenBits;
-            await SendSpecialFunctionAsync(SpecialFunctionCode.WriteOSF1Register, newVal).ConfigureAwait(false);
+            value &= (ushort)BasicMasks.FourteenBits;
+            await SendSpecialFunctionAsync(SpecialFunctionCode.WriteOSF1Register, value).ConfigureAwait(false);
         }
-        private async Task WriteOFS2RegisterAsync(ushort newVal)
+        private async Task WriteOFS2RegisterAsync(ushort value)
         {
-            newVal &= (ushort)BasicMasks.FourteenBits;
-            await SendSpecialFunctionAsync(SpecialFunctionCode.WriteOSF2Register, newVal).ConfigureAwait(false);
+            value &= (ushort)BasicMasks.FourteenBits;
+            await SendSpecialFunctionAsync(SpecialFunctionCode.WriteOSF2Register, value).ConfigureAwait(false);
         }
 
 
@@ -1102,9 +1102,9 @@ namespace AnalogDevices
         #endregion
 
         #region Device Communications
-        private async Task SendSpecialFunctionAsync(SpecialFunctionCode specialFunction, ushort data)
+        private async Task SendSpecialFunctionAsync(SpecialFunctionCode specialFunctionCode, ushort data)
         {
-            await SendSPIAsync((uint) ((((byte) specialFunction & (byte)BasicMasks.SixBits) << 16) | data)).ConfigureAwait(false);
+            await SendSPIAsync((uint) ((((byte) specialFunctionCode & (byte)BasicMasks.SixBits) << 16) | data)).ConfigureAwait(false);
         }
         private async Task<int> SendSPIAsync(uint data)
         {
@@ -1132,12 +1132,12 @@ namespace AnalogDevices
             var lengthTransferred = await UsbControlTransferAsync(setupPacket, buf, buf.Length).ConfigureAwait(false);
             return (ushort)(((ushort)buf[0]) |  (((ushort)buf[1])<<8));
         }
-        private async Task<int> UsbControlTransferAsync(UsbSetupPacket setupPacket, object buffer, int bufferLength)
+        private async Task<int> UsbControlTransferAsync(UsbSetupPacket usbSetupPacket, object buffer, int bufferLength)
         {
             int lengthTransferred = 0;
             if (_usbDevice != null)
             {
-                await Task.Run(()=>_usbDevice.ControlTransfer(ref setupPacket, buffer, bufferLength, out lengthTransferred)).ConfigureAwait(false);
+                await Task.Run(()=>_usbDevice.ControlTransfer(ref usbSetupPacket, buffer, bufferLength, out lengthTransferred)).ConfigureAwait(false);
             }
             else
             {
@@ -1146,17 +1146,17 @@ namespace AnalogDevices
             return lengthTransferred;
         }
 
-        private async Task<int> SendDeviceCommandAsync(DeviceCommand command, uint setupData)
+        private async Task<int> SendDeviceCommandAsync(DeviceCommand deviceCommand, uint setupData)
         {
-            return await SendDeviceCommandAsync(command, setupData, _emptyBuf).ConfigureAwait(false);
+            return await SendDeviceCommandAsync(deviceCommand, setupData, _emptyBuf).ConfigureAwait(false);
         }
-        private async Task<int> SendDeviceCommandAsync(DeviceCommand command, uint setupData, byte[] data)
+        private async Task<int> SendDeviceCommandAsync(DeviceCommand deviceCommand, uint setupData, byte[] data)
         {
-            if (!_spiInitialized && command != DeviceCommand.InitializeSPIPins)
+            if (!_spiInitialized && deviceCommand != DeviceCommand.InitializeSPIPins)
             {
                 await InitializeSPIPinsAsync().ConfigureAwait(false);
             }
-            var bRequest = (byte) command;
+            var bRequest = (byte) deviceCommand;
             var setupPacket = new UsbSetupPacket
             {
                 Request = bRequest,
