@@ -107,7 +107,7 @@ namespace SimLinkup.Runtime
                 {
                     try
                     {
-                        hsm.Synchronize();
+                        hsm.SynchronizeAsync();
                     }
                     catch (Exception e)
                     {

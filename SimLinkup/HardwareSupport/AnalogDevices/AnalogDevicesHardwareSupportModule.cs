@@ -6,7 +6,7 @@ using log4net;
 using a = AnalogDevices;
 using System.IO;
 using System.Threading.Tasks;
-
+using System.Linq;
 namespace SimLinkup.HardwareSupport.AnalogDevices
 {
     public class AnalogDevicesHardwareSupportModule : HardwareSupportModuleBase, IDisposable
@@ -14,12 +14,11 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         #region Class variables
 
         private static readonly ILog _log = LogManager.GetLogger(typeof (AnalogDevicesHardwareSupportModule));
-        private List<Task> _tasks = new List<Task>();
         #endregion
 
         #region Instance variables
 
-        private readonly AnalogSignal[] _analogOutputSignals;
+        private AnalogSignal[] _analogOutputSignals;
         private a.IDenseDacEvalBoard _device;
         private bool _isDisposed;
         private int _deviceIndex;
@@ -28,87 +27,102 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         #region Constructors
 
-        private AnalogDevicesHardwareSupportModule()
-        {
-        }
+        private AnalogDevicesHardwareSupportModule(){}
 
-        private AnalogDevicesHardwareSupportModule(a.IDenseDacEvalBoard device, int deviceIndex, DeviceConfig deviceConfig) : this()
+        public static async Task<AnalogDevicesHardwareSupportModule> CreateAsync(a.IDenseDacEvalBoard device, int deviceIndex, DeviceConfig deviceConfig) 
         {
-            _device = device ?? new a.DenseDacEvalBoard(null);
+            var module = new AnalogDevicesHardwareSupportModule();
+            await module.InitializeAsync(device, deviceIndex, deviceConfig).ConfigureAwait(false);
+            return module;
+        }
+        private async Task InitializeAsync(a.IDenseDacEvalBoard device, int deviceIndex, DeviceConfig deviceConfig)
+        {
+            _device = device ?? new SimulatedAnalogDevicesDenseDacEvalBoard();
             _deviceIndex = deviceIndex;
-            ConfigureDevice(_device, deviceConfig);
-            CreateOutputSignals(_device, deviceIndex, out _analogOutputSignals);
+            await ConfigureDeviceAsync(_device, deviceConfig).ConfigureAwait(false);
+            _analogOutputSignals = CreateOutputSignals(_device, _deviceIndex);
+            await InitializeOutputsAsync().ConfigureAwait(false);
         }
-        private void ConfigureDevice(a.IDenseDacEvalBoard device, DeviceConfig deviceConfig)
+        private async Task ConfigureDeviceAsync(a.IDenseDacEvalBoard device, DeviceConfig deviceConfig)
         {
-            device.Reset();
-            if (device.IsOverTemperature)
-            {
-                device.IsThermalShutdownEnabled = false;
-                //reset temperature shutdown after previous over-temperature event
-            }
-            device.IsThermalShutdownEnabled = true; //enable over-temperature auto shutdown
-
-            device.SetDacChannelDataSourceAllChannels(a.DacChannelDataSource.DataValueA);
-            device.DacPrecision =   deviceConfig !=null  && 
-                                    deviceConfig.DACPrecision.HasValue 
-                                        ? deviceConfig.DACPrecision.Value 
+            device.DacPrecision = deviceConfig != null &&
+                                    deviceConfig.DACPrecision.HasValue
+                                        ? deviceConfig.DACPrecision.Value
                                         : a.DacPrecision.SixteenBit;
 
-            device.OffsetDAC0 = deviceConfig != null &&
+            await device.ResetAsync().ConfigureAwait(false);
+            if (await device.GetIsOverTemperatureAsync().ConfigureAwait(false))
+            {
+                await device.DisableThermalShutdownAsync().ConfigureAwait(false);
+                //reset temperature shutdown after previous over-temperature event
+            }
+            await device.EnableThermalShutdownAsync().ConfigureAwait(false); //enable over-temperature auto shutdown
+
+            await device.SetDacChannelDataSourceAllChannelsAsync(a.DacChannelDataSource.DataValueA).ConfigureAwait(false);
+
+            await device.SetOffsetDAC0Async( deviceConfig != null &&
                                     deviceConfig.Calibration != null &&
                                     deviceConfig.Calibration.OffsetDAC0.HasValue
                                         ? deviceConfig.Calibration.OffsetDAC0.Value
-                                        : (ushort)0x2000;
+                                        : (ushort)0x2000).ConfigureAwait(false);
 
-            device.OffsetDAC1 = deviceConfig != null &&
+            await device.SetOffsetDAC1Async(deviceConfig != null &&
                                     deviceConfig.Calibration != null &&
                                     deviceConfig.Calibration.OffsetDAC1.HasValue
                                         ? deviceConfig.Calibration.OffsetDAC1.Value
-                                        : (ushort)0x2000;
+                                        : (ushort)0x2000).ConfigureAwait(false);
 
-            device.OffsetDAC2 = deviceConfig != null &&
+            await device.SetOffsetDAC2Async(deviceConfig != null &&
                                     deviceConfig.Calibration != null &&
                                     deviceConfig.Calibration.OffsetDAC2.HasValue
                                         ? deviceConfig.Calibration.OffsetDAC2.Value
-                                        : (ushort)0x2000;
+                                        : (ushort)0x2000).ConfigureAwait(false);
 
+            
+            var tasks = new List<Task>();
             for (var channel = a.ChannelAddress.Dac0; channel <= a.ChannelAddress.Dac39; channel++)
             {
-                var dacChannelConfiguration = GetDACChannelConfiguration(channel, deviceConfig);
-
-                device.SetDacChannelDataValueA(channel,
-                                dacChannelConfiguration != null &&
-                                dacChannelConfiguration.InitialState != null &&
-                                dacChannelConfiguration.InitialState.DataValueA.HasValue
-                                    ? dacChannelConfiguration.InitialState.DataValueA.Value
-                                    : (ushort)0x0000);
-
-                device.SetDacChannelDataValueB(channel,
-                                dacChannelConfiguration != null &&
-                                dacChannelConfiguration.InitialState != null &&
-                                dacChannelConfiguration.InitialState.DataValueB.HasValue
-                                    ? dacChannelConfiguration.InitialState.DataValueB.Value
-                                    : (ushort)0x0000);
-
-                device.SetDacChannelOffset(channel,   
-                                dacChannelConfiguration !=null && 
-                                dacChannelConfiguration.Calibration !=null && 
-                                dacChannelConfiguration.Calibration.Offset.HasValue 
-                                    ? dacChannelConfiguration.Calibration.Offset.Value
-                                    : (ushort)0x8000);
-
-                device.SetDacChannelGain(channel, 
-                                dacChannelConfiguration != null &&
-                                dacChannelConfiguration.Calibration != null &&
-                                dacChannelConfiguration.Calibration.Gain.HasValue
-                                    ? dacChannelConfiguration.Calibration.Gain.Value
-                                    : (ushort)0xFFFF);
-
+                var task = ConfigureDeviceChannelAsync(device, deviceConfig, channel);
+                tasks.Add(task);
             }
-            device.UpdateAllDacOutputs();
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+            await device.UpdateAllDacOutputsAsync().ConfigureAwait(false);
         }
-        private DACChannelConfiguration GetDACChannelConfiguration(a.ChannelAddress channel, DeviceConfig deviceConfig)
+
+        private async Task ConfigureDeviceChannelAsync(a.IDenseDacEvalBoard device, DeviceConfig deviceConfig, a.ChannelAddress channel)
+        {
+            var dacChannelConfiguration = GetDACChannelConfigurationAsync(channel, deviceConfig);
+
+            await device.SetDacChannelDataValueAAsync(channel,
+                            dacChannelConfiguration != null &&
+                            dacChannelConfiguration.InitialState != null &&
+                            dacChannelConfiguration.InitialState.DataValueA.HasValue
+                                ? dacChannelConfiguration.InitialState.DataValueA.Value
+                                : (ushort)0x0000).ConfigureAwait(false);
+
+            await device.SetDacChannelDataValueBAsync(channel,
+                            dacChannelConfiguration != null &&
+                            dacChannelConfiguration.InitialState != null &&
+                            dacChannelConfiguration.InitialState.DataValueB.HasValue
+                                ? dacChannelConfiguration.InitialState.DataValueB.Value
+                                : (ushort)0x0000).ConfigureAwait(false);
+
+            await device.SetDacChannelOffsetAsync(channel,
+                            dacChannelConfiguration != null &&
+                            dacChannelConfiguration.Calibration != null &&
+                            dacChannelConfiguration.Calibration.Offset.HasValue
+                                ? dacChannelConfiguration.Calibration.Offset.Value
+                                : (ushort)0x8000).ConfigureAwait(false);
+
+            await device.SetDacChannelGainAsync(channel,
+                            dacChannelConfiguration != null &&
+                            dacChannelConfiguration.Calibration != null &&
+                            dacChannelConfiguration.Calibration.Gain.HasValue
+                                ? dacChannelConfiguration.Calibration.Gain.Value
+                                : (ushort)0xFFFF).ConfigureAwait(false);
+        }
+
+        private DACChannelConfiguration GetDACChannelConfigurationAsync(a.ChannelAddress channel, DeviceConfig deviceConfig)
         {
             var type = typeof(DACChannelConfigurations);
             DACChannelConfiguration toReturn = null;
@@ -163,7 +177,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                                                     : null;
 
                     var device = devices != null && devices.Length > index ? devices[index] : new SimulatedAnalogDevicesDenseDacEvalBoard();
-                    var hsmInstance = new AnalogDevicesHardwareSupportModule(device, index, thisDeviceConfig);
+                    var hsmInstance = Task.Run(()=> CreateAsync(device, index, thisDeviceConfig)).Result;
                     toReturn.Add(hsmInstance);
                     index++;
                 }
@@ -208,8 +222,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         #region Signal Creation
 
-        private void CreateOutputSignals(a.IDenseDacEvalBoard device, int deviceIndex, out AnalogSignal[] analogSignals)
+        private AnalogSignal[] CreateOutputSignals(a.IDenseDacEvalBoard device, int deviceIndex)
         {
+
             var analogSignalsToReturn = new List<AnalogSignal>();
             for (var i = 0; i < 40; i++)
             {
@@ -234,16 +249,15 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 thisSignal.MaxValue = 10;
                 analogSignalsToReturn.Add(thisSignal);
             }
-            analogSignals = analogSignalsToReturn.ToArray();
-            Initialize();
+            return analogSignalsToReturn.ToArray();
         }
 
-        private void DAC_OutputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
+        private async void DAC_OutputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
-            UpdateDACOutput((AnalogSignal) sender, _dacChannelDataSourceForPendingData);
+            await UpdateDACOutputAsync((AnalogSignal) sender, _dacChannelDataSourceForPendingData);
         }
 
-        private void UpdateDACOutput(AnalogSignal outputSignal, a.DacChannelDataSource dacChannelDataSource)
+        private async Task UpdateDACOutputAsync(AnalogSignal outputSignal, a.DacChannelDataSource dacChannelDataSource)
         {
             if (outputSignal.Index.HasValue)
             {
@@ -253,50 +267,49 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                     var channelAddress = (a.ChannelAddress)outputSignal.SubSource;
                     if (dacChannelDataSource == a.DacChannelDataSource.DataValueA) 
                     {
-                        _tasks.Add(_device.SetDacChannelDataValueAAsync(channelAddress, value)); 
+                        await _device.SetDacChannelDataValueAAsync(channelAddress, value); 
                     }
                     else
                     {
-                        _tasks.Add(_device.SetDacChannelDataValueAAsync(channelAddress, value));
+                        await _device.SetDacChannelDataValueBAsync(channelAddress, value);
                     }
                 }
             }
         }
 
-        private void Initialize()
+        private async Task InitializeOutputsAsync()
         {
-            foreach (var signal in _analogOutputSignals)
-            {
-                UpdateDACOutput(signal, _dacChannelDataSourceForPendingData);
-            }
-            Synchronize();
+            await Task.WhenAll(
+                _analogOutputSignals.Select(signal => 
+                    UpdateDACOutputAsync(signal, _dacChannelDataSourceForPendingData)
+                )
+            ).ConfigureAwait(false);
+            await SynchronizeAsync().ConfigureAwait(false);
         }
 
-        public override void Synchronize()
+        public override async Task SynchronizeAsync()
         {
             if (_device != null)
             {
-                Task.WaitAll(_tasks.ToArray());
-                _tasks.Clear();
-                ToggleDACChannelDataSource();
-                _device.UpdateAllDacOutputs();
+                await ToggleDACChannelDataSourceAsync().ConfigureAwait(false);
+                await _device.UpdateAllDacOutputsAsync().ConfigureAwait(false);
             }
         }
 
-        private void ToggleDACChannelDataSource()
+        private async Task ToggleDACChannelDataSourceAsync()
         {
             //tell device to use pending data source as data source for all DAC channels
-            _device.SetDacChannelDataSourceAllChannels(_dacChannelDataSourceForPendingData); 
+            await _device.SetDacChannelDataSourceAllChannelsAsync(_dacChannelDataSourceForPendingData).ConfigureAwait(false); 
 
             //now set pending data source to alternate data source so signal updates will accumulate there
             _dacChannelDataSourceForPendingData = _dacChannelDataSourceForPendingData == a.DacChannelDataSource.DataValueA
                                                                                             ? a.DacChannelDataSource.DataValueB
                                                                                             : a.DacChannelDataSource.DataValueA;
             //populate the pending data source with all current values
-            foreach (var outputSignal in _analogOutputSignals)
-            {
-                UpdateDACOutput(outputSignal, _dacChannelDataSourceForPendingData);
-            }
+            await Task.WhenAll(
+                _analogOutputSignals.Select(outputSignal => 
+                    UpdateDACOutputAsync(outputSignal, _dacChannelDataSourceForPendingData))
+            ).ConfigureAwait(false);
         }
 
         #endregion

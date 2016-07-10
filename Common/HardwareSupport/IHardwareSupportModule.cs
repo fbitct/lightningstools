@@ -1,5 +1,6 @@
 ﻿using Common.MacroProgramming;
 using System.Drawing;
+using System.Threading.Tasks;
 
 namespace Common.HardwareSupport
 {
@@ -10,7 +11,7 @@ namespace Common.HardwareSupport
         AnalogSignal[] AnalogOutputs { get; }
         DigitalSignal[] DigitalOutputs { get; }
         string FriendlyName { get; }
-        void Synchronize();
+        Task SynchronizeAsync();
         void Render(Graphics g, Rectangle destinationRectangle);
     }
 }

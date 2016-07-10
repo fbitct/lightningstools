@@ -8,6 +8,8 @@ using System.IO;
 using System.Threading;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+
 namespace SimLinkup.HardwareSupport.Powell
 {
     public class PowellIP1310ALRHardwareSupportModule: HardwareSupportModuleBase, IDisposable
@@ -132,13 +134,13 @@ namespace SimLinkup.HardwareSupport.Powell
         {
             get { return null; }
         }
-        public override void Synchronize()
+        public override async Task SynchronizeAsync()
         {
-            base.Synchronize();
+            await base.SynchronizeAsync().ConfigureAwait(false);
             var timeSinceLastSynchronizedInMillis=DateTime.UtcNow.Subtract(_lastSynchronizedAt).TotalMilliseconds;
             if (timeSinceLastSynchronizedInMillis > (1000.00 / MAX_REFRESH_RATE_HZ))
             {
-                UpdateOutputs();
+                await UpdateOutputsAsync().ConfigureAwait(false);
                 _lastSynchronizedAt = DateTime.UtcNow;
             }
         }
@@ -149,13 +151,13 @@ namespace SimLinkup.HardwareSupport.Powell
         #region Signals Event Handling
 
         
-        private void UpdateOutputs()
+        private async Task UpdateOutputsAsync()
         {
             bool connected = EnsureSerialPortConnected();
             if (connected)
             {
                 var commandList = GenerateCommandList();
-                SendCommandList(commandList);
+                await SendCommandListAsync(commandList).ConfigureAwait(false);
             }
         }
         private bool EnsureSerialPortConnected()
@@ -276,7 +278,7 @@ namespace SimLinkup.HardwareSupport.Powell
             }
             return blipList;
         }
-        private void SendCommandList(IEnumerable<RWRCommand> commandList)
+        private async Task SendCommandListAsync(IEnumerable<RWRCommand> commandList)
         {
             if (commandList.Count() == 0) return;
             lock (_serialPortLock)
