@@ -105,18 +105,9 @@ namespace F4Utils.SimSupport
             if (_lastFlightData == null) return;
             foreach (var output in _simOutputs.Values)
             {
-                F4SimOutputs? simOutputEnumMatch = null;
-                F4SimOutputs triedParse;
-                var key = ((Signal) output).Id;
-                var firstBracketLocation = key.IndexOf("[", StringComparison.OrdinalIgnoreCase);
-                if (firstBracketLocation > 0)
-                {
-                    key = key.Substring(0, firstBracketLocation);
-                }
-                var success = Common.Util.EnumTryParse(key.Substring(3, key.Length - 3), out triedParse);
-                if (success) simOutputEnumMatch = triedParse;
-                if (!simOutputEnumMatch.HasValue) continue;
-                switch (simOutputEnumMatch.Value)
+                var simOutput= (F4SimOutputs)((Signal)output).SubSource;
+
+                switch (simOutput)
                 {
                     case F4SimOutputs.MAP__GROUND_POSITION__FEET_NORTH_OF_MAP_ORIGIN:
                         SetOutput((AnalogSignal)output,  _lastFlightData.x);
@@ -1428,6 +1419,7 @@ namespace F4Utils.SimSupport
             falconInput.PublisherObject = this;
             falconInput.Source = this;
             falconInput.SourceFriendlyName = "Falcon BMS";
+            falconInput.SubSource = callback;
             simCommand.Id = "F4_SEND_CALLBACK" + simCommand.In.Id;
             simCommand.FriendlyName = simCommand.In.FriendlyName;
             return simCommand;
@@ -1450,7 +1442,8 @@ namespace F4Utils.SimSupport
                                PublisherObject = this,
                                Source =  (object) this,
                                SourceFriendlyName = "Falcon BMS",
-                           };
+                               SubSource=simOutput,
+                };
             }
             else if (dataType.IsAssignableFrom(typeof (bool)))
             {
@@ -1465,7 +1458,8 @@ namespace F4Utils.SimSupport
                                PublisherObject = this,
                                Source = (object) this,
                                SourceFriendlyName = "Falcon BMS",
-                           };
+                               SubSource = simOutput
+                };
             }
             return new AnalogSimOutput
             {
@@ -1478,6 +1472,7 @@ namespace F4Utils.SimSupport
                 PublisherObject = this,
                 Source = (object)this,
                 SourceFriendlyName = "Falcon BMS",
+                SubSource = simOutput,
                 IsAngle = isAngle,
                 IsPercentage = isPercentage,
                 MinValue = minVal,
