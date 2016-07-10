@@ -43,7 +43,7 @@ namespace AnalogDevices
         public bool GeneralPurposeIOPinState
         {
             get { return GetGeneralPurposeIOPinStateAsync().Result; }
-            set { SetGeneralPurposeIOPinStateAsync(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetGeneralPurposeIOPinStateAsync(value); }).Wait(); }
         }
 
         public async Task<bool> GetGeneralPurposeIOPinStateAsync()
@@ -76,7 +76,7 @@ namespace AnalogDevices
         public IODirection GeneralPurposeIOPinDirection
         {
             get { return GetGeneralPurposeIOPinDirectionAsync().Result; }
-            set { SetGeneralPurposeIOPinDirectionAsync(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetGeneralPurposeIOPinDirectionAsync(value); }).Wait(); }
         }
 
         public async Task<IODirection> GetGeneralPurposeIOPinDirectionAsync()
@@ -98,7 +98,7 @@ namespace AnalogDevices
         public ushort OffsetDAC0
         {
             get { return GetOffsetDAC0Async().Result; }
-            set { SetOffsetDAC0Async(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetOffsetDAC0Async(value); }).Wait(); }
         }
         public async Task<ushort> GetOffsetDAC0Async()
         {
@@ -114,7 +114,7 @@ namespace AnalogDevices
         public ushort OffsetDAC1
         {
             get { return GetOffsetDAC1Async().Result; }
-            set { SetOffsetDAC1Async(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetOffsetDAC1Async(value); }).Wait(); }
         }
         public async Task<ushort> GetOffsetDAC1Async()
         {
@@ -130,7 +130,7 @@ namespace AnalogDevices
         public ushort OffsetDAC2
         {
             get { return GetOffsetDAC2Async().Result; }
-            set { SetOffsetDAC2Async(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetOffsetDAC2Async(value); }).Wait(); }
         }
         public async Task<ushort> GetOffsetDAC2Async()
         {
@@ -147,7 +147,7 @@ namespace AnalogDevices
         public ChannelMonitorOptions ChannelMonitorOptions
         {
             get { return GetChannelMonitorOptions(); }
-            set { SetChannelMonitorOptionsAsync(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetChannelMonitorOptionsAsync(value); }).Wait(); }
         }
 
         private ChannelMonitorOptions GetChannelMonitorOptions()
@@ -181,12 +181,12 @@ namespace AnalogDevices
         public bool IsThermalShutdownEnabled
         {
             get { return GetIsThermalShutdownEnabledAsync().Result; }
-            set { SetIsThermalShutdownEnabledAsync(value).RunSynchronously();}
+            set { Task.Run(async () => { await SetIsThermalShutdownEnabledAsync(value); }).Wait(); }
         }
 
         public void EnableThermalShutdown()
         {
-            EnableThermalShutdownAsync().RunSynchronously();
+            Task.Run(async () => { await EnableThermalShutdownAsync(); }).Wait();
         }
         public async Task EnableThermalShutdownAsync()
         {
@@ -194,7 +194,7 @@ namespace AnalogDevices
         }
         public void DisableThermalShutdown()
         {
-            DisableThermalShutdownAsync().RunSynchronously();
+            Task.Run(async () => { await DisableThermalShutdownAsync(); }).Wait();
         }
         public async Task DisableThermalShutdownAsync()
         {
@@ -256,7 +256,7 @@ namespace AnalogDevices
         #region Dac Channel Data Source Selection
         public void SetDacChannelDataSource(ChannelAddress channelAddress, DacChannelDataSource value)
         {
-            SetDacChannelDataSourceAsync(channelAddress, value).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelDataSourceAsync(channelAddress, value); }).Wait();
         }
         public async Task SetDacChannelDataSourceAsync(ChannelAddress channelAddress, DacChannelDataSource value)
         {
@@ -528,7 +528,7 @@ namespace AnalogDevices
                                             DacChannelDataSource channel5, DacChannelDataSource channel6,
                                             DacChannelDataSource channel7)
         {
-            SetDacChannelDataSourceAsync(group, channel0, channel1, channel2, channel3, channel4, channel5, channel6, channel7).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelDataSourceAsync(group, channel0, channel1, channel2, channel3, channel4, channel5, channel6, channel7); }).Wait();
         }
         public async Task SetDacChannelDataSourceAsync(ChannelGroup group, DacChannelDataSource channel0,
                                             DacChannelDataSource channel1, DacChannelDataSource channel2,
@@ -571,7 +571,7 @@ namespace AnalogDevices
         }
         public void SetDacChannelDataSourceAllChannels(DacChannelDataSource source)
         {
-            SetDacChannelDataSourceAllChannelsAsync(source).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelDataSourceAllChannelsAsync(source); }).Wait();
         }
         public async Task SetDacChannelDataSourceAllChannelsAsync(DacChannelDataSource source)
         {
@@ -594,7 +594,7 @@ namespace AnalogDevices
 
         public void PerformSoftPowerDown()
         {
-            PerformSoftPowerDownAsync().RunSynchronously();
+            Task.Run(async () => { await PerformSoftPowerDownAsync(); }).Wait();
         }
         public async Task PerformSoftPowerDownAsync()
         {
@@ -605,7 +605,7 @@ namespace AnalogDevices
 
         public void PerformSoftPowerUp()
         {
-            PerformSoftPowerUpAsync().RunSynchronously();
+            Task.Run(async () => { await PerformSoftPowerUpAsync(); }).Wait();
         }
         public async Task PerformSoftPowerUpAsync()
         {
@@ -616,7 +616,7 @@ namespace AnalogDevices
 
         public void Reset()
         {
-            ResetAsync().RunSynchronously();
+            Task.Run(async () => { await ResetAsync(); }).Wait();
         }
         public async Task ResetAsync()
         {
@@ -627,7 +627,7 @@ namespace AnalogDevices
 
         public void SuspendAllDacOutputs()
         {
-            SuspendAllDacOutputsAsync().RunSynchronously();
+            Task.Run(async () => { await SuspendAllDacOutputsAsync(); }).Wait();
         }
         public async Task SuspendAllDacOutputsAsync()
         {
@@ -636,7 +636,7 @@ namespace AnalogDevices
 
         public void ResumeAllDacOutputs()
         {
-            ResumeAllDacOutputsAsync().RunSynchronously();
+            Task.Run(async () => { await ResumeAllDacOutputsAsync(); }).Wait();
         }
         public async Task ResumeAllDacOutputsAsync()
         {
@@ -645,7 +645,7 @@ namespace AnalogDevices
 
         public void UpdateAllDacOutputs()
         {
-            UpdateAllDacOutputsAsync().RunSynchronously();
+            Task.Run(async () => { await UpdateAllDacOutputsAsync(); }).Wait();
         }
         public async Task UpdateAllDacOutputsAsync()
         {
@@ -683,7 +683,7 @@ namespace AnalogDevices
 
         public void SetDacChannelDataValueA(ChannelAddress channel, ushort value)
         {
-            SetDacChannelDataValueAAsync(channel, value).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelDataValueAAsync(channel, value); }).Wait();
         }
         public async Task SetDacChannelDataValueAAsync(ChannelAddress channelAddress, ushort value)
         {
@@ -704,7 +704,7 @@ namespace AnalogDevices
 
         public void SetDacChannelDataValueB(ChannelAddress channel, ushort value)
         {
-            SetDacChannelDataValueBAsync(channel, value).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelDataValueBAsync(channel, value); }).Wait();
         }
         public async Task SetDacChannelDataValueBAsync(ChannelAddress channelAddress, ushort newVal)
         {
@@ -736,7 +736,7 @@ namespace AnalogDevices
 
         public void SetDacChannelOffset(ChannelAddress channel, ushort value)
         {
-            SetDacChannelOffsetAsync(channel, value).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelOffsetAsync(channel, value); }).Wait();
         }
         public async Task SetDacChannelOffsetAsync(ChannelAddress channel, ushort value)
         {
@@ -767,7 +767,7 @@ namespace AnalogDevices
 
         public void SetDacChannelGain(ChannelAddress channel, ushort value)
         {
-            SetDacChannelGainAsync(channel, value).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelGainAsync(channel, value); }).Wait();
         }
         public async Task SetDacChannelGainAsync(ChannelAddress channel, ushort value)
         {
@@ -1068,7 +1068,7 @@ namespace AnalogDevices
 
         public void PulseLDACPin()
         {
-            PulseLDACPinAsync().RunSynchronously();
+            Task.Run(async () => { await PulseLDACPinAsync(); }).Wait();
         }
         public async Task PulseLDACPinAsync()
         {
@@ -1077,7 +1077,7 @@ namespace AnalogDevices
 
         public void SetLDACPinLow()
         {
-            SetLDACPinLowAsync().RunSynchronously();
+            Task.Run(async () => { await SetLDACPinLowAsync(); }).Wait();
         }
         public async Task SetLDACPinLowAsync()
         {
@@ -1086,7 +1086,7 @@ namespace AnalogDevices
 
         public void SetLDACPinHigh()
         {
-            SetLDACPinHighAsync().RunSynchronously();
+            Task.Run(async () => { await SetLDACPinHighAsync(); }).Wait();
         }
         public async Task SetLDACPinHighAsync()
         {
