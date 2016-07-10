@@ -19,7 +19,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         #region Instance variables
 
         private readonly AnalogSignal[] _analogOutputSignals;
-        private a.DenseDacEvalBoard _device;
+        private a.IDenseDacEvalBoard _device;
         private bool _isDisposed;
         private int _deviceIndex;
         private a.DacChannelDataSource _dacChannelDataSourceForPendingData = a.DacChannelDataSource.DataValueA;
@@ -31,14 +31,14 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
         }
 
-        private AnalogDevicesHardwareSupportModule(a.DenseDacEvalBoard device, int deviceIndex, DeviceConfig deviceConfig) : this()
+        private AnalogDevicesHardwareSupportModule(a.IDenseDacEvalBoard device, int deviceIndex, DeviceConfig deviceConfig) : this()
         {
             _device = device ?? new a.DenseDacEvalBoard(null);
             _deviceIndex = deviceIndex;
             ConfigureDevice(_device, deviceConfig);
             CreateOutputSignals(_device, deviceIndex, out _analogOutputSignals);
         }
-        private void ConfigureDevice(a.DenseDacEvalBoard device, DeviceConfig deviceConfig)
+        private void ConfigureDevice(a.IDenseDacEvalBoard device, DeviceConfig deviceConfig)
         {
             device.Reset();
             if (device.IsOverTemperature)
@@ -207,7 +207,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         #region Signal Creation
 
-        private void CreateOutputSignals(a.DenseDacEvalBoard device, int deviceIndex, out AnalogSignal[] analogSignals)
+        private void CreateOutputSignals(a.IDenseDacEvalBoard device, int deviceIndex, out AnalogSignal[] analogSignals)
         {
             var analogSignalsToReturn = new List<AnalogSignal>();
             for (var i = 0; i < 40; i++)

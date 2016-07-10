@@ -120,6 +120,7 @@
     <Compile Include="HardwareSupport\AMI\AMI900278002HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\AnalogDevices\AnalogDevicesHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\AnalogDevices\AnalogDevicesHardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\AnalogDevices\SimulatedAnalogDevicesDenseDacEvalBoard.cs" />
     <Compile Include="HardwareSupport\Astronautics\Astronautics12871HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Astronautics\Astronautics12871HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\DirectInput\DirectInputHardwareSupportModule.cs" />

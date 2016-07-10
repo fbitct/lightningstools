@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace AnalogDevices
 {
-    public class DenseDacEvalBoard
+    public class DenseDacEvalBoard : IDenseDacEvalBoard
     {
         #region Public stuff
 
