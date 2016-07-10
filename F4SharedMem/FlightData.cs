@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using F4SharedMem.Headers;
+using System.Collections.Generic;
 
 namespace F4SharedMem
 {
@@ -29,45 +30,65 @@ namespace F4SharedMem
         {
             PopulateFromStruct(data);
         }
-
-        internal void PopulateFromStruct(object data)
+        private Dictionary<Type, FieldInfo[]> _headerFields =new Dictionary<Type, FieldInfo[]>();
+        private Dictionary<string, FieldInfo> _flightDataFields = new Dictionary<string, FieldInfo>();
+        internal void PopulateFromStruct<T>(T data)
         {
-            var thisType = GetType();
-            var dataType = data.GetType();
-            var fields = dataType.GetFields(BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (var currentField in fields)
+            FieldInfo[] relevantHeaderFields = null;
+            var foundRelevantHeaderFields = _headerFields.TryGetValue(data.GetType(), out relevantHeaderFields);
+            if (!foundRelevantHeaderFields)
             {
-                var thisField = thisType.GetField(currentField.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                if (thisField == null) continue;
+                relevantHeaderFields = data.GetType().GetFields(BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                if (relevantHeaderFields == null)
+                {
+                    return;
+                }
+                _headerFields.Add(data.GetType(), relevantHeaderFields);
+            }
+            foreach (var currentField in relevantHeaderFields)
+            {
+                FieldInfo thisFlightDataField = null;
+                var fieldInfoFoundInCache=_flightDataFields.TryGetValue(currentField.Name, out thisFlightDataField);
+                if (!fieldInfoFoundInCache)
+                {
+                    thisFlightDataField = typeof(FlightData).GetField(currentField.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (thisFlightDataField !=null)
+                    {
+                        _flightDataFields.Add(currentField.Name, thisFlightDataField);
+                    }
+                }
+                    
+                    
+                if (thisFlightDataField == null) continue;
                 var currentFieldType = currentField.FieldType;
                 if (currentFieldType.IsArray)
                 {
                     if (currentFieldType == typeof(DED_PFL_LineOfText[]))
                     {
-                        PopulateDedPflLineOfText(data, currentField, thisField);
+                        PopulateDedPflLineOfText(data, currentField, thisFlightDataField);
                     }
                     else if (currentFieldType == typeof(OSBLabel[]))
                     {
-                        PopulateOSBLabel(data, currentField, thisField);
+                        PopulateOSBLabel(data, currentField, thisFlightDataField);
                     }
                     else if (currentFieldType == typeof(Callsign_LineOfText[]))
                     {
-                        PopulateCallsignLineOfText(data, currentField, thisField);
+                        PopulateCallsignLineOfText(data, currentField, thisFlightDataField);
                     }
                     else
                     {
                         var currentValue = (Array)currentField.GetValue(data);
-                        thisField.SetValue(this, currentValue);
+                        thisFlightDataField.SetValue(this, currentValue);
                     }
                 }
                 else if (currentFieldType.Name.ToLowerInvariant().Contains("uint"))
                 {
-                    thisField.SetValue(this, BitConverter.ToInt32(BitConverter.GetBytes((uint)currentField.GetValue(data)), 0));
+                    thisFlightDataField.SetValue(this, BitConverter.ToInt32(BitConverter.GetBytes((uint)currentField.GetValue(data)), 0));
                 }
                 else
                 {
 
-                    thisField.SetValue(this, currentField.GetValue(data));
+                    thisFlightDataField.SetValue(this, currentField.GetValue(data));
                 }
             }
         }

@@ -259,38 +259,36 @@ namespace F4SharedMem
                 return null;
             }
 
-            var data = Convert.ChangeType(Marshal.PtrToStructure(_lpPrimarySharedMemoryAreaBaseAddress, dataType),
-                dataType);
-            Marshal.SizeOf(dataType);
+            var data = Convert.ChangeType(Marshal.PtrToStructure(_lpPrimarySharedMemoryAreaBaseAddress, dataType),dataType);
             var toReturn = new FlightData((BMS4FlightData) data);
 
             if (!_hSecondarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                data = (Marshal.PtrToStructure(_lpSecondarySharedMemoryAreaBaseAddress, typeof (FlightData2)));
+                data = (FlightData2)(Marshal.PtrToStructure(_lpSecondarySharedMemoryAreaBaseAddress, typeof (FlightData2)));
                 toReturn.PopulateFromStruct(data);
             }
 
             if (!_hOsbSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                data = (Marshal.PtrToStructure(_lpOsbSharedMemoryAreaBaseAddress, typeof (OSBData)));
+                data = (OSBData)(Marshal.PtrToStructure(_lpOsbSharedMemoryAreaBaseAddress, typeof (OSBData)));
                 toReturn.PopulateFromStruct(data);
             }
 
             if (!_hIntelliVibeSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                data = (Marshal.PtrToStructure(_lpIntelliVibeSharedMemoryAreaBaseAddress, typeof(IntellivibeData)));
+                data = (IntellivibeData)(Marshal.PtrToStructure(_lpIntelliVibeSharedMemoryAreaBaseAddress, typeof(IntellivibeData)));
                 toReturn.IntellivibeData = (IntellivibeData)data;
             }
 
             if (!_hRadioClientControlSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                data = (Marshal.PtrToStructure(_lpRadioClientControlSharedMemoryAreaBaseAddress, typeof(RadioClientControl)));
+                data = (RadioClientControl)(Marshal.PtrToStructure(_lpRadioClientControlSharedMemoryAreaBaseAddress, typeof(RadioClientControl)));
                 toReturn.RadioClientControlData = (RadioClientControl)data;
             }
 
             if (!_hRadioClientStatusSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                data = (Marshal.PtrToStructure(_lpRadioClientStatusSharedMemoryAreaBaseAddress, typeof(RadioClientStatus)));
+                data = (RadioClientStatus)(Marshal.PtrToStructure(_lpRadioClientStatusSharedMemoryAreaBaseAddress, typeof(RadioClientStatus)));
                 toReturn.RadioClientStatus = (RadioClientStatus)data;
             }
 
