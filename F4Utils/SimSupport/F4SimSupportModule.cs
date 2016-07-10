@@ -2267,7 +2267,6 @@ namespace F4Utils.SimSupport
 
         public override void Update()
         {
-            GetNextFlightDataFromSharedMem();
             UpdateSimOutputValues();
         }
 
