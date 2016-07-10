@@ -660,7 +660,7 @@ namespace AnalogDevices
 
         #region Device Enumeration
 
-        public static DenseDacEvalBoard[] Enumerate()
+        public static IDenseDacEvalBoard[] Enumerate()
         {
             var discoveredDevices = new List<string>();
             var toReturn = new List<DenseDacEvalBoard>();

@@ -161,7 +161,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                                                     ? hsmConfig.Devices[index]
                                                     : null;
 
-                    var device = devices != null && devices.Length > index ? devices[index]: new a.DenseDacEvalBoard(null);
+                    var device = devices != null && devices.Length > index ? devices[index] : new SimulatedAnalogDevicesDenseDacEvalBoard();
                     var hsmInstance = new AnalogDevicesHardwareSupportModule(device, index, thisDeviceConfig);
                     toReturn.Add(hsmInstance);
                     index++;

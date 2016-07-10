@@ -1,5 +1,4 @@
-﻿using System;
-using AnalogDevices;
+﻿using AnalogDevices;
 using LibUsbDotNet;
 using System.Threading;
 
@@ -7,7 +6,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 {
     internal class SimulatedAnalogDevicesDenseDacEvalBoard : IDenseDacEvalBoard
     {
-        private ChannelMonitorOptions _channelMonitorOptions=new ChannelMonitorOptions(channelMonitorSource=ChannelMonitorSource.None, channelNumberOrInputPinNumber=0);
+        private ChannelMonitorOptions _channelMonitorOptions=new ChannelMonitorOptions(channelMonitorSource:ChannelMonitorSource.None, channelNumberOrInputPinNumber:0);
         public ChannelMonitorOptions ChannelMonitorOptions
         {
             get
