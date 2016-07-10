@@ -10,6 +10,7 @@ using Common.SimSupport;
 using log4net;
 using SimLinkup.Scripting;
 using SimLinkup.Signals;
+using System.Threading.Tasks;
 
 namespace SimLinkup.Runtime
 {
@@ -33,7 +34,7 @@ namespace SimLinkup.Runtime
         public void Start()
         {
             RunSetupScripts();
-            MainLoop();
+            Task.Run(() => MainLoop());
         }
         private void AddPerformanceMonitoringSignals()
         {
@@ -89,7 +90,6 @@ namespace SimLinkup.Runtime
                 {
                     RunLoopScripts();
                 }
-                Application.DoEvents();
                 Thread.Sleep(0);
                 var endTime = DateTime.Now;
                 var loopDuration = endTime.Subtract(startTime);
@@ -200,7 +200,6 @@ namespace SimLinkup.Runtime
                         }
                     }
                 }
-                Application.DoEvents();
             }
         }
 
