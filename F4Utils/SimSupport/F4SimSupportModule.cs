@@ -46,12 +46,20 @@ namespace F4Utils.SimSupport
             get { return "Falcon BMS"; }
         }
 
+        private DateTime _lastFalconIsRunningCheckTime = DateTime.Now;
+        private bool _lastFalconIsRunningCheckResult = false;
         public override bool IsSimRunning
         {
             get
             {
+                if (DateTime.Now.Subtract(_lastFalconIsRunningCheckTime).TotalMilliseconds < 500)
+                {
+                    return _lastFalconIsRunningCheckResult;
+                }
+                _lastFalconIsRunningCheckTime = DateTime.Now;
                 EnsureSharedmemReaderIsCreated();
-                return _smReader.IsFalconRunning;
+                _lastFalconIsRunningCheckResult=_smReader.IsFalconRunning;
+                return _lastFalconIsRunningCheckResult;
             }
         }
 
