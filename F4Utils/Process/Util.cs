@@ -37,11 +37,11 @@ namespace F4Utils.Process
         private static bool _falconWasRunningOnLastCheck;
         public static bool IsFalconRunning()
         {
-            if (!(DateTime.Now.Subtract(_lastFalconRunningCheck).TotalMilliseconds > 500))
+            if (!(DateTime.UtcNow.Subtract(_lastFalconRunningCheck).TotalMilliseconds > 500))
                 return _falconWasRunningOnLastCheck;
             var windowHandle = GetFalconWindowHandle();
             _falconWasRunningOnLastCheck = (windowHandle != IntPtr.Zero);
-            _lastFalconRunningCheck = DateTime.Now;
+            _lastFalconRunningCheck = DateTime.UtcNow;
             return _falconWasRunningOnLastCheck;
         }
 

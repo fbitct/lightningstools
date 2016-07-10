@@ -8,7 +8,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
     {
         internal static void DrawMissileActivitySymbol(Graphics gfx, int backgroundWidth, int backgroundHeight, Pen emitterPen, int width)
         {
-            if (DateTime.Now.Millisecond%250 >= 125) return;
+            if (DateTime.UtcNow.Millisecond%250 >= 125) return;
             //draw missile activity symbol
             emitterPen.DashStyle = DashStyle.Dash;
             gfx.DrawEllipse(emitterPen,

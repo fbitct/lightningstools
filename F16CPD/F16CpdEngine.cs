@@ -138,7 +138,7 @@ namespace F16CPD
             if (_isDisposed || !_keepRunning) return;
             UpdateMfdManagerSize();
             Render();
-            var loopEndTime = DateTime.Now;
+            var loopEndTime = DateTime.UtcNow;
         }
 
         protected void UpdateMfdManagerSize()

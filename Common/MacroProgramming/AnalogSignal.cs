@@ -45,9 +45,9 @@ namespace Common.MacroProgramming
 
         [field: NonSerializedAttribute] private static ILog _log = LogManager.GetLogger(typeof (AnalogSignal));
         private int _precision = -1; //# decimal places to round values to
-        private TimestampedDecimal _previousState = new TimestampedDecimal() { Timestamp = DateTime.Now, Value = 0 };
-        private TimestampedDecimal _state = new TimestampedDecimal() { Timestamp = DateTime.Now, Value = 0 };
-        private TimestampedDecimal _correlatedState = new TimestampedDecimal() { Timestamp = DateTime.Now, Value = 0 };
+        private TimestampedDecimal _previousState = new TimestampedDecimal() { Timestamp = DateTime.UtcNow, Value = 0 };
+        private TimestampedDecimal _state = new TimestampedDecimal() { Timestamp = DateTime.UtcNow, Value = 0 };
+        private TimestampedDecimal _correlatedState = new TimestampedDecimal() { Timestamp = DateTime.UtcNow, Value = 0 };
         private bool _isSine;
         private bool _isCosine;
         
@@ -84,7 +84,7 @@ namespace Common.MacroProgramming
                 if (newVal != _state.Value)
                 {
                     _previousState = _state;
-                    _state = new TimestampedDecimal { Timestamp = DateTime.Now, Value = newVal };
+                    _state = new TimestampedDecimal { Timestamp = DateTime.UtcNow, Value = newVal };
                     UpdateEventListeners();
                 }
             }
@@ -108,7 +108,7 @@ namespace Common.MacroProgramming
                 }
                 if (newVal != _correlatedState.Value)
                 {
-                    _correlatedState = new TimestampedDecimal { Timestamp = DateTime.Now, Value = newVal };
+                    _correlatedState = new TimestampedDecimal { Timestamp = DateTime.UtcNow, Value = newVal };
                 }
             }
         }

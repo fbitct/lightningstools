@@ -1186,7 +1186,7 @@ namespace F16CPD
                 {
                     if (inputControl is MomentaryButtonMfdInputControl)
                     {
-                        ((MomentaryButtonMfdInputControl) inputControl).Press(DateTime.Now);
+                        ((MomentaryButtonMfdInputControl) inputControl).Press(DateTime.UtcNow);
                     }
                     else if (inputControl is ToggleSwitchMfdInputControl)
                     {

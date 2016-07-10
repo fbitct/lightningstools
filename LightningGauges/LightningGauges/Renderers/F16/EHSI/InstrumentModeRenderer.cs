@@ -29,7 +29,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             const float labelWidth = 50;
 
             var howLongSinceInstrumentModeChanged =
-                DateTime.Now.Subtract(instrumentState.WhenInstrumentModeLastChanged);
+                DateTime.UtcNow.Subtract(instrumentState.WhenInstrumentModeLastChanged);
             if (howLongSinceInstrumentModeChanged.TotalMilliseconds <= 2000)
             {
                 var toDisplay = string.Empty;

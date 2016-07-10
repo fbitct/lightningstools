@@ -37,7 +37,7 @@ namespace F16CPD.Networking
             get
             {
                 var toReturn = false;
-                var secondsSinceLastCheck = (int) DateTime.Now.Subtract(_lastConnectionCheckTime).TotalSeconds;
+                var secondsSinceLastCheck = (int) DateTime.UtcNow.Subtract(_lastConnectionCheckTime).TotalSeconds;
                 if (secondsSinceLastCheck > 0 && secondsSinceLastCheck < 5)
                 {
                     return _wasConnected;
@@ -46,7 +46,7 @@ namespace F16CPD.Networking
                 {
                     try
                     {
-                        _lastConnectionCheckTime = DateTime.Now;
+                        _lastConnectionCheckTime = DateTime.UtcNow;
                         Application.DoEvents();
                         if (_connectionTestingBackgroundWorker == null)
                         {

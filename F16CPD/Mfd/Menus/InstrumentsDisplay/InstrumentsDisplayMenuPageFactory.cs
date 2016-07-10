@@ -152,7 +152,7 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
         private void altitudeIndexUpButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
             var whenPressed = e.WhenPressed;
-            var howLongPressed = (int)DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
+            var howLongPressed = (int)DateTime.UtcNow.Subtract(whenPressed).TotalMilliseconds;
             var secondsPressed = (howLongPressed / 1000.0f);
             var valueDelta = 20;
 
@@ -166,7 +166,7 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
         private void altitudeIndexDownButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
             var whenPressed = e.WhenPressed;
-            var howLongPressed = (int)DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
+            var howLongPressed = (int)DateTime.UtcNow.Subtract(whenPressed).TotalMilliseconds;
             var secondsPressed = (howLongPressed / 1000.0f);
             var valueDelta = 20;
 
@@ -194,7 +194,7 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
         private void courseSelectUpButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
             var whenPressed = e.WhenPressed;
-            var howLongPressed = (int)DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
+            var howLongPressed = (int)DateTime.UtcNow.Subtract(whenPressed).TotalMilliseconds;
             var numTimes = 1;
             if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
 
@@ -209,7 +209,7 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
         private void courseSelectDownButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
             var whenPressed = e.WhenPressed;
-            var howLongPressed = (int)DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
+            var howLongPressed = (int)DateTime.UtcNow.Subtract(whenPressed).TotalMilliseconds;
             var numTimes = 1;
             if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
 
@@ -224,7 +224,7 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
         private void headingSelectUpButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
             var whenPressed = e.WhenPressed;
-            var howLongPressed = (int)DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
+            var howLongPressed = (int)DateTime.UtcNow.Subtract(whenPressed).TotalMilliseconds;
             var numTimes = 1;
             if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
 
@@ -239,7 +239,7 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
         private void headingSelectDownButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
             var whenPressed = e.WhenPressed;
-            var howLongPressed = (int)DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
+            var howLongPressed = (int)DateTime.UtcNow.Subtract(whenPressed).TotalMilliseconds;
             var numTimes = 1;
             if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
 

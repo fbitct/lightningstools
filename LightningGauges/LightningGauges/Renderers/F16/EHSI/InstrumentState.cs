@@ -18,7 +18,7 @@ namespace LightningGauges.Renderers.F16.EHSI
         private float _distanceToBeaconNauticalMiles;
         private InstrumentModes _instrumentMode = InstrumentModes.Unknown;
         private float _magneticHeadingDegrees;
-        private DateTime _whenInstrumentModeLastChanged = DateTime.Now;
+        private DateTime _whenInstrumentModeLastChanged = DateTime.UtcNow;
 
         public InstrumentState()
         {
@@ -161,7 +161,7 @@ namespace LightningGauges.Renderers.F16.EHSI
                 if (currentMode != value)
                 {
                     _instrumentMode = value;
-                    _whenInstrumentModeLastChanged = DateTime.Now;
+                    _whenInstrumentModeLastChanged = DateTime.UtcNow;
                 }
             }
         }

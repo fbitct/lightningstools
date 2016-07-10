@@ -13,7 +13,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                     instrumentState.UnknownThreatScanMode
                     ||
                     (NonVisibleUnknownThreatsDetector.AreNonVisibleUnknownThreatsDetected(instrumentState)
-                     && DateTime.Now.Millisecond%500 < 250
+                     && DateTime.UtcNow.Millisecond%500 < 250
                         )
                     )
                 ) //draw highlighted UNK legend 

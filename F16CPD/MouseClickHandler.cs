@@ -38,11 +38,11 @@ namespace F16CPD
         private void MouseDown(object sender, MouseEventArgs e)
         {
             _mouseDown = true;
-            _mouseDownTime = DateTime.Now;
+            _mouseDownTime = DateTime.UtcNow;
             bool alreadyHandledOnce =false;
             while (_mouseDown && ((Form.MouseButtons & MouseButtons.Left) == MouseButtons.Left))
             {
-                if (!alreadyHandledOnce || (alreadyHandledOnce && DateTime.Now.Subtract(_mouseDownTime.Value).TotalMilliseconds > 500))
+                if (!alreadyHandledOnce || (alreadyHandledOnce && DateTime.UtcNow.Subtract(_mouseDownTime.Value).TotalMilliseconds > 500))
                 {
                     HandleMouseClick(new MouseEventArgs(MouseButtons.Left, 1, Cursor.Position.X, Cursor.Position.Y, 0));
                 }
@@ -97,7 +97,7 @@ namespace F16CPD
                     var clickedButton = currentPage.GetOptionSelectButtonByLocation(xPrime, yPrime);
                     if (clickedButton != null) //if a button was clicked
                     {
-                        var whenPressed = _mouseDownTime.HasValue ? _mouseDownTime.Value : DateTime.Now;
+                        var whenPressed = _mouseDownTime.HasValue ? _mouseDownTime.Value : DateTime.UtcNow;
                         clickedButton.Press(whenPressed); //fire the button's press  event
                     }
                 }

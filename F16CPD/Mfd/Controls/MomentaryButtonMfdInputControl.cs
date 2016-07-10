@@ -7,7 +7,7 @@ namespace F16CPD.Mfd.Controls
         private readonly DateTime _whenPressed;
 
         public MomentaryButtonPressedEventArgs()
-            : this(DateTime.Now)
+            : this(DateTime.UtcNow)
         {
         }
 

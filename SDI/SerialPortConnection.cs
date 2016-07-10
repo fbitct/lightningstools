@@ -69,12 +69,12 @@ namespace SDI
             {
                 EnsurePortIsReady();
                 var timeout = _serialPort.ReadTimeout;
-                var startTime = DateTime.Now;
+                var startTime = DateTime.UtcNow;
                 var bytesAvailable = 0;
                 while (bytesAvailable < count)
                 {
                     bytesAvailable = BytesAvailable;
-                    if (DateTime.Now > startTime.AddMilliseconds(timeout) && timeout != Timeout.Infinite)
+                    if (DateTime.UtcNow > startTime.AddMilliseconds(timeout) && timeout != Timeout.Infinite)
                     {
                         throw new TimeoutException();
                     }

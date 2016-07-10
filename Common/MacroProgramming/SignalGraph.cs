@@ -17,7 +17,7 @@ namespace Common.MacroProgramming
         private TimeSpan _duration;
         private List<TimestampedDecimal> _signalStateHistory = new List<TimestampedDecimal>();
         private object _signalStateHistoryLock = new object();
-        private DateTime _startTime = DateTime.Now;
+        private DateTime _startTime = DateTime.UtcNow;
         private static Color GridLineColor = Color.FromArgb(217,234,244);
         private static Color ValueCurveColor = Color.FromArgb(54, 145, 198);
         private static Color CorrelatedValueCurveColor = Color.LightGray;//Color.FromArgb(236, 222, 240);
@@ -80,11 +80,11 @@ namespace Common.MacroProgramming
                 PurgeOldSamples();
                 if (_signal is AnalogSignal)
                 {
-                    _signalStateHistory.Add(new TimestampedDecimal() { Timestamp = DateTime.Now, Value = ((AnalogSignal)_signal).State, CorrelatedValue = ((AnalogSignal)_signal).CorrelatedState });
+                    _signalStateHistory.Add(new TimestampedDecimal() { Timestamp = DateTime.UtcNow, Value = ((AnalogSignal)_signal).State, CorrelatedValue = ((AnalogSignal)_signal).CorrelatedState });
                 }
                 else if (_signal is DigitalSignal)
                 {
-                    _signalStateHistory.Add(new TimestampedDecimal() { Timestamp = DateTime.Now, Value = ((DigitalSignal)_signal).State ? 1 : 0 });
+                    _signalStateHistory.Add(new TimestampedDecimal() { Timestamp = DateTime.UtcNow, Value = ((DigitalSignal)_signal).State ? 1 : 0 });
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace Common.MacroProgramming
         {
             lock (_signalStateHistoryLock)
             {
-                _signalStateHistory.RemoveAll(x => x.Timestamp < DateTime.Now.Subtract(_duration));
+                _signalStateHistory.RemoveAll(x => x.Timestamp < DateTime.UtcNow.Subtract(_duration));
             }
         }
         public void Draw(Graphics graphics, Rectangle targetRectangle)
@@ -105,7 +105,7 @@ namespace Common.MacroProgramming
             var originalClip = graphics.Clip;
             var originalTransform = graphics.Transform;
 
-            var drawTime = DateTime.Now;
+            var drawTime = DateTime.UtcNow;
             CaptureNewSample();
             string value = string.Empty;
             string rangeMinValue = string.Empty;

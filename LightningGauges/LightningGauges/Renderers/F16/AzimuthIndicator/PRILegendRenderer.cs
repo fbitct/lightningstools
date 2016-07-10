@@ -10,7 +10,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
             if (instrumentState.RWRPowerOn &&
                 ((instrumentState.PriorityMode && !NonVisiblePriorityThreatsDetector.AreNonVisiblePriorityThreatsDetected(instrumentState)) ||
                  (instrumentState.PriorityMode && NonVisiblePriorityThreatsDetector.AreNonVisiblePriorityThreatsDetected(instrumentState) &&
-                  DateTime.Now.Millisecond%500 < 250)))
+                  DateTime.UtcNow.Millisecond%500 < 250)))
             {
                 gfx.FillRectangle(brush, leftLegend4Rectangle);
                 StringRenderer.DrawString(gfx, "PRI",font, Brushes.Black, leftLegend4Rectangle,

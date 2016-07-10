@@ -9,7 +9,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
         {
             if (instrumentState.RWRPowerOn &&
                 (instrumentState.SearchMode ||
-                 (NonVisibleSearchThreatsDetector.AreNonVisibleSearchThreatsDetected(instrumentState) && DateTime.Now.Millisecond % 500 < 250)))
+                 (NonVisibleSearchThreatsDetector.AreNonVisibleSearchThreatsDetected(instrumentState) && DateTime.UtcNow.Millisecond % 500 < 250)))
                 //draw highlighted SRCH legend 
             {
                 gfx.FillRectangle(brush, rightLegend2Rectangle);

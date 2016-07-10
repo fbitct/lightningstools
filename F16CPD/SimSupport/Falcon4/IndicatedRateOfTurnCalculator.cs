@@ -20,7 +20,7 @@ namespace F16CPD.SimSupport.Falcon4
         public void DetermineIndicatedRateOfTurn(FlightData flightData)
         {
             //capture the current time
-            var curTime = DateTime.Now;
+            var curTime = DateTime.UtcNow;
 
             //determine how many seconds it's been since our last "current heading" datum snapshot?
             var dT = (float)((curTime.Subtract(_lastHeadingSample.Timestamp)).TotalMilliseconds);

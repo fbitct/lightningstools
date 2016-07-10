@@ -9,7 +9,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
         {
             if (instrumentState.RWRPowerOn &&
                 (instrumentState.NavalMode ||
-                 (NonVisibleNavalThreatsDetector.AreNonVisibleNavalThreatsDetected(instrumentState) && DateTime.Now.Millisecond % 500 < 250)))
+                 (NonVisibleNavalThreatsDetector.AreNonVisibleNavalThreatsDetected(instrumentState) && DateTime.UtcNow.Millisecond % 500 < 250)))
                 //draw highlighted NVL legend 
             {
                 gfx.FillRectangle(brush, rightLegend1Rectangle);

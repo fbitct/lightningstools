@@ -1125,7 +1125,7 @@ namespace Phcc
                 try
                 {
                     _dontRead = true;
-                    var startTime = DateTime.Now;
+                    var startTime = DateTime.UtcNow;
                     var timeOut = 0;
                     lock (_rs232lock)
                     {
@@ -1136,7 +1136,7 @@ namespace Phcc
                     while (bytesAvailable < count)
                     {
                         bytesAvailable = Rs232BytesAvailable();
-                        if (DateTime.Now > startTime.AddMilliseconds(timeOut) && timeOut != Timeout.Infinite)
+                        if (DateTime.UtcNow > startTime.AddMilliseconds(timeOut) && timeOut != Timeout.Infinite)
                         {
                             throw new TimeoutException();
                         }

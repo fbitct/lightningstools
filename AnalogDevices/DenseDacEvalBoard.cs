@@ -1060,7 +1060,7 @@ namespace AnalogDevices
 
             ResetDevice(true); // reset = 1
 
-            var startTime = DateTime.Now;
+            var startTime = DateTime.UtcNow;
             var j = 0;
             for (var i = 0; i <= ihxFile.IhxData.Length; i++)
             {
@@ -1090,7 +1090,7 @@ namespace AnalogDevices
                 buffer[j] = (byte) ihxFile.IhxData[i];
                 j += 1;
             }
-            var endTime = DateTime.Now;
+            var endTime = DateTime.UtcNow;
 
             ResetDevice(false); //error (may caused re-numeration) can be ignored
             return (long) endTime.Subtract(startTime).TotalMilliseconds;

@@ -69,8 +69,8 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
             gfx.TranslateTransform(-backgroundWidth/2.0f, -backgroundHeight/2.0f);
 
             //draw the emitter symbol
-            var usePrimarySymbol = DateTime.Now.Millisecond < 500;
-            var useLargeSymbol = DateTime.Now.Millisecond < 500 && blip.NewDetection > 0;
+            var usePrimarySymbol = DateTime.UtcNow.Millisecond < 500;
+            var useLargeSymbol = DateTime.UtcNow.Millisecond < 500 && blip.NewDetection > 0;
 
             var emitterColor = EmitterColorChooser.GetEmitterColor(scopeGreenColor, missileColor, airborneThreatColor,
                 groundThreatColor, searchThreatColor, navalThreatColor, unknownThreatColor, blip, options);

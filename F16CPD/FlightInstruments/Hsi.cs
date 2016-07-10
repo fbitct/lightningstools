@@ -417,11 +417,11 @@ namespace F16CPD.FlightInstruments
 
                 if (Manager.FlightData.NavMode != _currentNavMode) 
                 {
-                    _currentNavModeDisplayedSince = DateTime.Now;
+                    _currentNavModeDisplayedSince = DateTime.UtcNow;
                     _currentNavMode = Manager.FlightData.NavMode;
                 }
                 //draw HSI nav mode
-                if (DateTime.Now.Subtract(_currentNavModeDisplayedSince).TotalSeconds < 2)
+                if (DateTime.UtcNow.Subtract(_currentNavModeDisplayedSince).TotalSeconds < 2)
                 {
                     var navModeRectangle = new Rectangle(243, 165, 95, 22);
                     var navModeText = string.Format("{0}", _currentNavMode.ToString().ToUpper().Replace("ILS", "ILS/"));

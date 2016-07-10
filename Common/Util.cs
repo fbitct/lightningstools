@@ -8,40 +8,24 @@ namespace Common
     public static class Util
     {
         private static ILog _log = LogManager.GetLogger(typeof (Util));
-        private static Dictionary<Type, Dictionary<string,object>> _cachedTypes = new Dictionary<Type,Dictionary<string,object>>();
-        public static bool EnumTryParse<T>(string strType, out T result)
+        private static Dictionary<int, object> _cachedEnumValues=new Dictionary<int, object>();
+        public static bool EnumTryParse<T>(string value, out T result) where T: struct
         {
+            var key = typeof(T).GetHashCode() << 32 | value.GetHashCode();
+            object parsedValue = null;
+            var wasCached= _cachedEnumValues.TryGetValue(key, out parsedValue);
+            if (wasCached)
+            {
+                result = (T)parsedValue;
+                return wasCached;
+            }
             
-
-            if (_cachedTypes.ContainsKey(typeof(T)))
+            var couldParse= Enum.TryParse(value, out result);
+            if (couldParse)
             {
-                if (_cachedTypes[typeof(T)].ContainsKey(strType))
-                {
-                    result = (T)_cachedTypes[typeof(T)][strType];
-                    return true;
-                }
+                _cachedEnumValues[key] = result;
             }
-            else
-            {
-                _cachedTypes[typeof(T)] = new Dictionary<string, object>();
-            }
-
-            var strTypeFixed = strType.Replace(' ', '_');
-            if (Enum.IsDefined(typeof (T), strTypeFixed))
-            {
-                result = (T) Enum.Parse(typeof (T), strTypeFixed, true);
-                _cachedTypes[typeof(T)][strType] = result;
-                return true;
-            }
-            foreach (var value in
-                Enum.GetNames(typeof (T)).Where(value => value.Equals(strTypeFixed, StringComparison.OrdinalIgnoreCase)))
-            {
-                result = (T) Enum.Parse(typeof (T), value);
-                _cachedTypes[typeof(T)][strType] = result;
-                return true;
-            }
-            result = default(T);
-            return false;
+            return couldParse;
         }
 
         public static byte SetBit(byte bits, int index, bool newVal)
