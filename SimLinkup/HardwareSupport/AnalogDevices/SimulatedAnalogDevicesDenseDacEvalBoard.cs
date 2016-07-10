@@ -319,7 +319,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         private void SimulateSendingUSBCommand()
         {
-            Thread.Sleep(5);
+            Thread.Sleep(1);
         }
     }
 }

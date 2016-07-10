@@ -5,6 +5,7 @@ using Common.MacroProgramming;
 using log4net;
 using a = AnalogDevices;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace SimLinkup.HardwareSupport.AnalogDevices
 {
@@ -13,7 +14,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         #region Class variables
 
         private static readonly ILog _log = LogManager.GetLogger(typeof (AnalogDevicesHardwareSupportModule));
-
+        private List<Task> _tasks = new List<Task>();
         #endregion
 
         #region Instance variables
@@ -252,11 +253,12 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                     var channelAddress = (a.ChannelAddress)outputSignal.SubSource;
                     if (dacChannelDataSource == a.DacChannelDataSource.DataValueA) 
                     {
-                        _device.SetDacChannelDataValueA(channelAddress, value); 
+                        _tasks.Add(Task.Run(()=> _device.SetDacChannelDataValueA(channelAddress, value))); 
                     }
                     else
                     {
-                        _device.SetDacChannelDataValueB(channelAddress, value);                     }
+                        _tasks.Add(Task.Run(()=>_device.SetDacChannelDataValueB(channelAddress, value)));
+                    }
                 }
             }
         }
@@ -274,6 +276,8 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             if (_device != null)
             {
+                Task.WaitAll(_tasks.ToArray());
+                _tasks.Clear();
                 ToggleDACChannelDataSource();
                 _device.UpdateAllDacOutputs();
             }
