@@ -1,7 +1,5 @@
 ﻿using AnalogDevices;
 using LibUsbDotNet;
-using System.Threading;
-using System;
 using System.Threading.Tasks;
 
 namespace SimLinkup.HardwareSupport.AnalogDevices
@@ -19,14 +17,14 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             get
             {
-                SimulateSendingUSBCommandAsynchronously().RunSynchronously();
+                Task.Run(async () => { await SimulateSendingUSBCommandAsync(); }).Wait();
                 return _channelMonitorOptions;
             }
-            set { SetChannelMonitorOptionsAsync(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetChannelMonitorOptionsAsync(value); }).Wait(); }
         }
         public async Task SetChannelMonitorOptionsAsync(ChannelMonitorOptions value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _channelMonitorOptions = value;
         }
 
@@ -36,16 +34,16 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         public IODirection GeneralPurposeIOPinDirection
         {
             get { return GetGeneralPurposeIOPinDirectionAsync().Result; }
-            set { SetGeneralPurposeIOPinDirectionAsync(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetGeneralPurposeIOPinDirectionAsync(value); }).Wait(); }
         }
         public async Task<IODirection> GetGeneralPurposeIOPinDirectionAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _generalPurposeIOPinDirection;
         }
         public async Task SetGeneralPurposeIOPinDirectionAsync(IODirection value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _generalPurposeIOPinDirection=value;
         }
 
@@ -55,16 +53,16 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         public bool GeneralPurposeIOPinState
         {
             get { return GetGeneralPurposeIOPinStateAsync().Result; }
-            set { SetGeneralPurposeIOPinStateAsync(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetGeneralPurposeIOPinStateAsync(value); }).Wait(); }
         }
         public async Task<bool> GetGeneralPurposeIOPinStateAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _generalPurposeIOPinState;
         }
         public async Task SetGeneralPurposeIOPinStateAsync(bool value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _generalPurposeIOPinState=value;
         }
 
@@ -83,7 +81,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public async Task<bool> GetIsOverTemperatureAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _isOverTemperature;
         }
 
@@ -93,21 +91,21 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         public bool IsThermalShutdownEnabled
         {
             get { return GetIsThermalShutdownEnabledAsync().Result; }
-            set { SetIsThermalShutdownEnabledAsync(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetIsThermalShutdownEnabledAsync(value); }).Wait(); }
         }
         public async Task<bool> GetIsThermalShutdownEnabledAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _isThermalShutdownEnabled;
         }
         public async Task SetIsThermalShutdownEnabledAsync(bool value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _isThermalShutdownEnabled = value;
         }
         public void DisableThermalShutdown()
         {
-            SetIsThermalShutdownEnabledAsync(false).RunSynchronously();
+            Task.Run(async () => { await SetIsThermalShutdownEnabledAsync(false); }).Wait();
         }
         public async Task DisableThermalShutdownAsync()
         {
@@ -115,7 +113,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public void EnableThermalShutdown()
         {
-            SetIsThermalShutdownEnabledAsync(true).RunSynchronously();
+            Task.Run(async () => { await SetIsThermalShutdownEnabledAsync(true); }).Wait();
         }
         public async Task EnableThermalShutdownAsync()
         {
@@ -128,16 +126,16 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         public ushort OffsetDAC0
         {
             get { return GetOffsetDAC0Async().Result; }
-            set { SetOffsetDAC0Async(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetOffsetDAC0Async(value); }).Wait(); }
         }
         public async Task<ushort> GetOffsetDAC0Async()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _offsetDAC0;
         }
         public async Task SetOffsetDAC0Async(ushort value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _offsetDAC0 = value;
         }
 
@@ -147,16 +145,16 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         public ushort OffsetDAC1
         {
             get { return GetOffsetDAC1Async().Result; }
-            set { SetOffsetDAC1Async(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetOffsetDAC1Async(value); }).Wait(); }
         }
         public async Task<ushort> GetOffsetDAC1Async()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _offsetDAC1;
         }
         public async Task SetOffsetDAC1Async(ushort value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _offsetDAC1 = value;
         }
 
@@ -165,16 +163,16 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         public ushort OffsetDAC2
         {
             get { return GetOffsetDAC2Async().Result; }
-            set { SetOffsetDAC2Async(value).RunSynchronously(); }
+            set { Task.Run(async () => { await SetOffsetDAC2Async(value); }).Wait(); }
         }
         public async Task<ushort> GetOffsetDAC2Async()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _offsetDAC2;
         }
         public async Task SetOffsetDAC2Async(ushort value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _offsetDAC2 = value;
         }
 
@@ -187,7 +185,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public async Task<bool> GetPacketErrorCheckErrorOccurredAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _packetErrorCheckErrorOccurred;
         }
 
@@ -199,50 +197,50 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public async Task<DacChannelDataSource> GetDacChannelDataSourceAsync(ChannelAddress channel)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _dacChannelDataSource[(int)channel - 8];
         }
         public void SetDacChannelDataSource(ChannelAddress channel, DacChannelDataSource value)
         {
-            SetDacChannelDataSourceAsync(channel, value).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelDataSourceAsync(channel, value); }).Wait();
         }
         public async Task SetDacChannelDataSourceAsync(ChannelAddress channel, DacChannelDataSource value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _dacChannelDataSource[(int)channel - 8]=value;
         }
 
 
         public void SetDacChannelDataSource(ChannelGroup group, DacChannelDataSource channel0, DacChannelDataSource channel1, DacChannelDataSource channel2, DacChannelDataSource channel3, DacChannelDataSource channel4, DacChannelDataSource channel5, DacChannelDataSource channel6, DacChannelDataSource channel7)
         {
-            SetDacChannelDataSourceAsync(group, channel0, channel1, channel2, channel3, channel4, channel5, channel6, channel7).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelDataSourceAsync(group, channel0, channel1, channel2, channel3, channel4, channel5, channel6, channel7); }).Wait();    
         }
         public async Task SetDacChannelDataSourceAsync(ChannelGroup group, DacChannelDataSource channel0, DacChannelDataSource channel1, DacChannelDataSource channel2, DacChannelDataSource channel3, DacChannelDataSource channel4, DacChannelDataSource channel5, DacChannelDataSource channel6, DacChannelDataSource channel7)
         {
             for (int i = 0; i < 8; i++)
             {
-                await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+                await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
                 _dacChannelDataSource[((int)group * 8)] = channel0;
 
-                await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+                await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
                 _dacChannelDataSource[((int)group * 8) + 1] = channel1;
 
-                await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+                await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
                 _dacChannelDataSource[((int)group * 8) + 2] = channel2;
 
-                await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+                await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
                 _dacChannelDataSource[((int)group * 8) + 3] = channel3;
 
-                await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+                await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
                 _dacChannelDataSource[((int)group * 8) + 4] = channel4;
 
-                await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+                await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
                 _dacChannelDataSource[((int)group * 8) + 5] = channel5;
 
-                await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+                await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
                 _dacChannelDataSource[((int)group * 8) + 6] = channel6;
 
-                await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+                await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
                 _dacChannelDataSource[((int)group * 8) + 7] = channel7;
             }
         }
@@ -250,11 +248,11 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void SetDacChannelDataSourceAllChannels(DacChannelDataSource source)
         {
-            SetDacChannelDataSourceAllChannelsAsync(source).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelDataSourceAllChannelsAsync(source); }).Wait();
         }
         public async Task SetDacChannelDataSourceAllChannelsAsync(DacChannelDataSource source)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             for (int i = 0; i < 40; i++)
             {
                 _dacChannelDataSource[i] = source;
@@ -270,16 +268,16 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public void SetDacChannelDataValueA(ChannelAddress channel, ushort value)
         {
-            SetDacChannelDataValueAAsync(channel, value).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelDataValueAAsync(channel, value); }).Wait();
         }
         public async Task<ushort> GetDacChannelDataValueAAsync(ChannelAddress channel)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _dacChannelDataValueA[(int)channel - 8];
         }
         public async Task SetDacChannelDataValueAAsync(ChannelAddress channel, ushort value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _dacChannelDataValueA[(int)channel - 8]=value;
         }
 
@@ -291,16 +289,16 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public void SetDacChannelDataValueB(ChannelAddress channel, ushort value)
         {
-            SetDacChannelDataValueBAsync(channel, value).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelDataValueBAsync(channel, value); }).Wait();
         }
         public async Task<ushort> GetDacChannelDataValueBAsync(ChannelAddress channel)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _dacChannelDataValueB[(int)channel - 8];
         }
         public async Task SetDacChannelDataValueBAsync(ChannelAddress channel, ushort value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _dacChannelDataValueB[(int)channel - 8] = value;
         }
 
@@ -312,16 +310,16 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public async Task<ushort> GetDacChannelOffsetAsync(ChannelAddress channel)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _dacChannelOffset[(int)channel - 8];
         }
         public void SetDacChannelOffset(ChannelAddress channel, ushort value)
         {
-            SetDacChannelOffsetAsync(channel, value).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelOffsetAsync(channel, value); }).Wait();
         }
         public async Task SetDacChannelOffsetAsync(ChannelAddress channel, ushort value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _dacChannelOffset[(int)channel - 8]=value;
         }
 
@@ -335,16 +333,16 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         public async Task<ushort> GetDacChannelGainAsync(ChannelAddress channel)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             return _dacChannelGain[(int)channel - 8];
         }
         public void SetDacChannelGain(ChannelAddress channel, ushort value)
         {
-            SetDacChannelGainAsync(channel, value).RunSynchronously();
+            Task.Run(async () => { await SetDacChannelGainAsync(channel, value); }).Wait();
         }
         public async Task SetDacChannelGainAsync(ChannelAddress channel, ushort value)
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
             _dacChannelGain[(int)channel - 8]=value;
         }
 
@@ -352,36 +350,36 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void PerformSoftPowerDown()
         {
-            PerformSoftPowerDownAsync().RunSynchronously();
+            Task.Run(async () => { await PerformSoftPowerDownAsync(); }).Wait();
         }
         public async Task PerformSoftPowerDownAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
         }
 
 
         public void PerformSoftPowerUp()
         {
-            PerformSoftPowerUpAsync().RunSynchronously();
+            Task.Run(async () => { await PerformSoftPowerUpAsync(); }).Wait();
         }
         public async Task PerformSoftPowerUpAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
         }
 
         public void PulseLDACPin()
         {
-            PulseLDACPinAsync().RunSynchronously();
+            Task.Run(async () => { await PulseLDACPinAsync(); }).Wait();
         }
         public async Task PulseLDACPinAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
         }
 
 
         public void Reset()
         {
-            ResetAsync().RunSynchronously();
+            Task.Run(async () => { await ResetAsync(); }).Wait();
         }
         public async Task ResetAsync()
         {
@@ -390,49 +388,49 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void ResumeAllDacOutputs()
         {
-            ResumeAllDacOutputsAsync().RunSynchronously();
+            Task.Run(async () => { await ResumeAllDacOutputsAsync(); }).Wait();
         }
         public async Task ResumeAllDacOutputsAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
         }
 
         public void SetLDACPinHigh()
         {
-            SetLDACPinHighAsync().RunSynchronously();
+            Task.Run(async () => { await SetLDACPinHighAsync(); }).Wait();
         }
         public async Task SetLDACPinHighAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
         }
 
         public void SetLDACPinLow()
         {
-            SetLDACPinLowAsync().RunSynchronously();
+            Task.Run(async () => { await SetLDACPinLowAsync(); }).Wait();
         }
         public async Task SetLDACPinLowAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
         }
 
 
         public void SuspendAllDacOutputs()
         {
-            SuspendAllDacOutputsAsync().RunSynchronously();
+            Task.Run(async () => { await SuspendAllDacOutputsAsync(); }).Wait();
         }
         public async Task SuspendAllDacOutputsAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
         }
 
 
         public void UpdateAllDacOutputs()
         {
-            UpdateAllDacOutputsAsync().RunSynchronously();
+            Task.Run(async () => { await UpdateAllDacOutputsAsync(); }).Wait();
         }
         public async Task UpdateAllDacOutputsAsync()
         {
-            await SimulateSendingUSBCommandAsynchronously().ConfigureAwait(false);
+            await SimulateSendingUSBCommandAsync().ConfigureAwait(false);
         }
 
 
@@ -447,10 +445,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
 
 
-        private async Task SimulateSendingUSBCommandAsynchronously()
+        private async Task SimulateSendingUSBCommandAsync()
         {
             await Task.Delay(1).ConfigureAwait(false);
         }
-
     }
 }
