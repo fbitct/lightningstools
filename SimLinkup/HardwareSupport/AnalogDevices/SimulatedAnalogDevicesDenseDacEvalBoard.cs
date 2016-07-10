@@ -6,25 +6,25 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 {
     internal class SimulatedAnalogDevicesDenseDacEvalBoard : IDenseDacEvalBoard
     {
-        private ChannelMonitorOptions _channelMonitorOptions=new ChannelMonitorOptions(channelMonitorSource:ChannelMonitorSource.None, channelNumberOrInputPinNumber:0);
+        private ChannelMonitorOptions _channelMonitorOptions = new ChannelMonitorOptions(channelMonitorSource: ChannelMonitorSource.None, channelNumberOrInputPinNumber: 0);
         public ChannelMonitorOptions ChannelMonitorOptions
         {
             get
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 return _channelMonitorOptions;
             }
 
             set
             {
                 _channelMonitorOptions = value;
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
             }
         }
 
         public DacPrecision DacPrecision
         {
-            get;set;
+            get; set;
         }
 
         private IODirection _generalPurposeIOPinDirection = IODirection.Output;
@@ -32,14 +32,14 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             get
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 return _generalPurposeIOPinDirection;
             }
 
             set
             {
                 _generalPurposeIOPinDirection = value;
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
             }
         }
 
@@ -48,23 +48,23 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             get
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 return _generalPurposeIOPinState;
             }
 
             set
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 _generalPurposeIOPinState = value;
             }
         }
 
-        private bool _isOverTemperature=false;
+        private bool _isOverTemperature = false;
         public bool IsOverTemperature
         {
             get
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 return _isOverTemperature;
             }
             internal set
@@ -78,13 +78,13 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             get
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 return _isThermalShutdownEnabled;
             }
 
             set
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 _isThermalShutdownEnabled = value;
             }
         }
@@ -94,13 +94,13 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             get
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 return _offsetDAC0;
             }
 
             set
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 _offsetDAC0 = value;
             }
         }
@@ -110,13 +110,13 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             get
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 return _offsetDAC1;
             }
 
             set
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 _offsetDAC1 = value;
             }
         }
@@ -127,13 +127,13 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             get
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 return _offsetDAC2;
             }
 
             set
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 _offsetDAC2 = value;
             }
         }
@@ -143,7 +143,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             get
             {
-                Thread.Sleep(100);
+                SimulateSendingUSBCommand();
                 return _packetErrorCheckErrorOccurred;
             }
             internal set
@@ -167,51 +167,51 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private DacChannelDataSource[] _dacChannelDataSource = new DacChannelDataSource[40];
         public DacChannelDataSource GetDacChannelDataSource(ChannelAddress channelAddress)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             return _dacChannelDataSource[(int)channelAddress - 8];
         }
 
         private ushort[] _dacChannelDataValueA = new ushort[40];
         public ushort GetDacChannelDataValueA(ChannelAddress channel)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             return _dacChannelDataValueA[(int)channel - 8];
         }
 
         private ushort[] _dacChannelDataValueB = new ushort[40];
         public ushort GetDacChannelDataValueB(ChannelAddress channel)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             return _dacChannelDataValueB[(int)channel - 8];
         }
 
         private ushort[] _dacChannelGain = new ushort[40];
         public ushort GetDacChannelGain(ChannelAddress channel)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             return _dacChannelGain[(int)channel - 8];
         }
 
-        private ushort[] _dacChannelOffset= new ushort[40];
+        private ushort[] _dacChannelOffset = new ushort[40];
         public ushort GetDacChannelOffset(ChannelAddress channel)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             return _dacChannelOffset[(int)channel - 8];
         }
 
         public void PerformSoftPowerDown()
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
         }
 
         public void PerformSoftPowerUp()
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
         }
 
         public void PulseLDacPin()
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
         }
 
         public void Reset()
@@ -221,18 +221,18 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void ResumeAllDacOutputs()
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
         }
 
         public void SetDacChannelDataSource(ChannelAddress channelAddress, DacChannelDataSource value)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             _dacChannelDataSource[(int)channelAddress - 8] = value;
         }
 
         public void SetDacChannelDataSource(ChannelGroup group, DacChannelDataSource channel0, DacChannelDataSource channel1, DacChannelDataSource channel2, DacChannelDataSource channel3, DacChannelDataSource channel4, DacChannelDataSource channel5, DacChannelDataSource channel6, DacChannelDataSource channel7)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             for (int i = 0; i < 8; i++)
             {
                 _dacChannelDataSource[((int)group * 8)] = channel0;
@@ -248,7 +248,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void SetDacChannelDataSourceAllChannels(DacChannelDataSource source)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             for (int i = 0; i < 40; i++)
             {
                 _dacChannelDataSource[i] = source;
@@ -257,16 +257,16 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void SetDacChannelDataValueA(ChannelAddress channelAddress, ushort newVal)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             for (int i = 0; i < 40; i++)
             {
-                _dacChannelDataValueA[(int)channelAddress-8] = newVal;
+                _dacChannelDataValueA[(int)channelAddress - 8] = newVal;
             }
         }
 
         public void SetDacChannelDataValueB(ChannelAddress channels, ushort newVal)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             for (int i = 0; i < 40; i++)
             {
                 _dacChannelDataValueB[(int)channels - 8] = newVal;
@@ -275,7 +275,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void SetDacChannelGain(ChannelAddress channels, ushort newVal)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             for (int i = 0; i < 40; i++)
             {
                 _dacChannelGain[(int)channels - 8] = newVal;
@@ -284,7 +284,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void SetDacChannelOffset(ChannelAddress channels, ushort newVal)
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
             for (int i = 0; i < 40; i++)
             {
                 _dacChannelOffset[(int)channels - 8] = newVal;
@@ -293,22 +293,22 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public void SetLDacPinHigh()
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
         }
 
         public void SetLDacPinLow()
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
         }
 
         public void SuspendAllDacOutputs()
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
         }
 
         public void UpdateAllDacOutputs()
         {
-            Thread.Sleep(100);
+            SimulateSendingUSBCommand();
         }
 
         public long UploadFirmware(IhxFile ihxFile)
@@ -317,5 +317,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             return 0;
         }
 
+        private void SimulateSendingUSBCommand()
+        {
+            Thread.Sleep(5);
+        }
     }
 }
