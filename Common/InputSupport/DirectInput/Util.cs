@@ -26,10 +26,10 @@ namespace Common.InputSupport.DirectInput
         public static Device GetDIDevice(Guid instanceGuid)
         {
             Device device = null;
-            var startTime = DateTime.Now;
+            var startTime = DateTime.UtcNow;
             var endTime = startTime.Add(TimeSpan.FromMilliseconds(1000));
 
-            while (device == null && DateTime.Now.CompareTo(endTime) < 0)
+            while (device == null && DateTime.UtcNow.CompareTo(endTime) < 0)
             {
                 try
                 {

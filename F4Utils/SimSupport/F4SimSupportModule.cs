@@ -46,17 +46,17 @@ namespace F4Utils.SimSupport
             get { return "Falcon BMS"; }
         }
 
-        private DateTime _lastFalconIsRunningCheckTime = DateTime.Now;
+        private DateTime _lastFalconIsRunningCheckTime = DateTime.UtcNow;
         private bool _lastFalconIsRunningCheckResult = false;
         public override bool IsSimRunning
         {
             get
             {
-                if (DateTime.Now.Subtract(_lastFalconIsRunningCheckTime).TotalMilliseconds < 500)
+                if (DateTime.UtcNow.Subtract(_lastFalconIsRunningCheckTime).TotalMilliseconds < 500)
                 {
                     return _lastFalconIsRunningCheckResult;
                 }
-                _lastFalconIsRunningCheckTime = DateTime.Now;
+                _lastFalconIsRunningCheckTime = DateTime.UtcNow;
                 EnsureSharedmemReaderIsCreated();
                 _lastFalconIsRunningCheckResult=_smReader.IsFalconRunning;
                 return _lastFalconIsRunningCheckResult;
@@ -565,7 +565,7 @@ namespace F4Utils.SimSupport
                                                                 (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.OXY_BROW) ==
                                                               BlinkBits.OXY_BROW) 
                                                                     &&
-                                                                DateTime.Now.Millisecond %500 <250
+                                                                DateTime.UtcNow.Millisecond %500 <250
                                                             )
                                                         );
 
@@ -594,7 +594,7 @@ namespace F4Utils.SimSupport
                                                                 (((BlinkBits) _lastFlightData.blinkBits &
                                                                    BlinkBits.Elec_Fault) == BlinkBits.Elec_Fault)
                                                                         &&
-                                                                DateTime.Now.Millisecond % 250 < 125
+                                                                DateTime.UtcNow.Millisecond % 250 < 125
                                                             )
                                                         );
                         break;
@@ -679,7 +679,7 @@ namespace F4Utils.SimSupport
                                                            (((BlinkBits)_lastFlightData.blinkBits &
                                                             BlinkBits.PROBEHEAT) == BlinkBits.PROBEHEAT) 
                                                                 && 
-                                                           DateTime.Now.Millisecond % 250 < 125
+                                                           DateTime.UtcNow.Millisecond % 250 < 125
                                                         );
                         break;
                     case F4SimOutputs.CAUTION_PANEL__FUEL_LOW:
@@ -734,7 +734,7 @@ namespace F4Utils.SimSupport
                                                           (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.Launch) ==
                                                           BlinkBits.Launch) 
                                                               && 
-                                                          DateTime.Now.Millisecond % 250 < 125
+                                                          DateTime.UtcNow.Millisecond % 250 < 125
                                                         );
                         break;
                     case F4SimOutputs.TWP__PRIORITY_MODE:
@@ -748,7 +748,7 @@ namespace F4Utils.SimSupport
                                                               (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.PriMode) ==
                                                               BlinkBits.PriMode)
                                                                 &&
-                                                              DateTime.Now.Millisecond % 250 < 125
+                                                              DateTime.UtcNow.Millisecond % 250 < 125
                                                             );
                         break;
                     case F4SimOutputs.TWP__UNKNOWN:
@@ -762,7 +762,7 @@ namespace F4Utils.SimSupport
                                                               (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.Unk) ==
                                                               BlinkBits.Unk)
                                                                 &&
-                                                              DateTime.Now.Millisecond % 250 < 125
+                                                              DateTime.UtcNow.Millisecond % 250 < 125
                                                             );
                         break;
                     case F4SimOutputs.TWP__NAVAL:
@@ -785,7 +785,7 @@ namespace F4Utils.SimSupport
                                                           (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.AuxSrch) ==
                                                           BlinkBits.AuxSrch) 
                                                             && 
-                                                          DateTime.Now.Millisecond % 250 < 125
+                                                          DateTime.UtcNow.Millisecond % 250 < 125
                                                         );
                         break;
                     case F4SimOutputs.TWA__ACTIVITY_POWER:
@@ -907,7 +907,7 @@ namespace F4Utils.SimSupport
                                                                 (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.EPUOn) ==
                                                               BlinkBits.EPUOn)
                                                                 &&
-                                                                DateTime.Now.Millisecond % 250 < 125
+                                                                DateTime.UtcNow.Millisecond % 250 < 125
                                                             )
                                                         );
                         break;
@@ -925,14 +925,14 @@ namespace F4Utils.SimSupport
                                                             (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.JFSOn_Slow) ==
                                                               BlinkBits.JFSOn_Slow)
                                                                 &&
-                                                            DateTime.Now.Millisecond % 1000 < 500
+                                                            DateTime.UtcNow.Millisecond % 1000 < 500
                                                         )
                                                                 ||
                                                         (
                                                             (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.JFSOn_Fast) ==
                                                               BlinkBits.JFSOn_Fast)
                                                                 &&
-                                                            DateTime.Now.Millisecond % 250 < 125
+                                                            DateTime.UtcNow.Millisecond % 250 < 125
                                                         )
                                                     );
                         break;
@@ -1511,7 +1511,7 @@ namespace F4Utils.SimSupport
             originalDelta = delta;
             if (signal.TimeConstant.HasValue)
             {
-                var time = DateTime.Now.Subtract(currentState.Timestamp).TotalMilliseconds;
+                var time = DateTime.UtcNow.Subtract(currentState.Timestamp).TotalMilliseconds;
                 delta *= (System.Math.Min(time, signal.TimeConstant.Value) / signal.TimeConstant.Value);
             }
 

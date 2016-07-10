@@ -83,7 +83,7 @@ namespace SimLinkup.Runtime
             IsRunning = true;
             while (_keepRunning)
             {
-                var startTime = DateTime.Now;
+                var startTime = DateTime.UtcNow;
                 UpdateSimSignals();
                 Synchronize();
                 if (_loopScripts != null && _loopScripts.Length > 0)
@@ -91,7 +91,7 @@ namespace SimLinkup.Runtime
                     RunLoopScripts();
                 }
                 Thread.Sleep(0);
-                var endTime = DateTime.Now;
+                var endTime = DateTime.UtcNow;
                 var loopDuration = endTime.Subtract(startTime);
                 _loopDurationSignal.State = loopDuration.TotalMilliseconds;
                 _loopFrequencySignal.State = 1000 / loopDuration.TotalMilliseconds;
@@ -132,11 +132,11 @@ namespace SimLinkup.Runtime
         public void Stop()
         {
             _keepRunning = false;
-            var startWaitingTime = DateTime.Now;
+            var startWaitingTime = DateTime.UtcNow;
             while (IsRunning)
             {
                 Thread.Sleep(5);
-                var currentTime = DateTime.Now;
+                var currentTime = DateTime.UtcNow;
                 var elapsed = currentTime.Subtract(startWaitingTime);
                 if (elapsed.TotalSeconds > 5)
                 {
