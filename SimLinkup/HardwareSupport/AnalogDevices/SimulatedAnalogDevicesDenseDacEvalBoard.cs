@@ -209,7 +209,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             SimulateSendingUSBCommand();
         }
 
-        public void PulseLDacPin()
+        public void PulseLDACPin()
         {
             SimulateSendingUSBCommand();
         }
@@ -291,12 +291,12 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             }
         }
 
-        public void SetLDacPinHigh()
+        public void SetLDACPinHigh()
         {
             SimulateSendingUSBCommand();
         }
 
-        public void SetLDacPinLow()
+        public void SetLDACPinLow()
         {
             SimulateSendingUSBCommand();
         }

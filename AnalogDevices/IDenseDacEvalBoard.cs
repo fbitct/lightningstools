@@ -24,7 +24,7 @@ namespace AnalogDevices
         ushort GetDacChannelOffset(ChannelAddress channel);
         void PerformSoftPowerDown();
         void PerformSoftPowerUp();
-        void PulseLDacPin();
+        void PulseLDACPin();
         void Reset();
         void ResumeAllDacOutputs();
         void SetDacChannelDataSource(ChannelAddress channelAddress, DacChannelDataSource value);
@@ -34,8 +34,8 @@ namespace AnalogDevices
         void SetDacChannelDataValueB(ChannelAddress channels, ushort newVal);
         void SetDacChannelGain(ChannelAddress channels, ushort newVal);
         void SetDacChannelOffset(ChannelAddress channels, ushort newVal);
-        void SetLDacPinHigh();
-        void SetLDacPinLow();
+        void SetLDACPinHigh();
+        void SetLDACPinLow();
         void SuspendAllDacOutputs();
         void UpdateAllDacOutputs();
         long UploadFirmware(IhxFile ihxFile);

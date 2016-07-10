@@ -25,7 +25,7 @@ namespace AnalogDevices
         /// <summary>
         ///   Pulse LDac pin
         /// </summary>
-        PulseLDacPin = 0xDE,
+        PulseLDACPin = 0xDE,
         /// <summary>
         ///   Sets CLR pin low
         /// </summary>
@@ -35,12 +35,12 @@ namespace AnalogDevices
         /// </summary>
         InitializeSPIPins = 0xE0,
         /// <summary>
-        ///   Sets the LDac pin high
+        ///   Sets the LDAC pin high
         /// </summary>
-        SetLDacPinHigh = 0xE2,
+        SetLDACPinHigh = 0xE2,
         /// <summary>
-        ///   Sets the LDac pin low
+        ///   Sets the LDAC pin low
         /// </summary>
-        SetLDacPinLow = 0xE3,
+        SetLDACPinLow = 0xE3,
     }
 }

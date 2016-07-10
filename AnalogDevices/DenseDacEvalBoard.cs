@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading;
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
 using System.Linq;
@@ -34,29 +33,23 @@ namespace AnalogDevices
         {
             get
             {
-                return  _usbDevice !=null && 
-                        _usbDevice.UsbRegistryInfo !=null 
-                            ? _usbDevice.UsbRegistryInfo.SymbolicName 
+                return _usbDevice != null &&
+                        _usbDevice.UsbRegistryInfo != null
+                            ? _usbDevice.UsbRegistryInfo.SymbolicName
                             : null;
             }
         }
 
         public bool GeneralPurposeIOPinState
         {
-            get
-            {
-                return GetGeneralPurposeIOPinStateAsync().Result;
-            }
-            set
-            {
-                SetGeneralPurposeIOPinStateAsync(value).RunSynchronously();
-            }
+            get { return GetGeneralPurposeIOPinStateAsync().Result; }
+            set { SetGeneralPurposeIOPinStateAsync(value).RunSynchronously(); }
         }
 
         public async Task<bool> GetGeneralPurposeIOPinStateAsync()
         {
             var gpioPinDirection = await GetGeneralPurposeIOPinDirectionAsync().ConfigureAwait(false);
-            if (gpioPinDirection!= IODirection.Input)
+            if (gpioPinDirection != IODirection.Input)
             {
                 throw new InvalidOperationException(
                     "GeneralPurposeIOPinDirection must be set to Input in order to read the GeneralPurposeIOPinState property.");
@@ -68,7 +61,7 @@ namespace AnalogDevices
         public async Task SetGeneralPurposeIOPinStateAsync(bool value)
         {
             var gpioPinDirection = await GetGeneralPurposeIOPinDirectionAsync().ConfigureAwait(false);
-            if (gpioPinDirection!= IODirection.Output)
+            if (gpioPinDirection != IODirection.Output)
             {
                 throw new InvalidOperationException(
                     "GeneralPurposeIOPinDirection must be set to Output in order to set the GeneralPurposeIOPinState property.");
@@ -82,14 +75,8 @@ namespace AnalogDevices
 
         public IODirection GeneralPurposeIOPinDirection
         {
-            get
-            {
-                return GetGeneralPurposeIOPinDirectionAsync().Result;
-            }
-            set
-            {
-                SetGeneralPurposeIOPinDirectionAsync(value).RunSynchronously();
-            }
+            get { return GetGeneralPurposeIOPinDirectionAsync().Result; }
+            set { SetGeneralPurposeIOPinDirectionAsync(value).RunSynchronously(); }
         }
 
         public async Task<IODirection> GetGeneralPurposeIOPinDirectionAsync()
@@ -108,292 +95,337 @@ namespace AnalogDevices
                                     : (ushort)BasicMasks.AllBitsZero).ConfigureAwait(false);
         }
 
-
         public ushort OffsetDAC0
         {
-            get { return ReadbackOFS0Register(); }
-            set
-            {
-                SetCLRPinLow();
-                WriteOFS0Register(value);
-                SetCLRPinHigh();
-            }
+            get { return GetOffsetDAC0Async().Result; }
+            set { SetOffsetDAC0Async(value).RunSynchronously(); }
         }
-
+        public async Task<ushort> GetOffsetDAC0Async()
+        {
+            return await ReadbackOFS0RegisterAsync().ConfigureAwait(false);
+        }
+        public async Task SetOffsetDAC0Async(ushort value)
+        {
+            await SetCLRPinLowAsync().ConfigureAwait(false);
+            await WriteOFS0RegisterAsync(value).ConfigureAwait(false);
+            await SetCLRPinHighAsync().ConfigureAwait(false);
+        }
 
         public ushort OffsetDAC1
         {
-            get { return ReadbackOFS1Register(); }
-            set
-            {
-                SetCLRPinLow();
-                WriteOFS1Register(value);
-                SetCLRPinHigh();
-            }
+            get { return GetOffsetDAC1Async().Result; }
+            set { SetOffsetDAC1Async(value).RunSynchronously(); }
+        }
+        public async Task<ushort> GetOffsetDAC1Async()
+        {
+            return await ReadbackOFS1RegisterAsync().ConfigureAwait(false);
+        }
+        public async Task SetOffsetDAC1Async(ushort value)
+        {
+            await SetCLRPinLowAsync().ConfigureAwait(false);
+            await WriteOFS1RegisterAsync(value).ConfigureAwait(false);
+            await SetCLRPinHighAsync().ConfigureAwait(false);
         }
 
         public ushort OffsetDAC2
         {
-            get { return ReadbackOFS2Register(); }
-            set
-            {
-                SetCLRPinLow();
-                WriteOFS2Register(value);
-                SetCLRPinHigh();
-            }
+            get { return GetOffsetDAC2Async().Result; }
+            set { SetOffsetDAC2Async(value).RunSynchronously(); }
         }
+        public async Task<ushort> GetOffsetDAC2Async()
+        {
+            return await ReadbackOFS2RegisterAsync().ConfigureAwait(false);
+        }
+        public async Task SetOffsetDAC2Async(ushort value)
+        {
+            await SetCLRPinLowAsync().ConfigureAwait(false);
+            await WriteOFS2RegisterAsync(value).ConfigureAwait(false);
+            await SetCLRPinHighAsync().ConfigureAwait(false);
+        }
+
 
         public ChannelMonitorOptions ChannelMonitorOptions
         {
-            get
-            {
-                var source = ChannelMonitorSource.None;
-                byte channelNumberOrInputPinNumber = 0;
-                if ((_monitorFlags & MonitorBits.MonitorEnable) == MonitorBits.MonitorEnable) //if bit F5 is set (monitor enable bit = 1), monitoring is enabled
-                {
-                    if ((_monitorFlags & MonitorBits.SourceSelect) == MonitorBits.SourceSelect) //if bit F4 =1, input pin monitoring is selected
-                    {
-                        source = ChannelMonitorSource.InputPin;
-                        channelNumberOrInputPinNumber = (byte)(_monitorFlags & MonitorBits.InputPin); //if bit F0=0, MON_IN0 is selected for monitoring, else MON_IN1 is selected for monitoring
-                    }
-                    else //bit F4 =0; DAC channel monitoring is selected
-                    {
-                        source = ChannelMonitorSource.DacChannel;
-                        channelNumberOrInputPinNumber = (byte) (_monitorFlags & MonitorBits.DacChannel); //bits F0-F3 specify the monitored DAC channel
-                    }
-                }
-                
-                var toReturn = new ChannelMonitorOptions(source, channelNumberOrInputPinNumber);
-                toReturn.PropertyChanged += MonitorOptionsPropertyChangedHandler;
-                return toReturn;
-            }
-            set { SendNewChannelMonitorOptionsToDevice(value); }
+            get { return GetChannelMonitorOptions(); }
+            set { SetChannelMonitorOptionsAsync(value).RunSynchronously(); }
         }
+
+        private ChannelMonitorOptions GetChannelMonitorOptions()
+        {
+            var source = ChannelMonitorSource.None;
+            byte channelNumberOrInputPinNumber = 0;
+            if ((_monitorFlags & MonitorBits.MonitorEnable) == MonitorBits.MonitorEnable) //if bit F5 is set (monitor enable bit = 1), monitoring is enabled
+            {
+                if ((_monitorFlags & MonitorBits.SourceSelect) == MonitorBits.SourceSelect) //if bit F4 =1, input pin monitoring is selected
+                {
+                    source = ChannelMonitorSource.InputPin;
+                    channelNumberOrInputPinNumber = (byte)(_monitorFlags & MonitorBits.InputPin); //if bit F0=0, MON_IN0 is selected for monitoring, else MON_IN1 is selected for monitoring
+                }
+                else //bit F4 =0; DAC channel monitoring is selected
+                {
+                    source = ChannelMonitorSource.DacChannel;
+                    channelNumberOrInputPinNumber = (byte)(_monitorFlags & MonitorBits.DacChannel); //bits F0-F3 specify the monitored DAC channel
+                }
+            }
+
+            var toReturn = new ChannelMonitorOptions(source, channelNumberOrInputPinNumber);
+            toReturn.PropertyChanged += MonitorOptionsPropertyChangedHandler;
+            return toReturn;
+        }
+        public async Task SetChannelMonitorOptionsAsync(ChannelMonitorOptions value)
+        {
+            await SendNewChannelMonitorOptionsToDeviceAsync(value).ConfigureAwait(false);
+        }
+
 
         public bool IsThermalShutdownEnabled
         {
-            get
-            {
-                var controlRegisterBits = ReadbackControlRegister();
-                return ((controlRegisterBits & ControlRegisterBits.ThermalShutdownEnabled) == ControlRegisterBits.ThermalShutdownEnabled); //if bit 1=1, thermal shutdown is enabled
-            }
-            set
-            {
-                var controlRegisterBits = ReadbackControlRegister();
-                if (value)
-                {
-                    controlRegisterBits |= ControlRegisterBits.ThermalShutdownEnabled;
-                }
-                else
-                {
-                    controlRegisterBits &= ~ControlRegisterBits.ThermalShutdownEnabled;
-                }
-                WriteControlRegister(controlRegisterBits);
-            }
+            get { return GetIsThermalShutdownEnabledAsync().Result; }
+            set { SetIsThermalShutdownEnabledAsync(value).RunSynchronously();}
         }
+
+        public void EnableThermalShutdown()
+        {
+            EnableThermalShutdownAsync().RunSynchronously();
+        }
+        public async Task EnableThermalShutdownAsync()
+        {
+            await SetIsThermalShutdownEnabledAsync(true).ConfigureAwait(false);
+        }
+        public void DisableThermalShutdown()
+        {
+            DisableThermalShutdownAsync().RunSynchronously();
+        }
+        public async Task DisableThermalShutdownAsync()
+        {
+            await SetIsThermalShutdownEnabledAsync(false).ConfigureAwait(false);
+        }
+        public async Task<bool> GetIsThermalShutdownEnabledAsync()
+        {
+            var controlRegisterBits = await ReadbackControlRegisterAsync().ConfigureAwait(false);
+            return ((controlRegisterBits & ControlRegisterBits.ThermalShutdownEnabled) == ControlRegisterBits.ThermalShutdownEnabled); //if bit 1=1, thermal shutdown is enabled
+        }
+        public async Task SetIsThermalShutdownEnabledAsync(bool value)
+        {
+            var controlRegisterBits = await ReadbackControlRegisterAsync().ConfigureAwait(false);
+            if (value)
+            {
+                controlRegisterBits |= ControlRegisterBits.ThermalShutdownEnabled;
+            }
+            else
+            {
+                controlRegisterBits &= ~ControlRegisterBits.ThermalShutdownEnabled;
+            }
+            await WriteControlRegisterAsync(controlRegisterBits).ConfigureAwait(false);
+        }
+
 
         public DacPrecision DacPrecision
         {
-            get
-            {
-                return _thisDevicePrecision;
-            }
-            set
-            {
-                _thisDevicePrecision = value;
-            }
+            get { return _thisDevicePrecision; }
+            set { _thisDevicePrecision = value; }
         }
 
         public bool PacketErrorCheckErrorOccurred
         {
-            get
-            {
-                var controlRegisterBits = ReadbackControlRegister();
-                return (controlRegisterBits & ControlRegisterBits.PacketErrorCheckErrorOccurred) == ControlRegisterBits.PacketErrorCheckErrorOccurred;
-            }
+            get { return GetPacketErrorCheckErrorOccurredAsync().Result; }
+        }
+
+        public async Task<bool> GetPacketErrorCheckErrorOccurredAsync()
+        {
+            var controlRegisterBits = await ReadbackControlRegisterAsync().ConfigureAwait(false);
+            return (controlRegisterBits & ControlRegisterBits.PacketErrorCheckErrorOccurred) == ControlRegisterBits.PacketErrorCheckErrorOccurred;
         }
 
         public bool IsOverTemperature
         {
             get
             {
-                var controlRegisterBits = ReadbackControlRegister();
-                return (controlRegisterBits & ControlRegisterBits.OverTemperature) == ControlRegisterBits.OverTemperature;
+                return GetIsOverTemperatureAsync().Result;
             }
+        }
+
+        public async Task<bool> GetIsOverTemperatureAsync()
+        {
+            var controlRegisterBits = await ReadbackControlRegisterAsync().ConfigureAwait(false);
+            return (controlRegisterBits & ControlRegisterBits.OverTemperature) == ControlRegisterBits.OverTemperature;
         }
 
         #endregion
 
         #region Dac Channel Data Source Selection
-
         public void SetDacChannelDataSource(ChannelAddress channelAddress, DacChannelDataSource value)
         {
-            if ((int) channelAddress < 8 || (int) channelAddress > 47)
+            SetDacChannelDataSourceAsync(channelAddress, value).RunSynchronously();
+        }
+        public async Task SetDacChannelDataSourceAsync(ChannelAddress channelAddress, DacChannelDataSource value)
+        {
+            if ((int)channelAddress < 8 || (int)channelAddress > 47)
             {
                 if (channelAddress == ChannelAddress.AllGroupsAllChannels)
                 {
-                    SetDacChannelDataSourceAllChannels(value);
+                    await SetDacChannelDataSourceAllChannelsAsync(value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group0AllChannels)
                 {
-                    SetDacChannelDataSource(ChannelGroup.Group0, value, value, value, value, value, value, value, value);
+                    await SetDacChannelDataSourceAsync(ChannelGroup.Group0, value, value, value, value, value, value, value, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group1AllChannels)
                 {
-                    SetDacChannelDataSource(ChannelGroup.Group1, value, value, value, value, value, value, value, value);
+                    await SetDacChannelDataSourceAsync(ChannelGroup.Group1, value, value, value, value, value, value, value, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group2AllChannels)
                 {
-                    SetDacChannelDataSource(ChannelGroup.Group2, value, value, value, value, value, value, value, value);
+                    await SetDacChannelDataSourceAsync(ChannelGroup.Group2, value, value, value, value, value, value, value, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group3AllChannels)
                 {
-                    SetDacChannelDataSource(ChannelGroup.Group3, value, value, value, value, value, value, value, value);
+                    await SetDacChannelDataSourceAsync(ChannelGroup.Group3, value, value, value, value, value, value, value, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group4AllChannels)
                 {
-                    SetDacChannelDataSource(ChannelGroup.Group4, value, value, value, value, value, value, value, value);
+                    await SetDacChannelDataSourceAsync(ChannelGroup.Group4, value, value, value, value, value, value, value, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group0Through4Channel0)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group0Channel0, value);
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel0, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel0, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel0, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel0, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel0, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel0, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel0, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel0, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel0, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group0Through4Channel1)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group0Channel1, value);
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel1, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel1, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel1, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel1, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel1, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel1, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel1, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel1, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel1, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group0Through4Channel2)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group0Channel2, value);
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel2, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel2, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel2, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel2, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel2, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel2, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel2, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel2, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel2, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group0Through4Channel3)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group0Channel3, value);
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel3, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel3, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel3, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel3, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel3, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel3, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel3, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel3, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel3, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group0Through4Channel4)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group0Channel4, value);
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel4, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel4, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel4, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel4, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel4, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel4, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel4, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel4, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel4, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group0Through4Channel5)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group0Channel5, value);
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel5, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel5, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel5, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel5, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel5, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel5, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel5, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel5, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel5, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group0Through4Channel6)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group0Channel6, value);
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel6, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel6, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel6, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel6, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel6, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel6, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel6, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel6, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel6, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group0Through4Channel7)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group0Channel7, value);
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel7, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel7, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel7, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel7, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel7, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel7, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel7, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel7, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel7, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group1Through4Channel0)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel0, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel0, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel0, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel0, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel0, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel0, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel0, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel0, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group1Through4Channel1)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel1, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel1, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel1, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel1, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel1, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel1, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel1, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel1, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group1Through4Channel2)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel2, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel2, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel2, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel2, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel2, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel2, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel2, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel2, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group1Through4Channel3)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel3, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel3, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel3, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel3, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel3, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel3, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel3, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel3, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group1Through4Channel4)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel4, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel4, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel4, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel4, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel4, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel4, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel4, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel4, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group1Through4Channel5)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel5, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel5, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel5, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel5, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel5, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel5, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel5, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel5, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group1Through4Channel6)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel6, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel6, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel6, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel6, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel6, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel6, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel6, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel6, value).ConfigureAwait(false);
                     return;
                 }
                 else if (channelAddress == ChannelAddress.Group1Through4Channel7)
                 {
-                    SetDacChannelDataSource(ChannelAddress.Group1Channel7, value);
-                    SetDacChannelDataSource(ChannelAddress.Group2Channel7, value);
-                    SetDacChannelDataSource(ChannelAddress.Group3Channel7, value);
-                    SetDacChannelDataSource(ChannelAddress.Group4Channel7, value);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel7, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel7, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group3Channel7, value).ConfigureAwait(false);
+                    await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel7, value).ConfigureAwait(false);
                     return;
                 }
                 else
@@ -401,39 +433,39 @@ namespace AnalogDevices
                     throw new ArgumentOutOfRangeException("channelAddress");
                 }
             }
-            var channelNum = (byte) ((byte) channelAddress - 8);
+            var channelNum = (byte)((byte)channelAddress - 8);
             var currentSourceSelections = ABSelectRegisterBits.AllChannelsA;
 
             var specialFunctionCode = SpecialFunctionCode.NOP;
             if (channelNum < 8)
             {
                 specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister0;
-                currentSourceSelections = ReadbackABSelect0Register();
+                currentSourceSelections = await ReadbackABSelect0RegisterAsync().ConfigureAwait(false);
             }
             else if (channelNum >= 8 && channelNum < 16)
             {
                 specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister1;
-                currentSourceSelections = ReadbackABSelect1Register();
+                currentSourceSelections = await ReadbackABSelect1RegisterAsync().ConfigureAwait(false);
             }
             else if (channelNum >= 16 && channelNum < 24)
             {
                 specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister2;
-                currentSourceSelections = ReadbackABSelect2Register();
+                currentSourceSelections = await ReadbackABSelect2RegisterAsync().ConfigureAwait(false);
             }
             else if (channelNum >= 24 && channelNum < 32)
             {
                 specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister3;
-                currentSourceSelections = ReadbackABSelect3Register();
+                currentSourceSelections = await ReadbackABSelect3RegisterAsync().ConfigureAwait(false);
             }
             else if (channelNum >= 32 && channelNum <= 39)
             {
                 specialFunctionCode = SpecialFunctionCode.WriteToABSelectRegister4;
-                currentSourceSelections = ReadbackABSelect4Register();
+                currentSourceSelections = await ReadbackABSelect4RegisterAsync().ConfigureAwait(false);
             }
             var newSourceSelections = currentSourceSelections;
 
-            var channelOffset = (byte) (channelNum % 8);
-            var channelMask = (ABSelectRegisterBits) (1 << channelOffset);
+            var channelOffset = (byte)(channelNum % 8);
+            var channelMask = (ABSelectRegisterBits)(1 << channelOffset);
 
             if (value == DacChannelDataSource.DataValueA)
             {
@@ -444,39 +476,42 @@ namespace AnalogDevices
                 newSourceSelections |= channelMask;
             }
             newSourceSelections &= ABSelectRegisterBits.WritableBits; //ensure we only send 8 bits of data (one for each channel in the group)
-            SendSpecialFunction(specialFunctionCode, (ushort)newSourceSelections);
+            await SendSpecialFunctionAsync(specialFunctionCode, (ushort)newSourceSelections).ConfigureAwait(false);
         }
-
         public DacChannelDataSource GetDacChannelDataSource(ChannelAddress channelAddress)
         {
-            if ((int) channelAddress < 8 || (int) channelAddress > 47)
+            return GetDacChannelDataSourceAsync(channelAddress).Result;
+        }
+        public async Task<DacChannelDataSource> GetDacChannelDataSourceAsync(ChannelAddress channelAddress)
+        {
+            if ((int)channelAddress < 8 || (int)channelAddress > 47)
             {
                 throw new ArgumentOutOfRangeException("channelAddress");
             }
-            var channelNum = (byte) ((byte) channelAddress - 8);
+            var channelNum = (byte)((byte)channelAddress - 8);
             var currentSourceSelections = ABSelectRegisterBits.AllChannelsA;
             if (channelNum < 8)
             {
-                currentSourceSelections = ReadbackABSelect0Register();
+                currentSourceSelections = await ReadbackABSelect0RegisterAsync().ConfigureAwait(false);
             }
             else if (channelNum >= 8 && channelNum < 16)
             {
-                currentSourceSelections = ReadbackABSelect1Register();
+                currentSourceSelections = await ReadbackABSelect1RegisterAsync().ConfigureAwait(false);
             }
             else if (channelNum >= 16 && channelNum < 24)
             {
-                currentSourceSelections = ReadbackABSelect2Register();
+                currentSourceSelections = await ReadbackABSelect2RegisterAsync().ConfigureAwait(false);
             }
             else if (channelNum >= 24 && channelNum < 32)
             {
-                currentSourceSelections = ReadbackABSelect3Register();
+                currentSourceSelections = await ReadbackABSelect3RegisterAsync().ConfigureAwait(false);
             }
             else if (channelNum >= 32 && channelNum <= 39)
             {
-                currentSourceSelections = ReadbackABSelect4Register();
+                currentSourceSelections = await ReadbackABSelect4RegisterAsync().ConfigureAwait(false);
             }
-            var channelOffset = (byte) (channelNum % 8);
-            var channelMask = (ABSelectRegisterBits) (1 << channelOffset);
+            var channelOffset = (byte)(channelNum % 8);
+            var channelMask = (ABSelectRegisterBits)(1 << channelOffset);
             var sourceIsDataValueB = ((currentSourceSelections & channelMask) == channelMask);
             if (sourceIsDataValueB)
             {
@@ -487,8 +522,15 @@ namespace AnalogDevices
                 return DacChannelDataSource.DataValueA;
             }
         }
-
         public void SetDacChannelDataSource(ChannelGroup group, DacChannelDataSource channel0,
+                                            DacChannelDataSource channel1, DacChannelDataSource channel2,
+                                            DacChannelDataSource channel3, DacChannelDataSource channel4,
+                                            DacChannelDataSource channel5, DacChannelDataSource channel6,
+                                            DacChannelDataSource channel7)
+        {
+            SetDacChannelDataSourceAsync(group, channel0, channel1, channel2, channel3, channel4, channel5, channel6, channel7).RunSynchronously();
+        }
+        public async Task SetDacChannelDataSourceAsync(ChannelGroup group, DacChannelDataSource channel0,
                                             DacChannelDataSource channel1, DacChannelDataSource channel2,
                                             DacChannelDataSource channel3, DacChannelDataSource channel4,
                                             DacChannelDataSource channel5, DacChannelDataSource channel6,
@@ -525,18 +567,21 @@ namespace AnalogDevices
                     break;
             }
             abSelectRegisterBits &= ABSelectRegisterBits.WritableBits; //ensure we only send 8 bits of data
-            SendSpecialFunction(specialFunctionCode, (ushort)abSelectRegisterBits);
+            await SendSpecialFunctionAsync(specialFunctionCode, (ushort)abSelectRegisterBits).ConfigureAwait(false);
         }
-
         public void SetDacChannelDataSourceAllChannels(DacChannelDataSource source)
+        {
+            SetDacChannelDataSourceAllChannelsAsync(source).RunSynchronously();
+        }
+        public async Task SetDacChannelDataSourceAllChannelsAsync(DacChannelDataSource source)
         {
             switch (source)
             {
                 case DacChannelDataSource.DataValueA:
-                    SendSpecialFunction(SpecialFunctionCode.BlockWriteABSelectRegisters, (ushort)ABSelectRegisterBits.AllChannelsA);
+                    await SendSpecialFunctionAsync(SpecialFunctionCode.BlockWriteABSelectRegisters, (ushort)ABSelectRegisterBits.AllChannelsA).ConfigureAwait(false);
                     break;
                 case DacChannelDataSource.DataValueB:
-                    SendSpecialFunction(SpecialFunctionCode.BlockWriteABSelectRegisters, (ushort)ABSelectRegisterBits.AllChannelsB);
+                    await SendSpecialFunctionAsync(SpecialFunctionCode.BlockWriteABSelectRegisters, (ushort)ABSelectRegisterBits.AllChannelsB).ConfigureAwait(false);
                     break;
                 default:
                     throw new ArgumentException("source");
@@ -549,168 +594,229 @@ namespace AnalogDevices
 
         public void PerformSoftPowerDown()
         {
-            var controlRegisterBits = ReadbackControlRegister();
+            PerformSoftPowerDownAsync().RunSynchronously();
+        }
+        public async Task PerformSoftPowerDownAsync()
+        {
+            var controlRegisterBits = await ReadbackControlRegisterAsync().ConfigureAwait(false);
             controlRegisterBits |= ControlRegisterBits.SoftPowerDown; //set bit F0=1 to perform soft power-down
-            WriteControlRegister(controlRegisterBits);
+            await WriteControlRegisterAsync(controlRegisterBits).ConfigureAwait(false);
         }
 
         public void PerformSoftPowerUp()
         {
-            var controlRegisterBits = ReadbackControlRegister();
+            PerformSoftPowerUpAsync().RunSynchronously();
+        }
+        public async Task PerformSoftPowerUpAsync()
+        {
+            var controlRegisterBits = await ReadbackControlRegisterAsync().ConfigureAwait(false);
             controlRegisterBits &= ~ControlRegisterBits.SoftPowerDown; //set bit F0=0 to perform soft power-up;
-            WriteControlRegister(controlRegisterBits);
+            await WriteControlRegisterAsync(controlRegisterBits).ConfigureAwait(false);
         }
 
         public void Reset()
         {
-            SetRESETPinHigh();
-            Thread.Sleep(1000);
-            SetRESETPinLow();
+            ResetAsync().RunSynchronously();
+        }
+        public async Task ResetAsync()
+        {
+            await SetRESETPinHighAsync().ConfigureAwait(false);
+            await Task.Delay(1000).ConfigureAwait(false);
+            await SetRESETPinLowAsync().ConfigureAwait(false);
         }
 
         public void SuspendAllDacOutputs()
         {
-            SetCLRPinLow();
+            SuspendAllDacOutputsAsync().RunSynchronously();
+        }
+        public async Task SuspendAllDacOutputsAsync()
+        {
+            await SetCLRPinLowAsync().ConfigureAwait(false);
         }
 
         public void ResumeAllDacOutputs()
         {
-            SetCLRPinHigh();
+            ResumeAllDacOutputsAsync().RunSynchronously();
+        }
+        public async Task ResumeAllDacOutputsAsync()
+        {
+            await SetCLRPinHighAsync().ConfigureAwait(false);
         }
 
         public void UpdateAllDacOutputs()
         {
-            PulseLDacPin();
+            UpdateAllDacOutputsAsync().RunSynchronously();
+        }
+        public async Task UpdateAllDacOutputsAsync()
+        {
+            await PulseLDACPinAsync().ConfigureAwait(false);
         }
 
         #endregion
 
         #region Dac Functions
-
         public ushort GetDacChannelDataValueA(ChannelAddress channel)
         {
-            if ((int) channel >= 8 && (int) channel <= 47)
+            return GetDacChannelDataValueAAsync(channel).Result;
+        }
+        public async Task<ushort> GetDacChannelDataValueAAsync(ChannelAddress channelAddress)
+        {
+            if ((int) channelAddress >= 8 && (int) channelAddress <= 47)
             {
-                return ReadbackX1ARegister(channel);
+                return await ReadbackX1ARegisterAsync(channelAddress).ConfigureAwait(false);
             }
             throw new ArgumentOutOfRangeException("channel");
         }
 
-        public ushort GetDacChannelDataValueB(ChannelAddress channel)
+        public ushort GetDacChannelDataValueB(ChannelAddress channelAddress)
+        {
+            return GetDacChannelDataValueBAsync(channelAddress).Result;
+        }
+        public async Task<ushort> GetDacChannelDataValueBAsync(ChannelAddress channel)
         {
             if ((int) channel >= 8 && (int) channel <= 47)
             {
-                return ReadbackX1BRegister(channel);
+                return await ReadbackX1BRegisterAsync(channel).ConfigureAwait(false);
             }
             throw new ArgumentOutOfRangeException("channel");
         }
 
         public void SetDacChannelDataValueA(ChannelAddress channelAddress, ushort newVal)
         {
-            var controlRegisterBits = ReadbackControlRegister();
+            SetDacChannelDataValueAAsync(channelAddress, newVal).RunSynchronously();
+        }
+        public async Task SetDacChannelDataValueAAsync(ChannelAddress channelAddress, ushort newVal)
+        {
+            var controlRegisterBits = await ReadbackControlRegisterAsync().ConfigureAwait(false);
             controlRegisterBits &= ~ControlRegisterBits.InputRegisterSelect; //set control register bit F2 =0 to select register X1A for input
-            WriteControlRegister(controlRegisterBits);
+            await WriteControlRegisterAsync(controlRegisterBits).ConfigureAwait(false);
 
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | newVal);
+                await SendSPIAsync((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | newVal).ConfigureAwait(false);
             }
             else
             {
-                SendSPI((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2));
+                await SendSPIAsync((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)).ConfigureAwait(false);
             }
         }
 
-        public void SetDacChannelDataValueB(ChannelAddress channels, ushort newVal)
+
+        public void SetDacChannelDataValueB(ChannelAddress channelAddress, ushort newVal)
         {
-            var controlRegisterBits = ReadbackControlRegister();
+            SetDacChannelDataValueBAsync(channelAddress, newVal).RunSynchronously();
+        }
+        public async Task SetDacChannelDataValueBAsync(ChannelAddress channelAddress, ushort newVal)
+        {
+            var controlRegisterBits = await ReadbackControlRegisterAsync().ConfigureAwait(false);
             controlRegisterBits |= ControlRegisterBits.InputRegisterSelect;//set control register bit F2 =1 to select register X1B for input
-            WriteControlRegister(controlRegisterBits);
+            await WriteControlRegisterAsync(controlRegisterBits).ConfigureAwait(false);
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | newVal)).ConfigureAwait(false);
             }
             else
             {
-                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2))).ConfigureAwait(false);
             }
         }
 
         public ushort GetDacChannelOffset(ChannelAddress channel)
         {
+            return GetDacChannelOffsetAsync(channel).Result;
+        }
+        public async Task<ushort> GetDacChannelOffsetAsync(ChannelAddress channel)
+        {
             if ((int) channel >= 8 && (int) channel <= 47)
             {
-                return ReadbackCRegister(channel);
+                return await ReadbackCRegisterAsync(channel).ConfigureAwait(false);
             }
             throw new ArgumentOutOfRangeException("channel");
         }
 
-        public void SetDacChannelOffset(ChannelAddress channels, ushort newVal)
+        public void SetDacChannelOffset(ChannelAddress channel, ushort newVal)
         {
-            SetCLRPinLow();
+            SetDacChannelOffsetAsync(channel, newVal).RunSynchronously();
+        }
+        public async Task SetDacChannelOffsetAsync(ChannelAddress channel, ushort newVal)
+        {
+            await SetCLRPinLowAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | newVal)).ConfigureAwait(false);
             }
             else
             {
-                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACOffsetRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2))).ConfigureAwait(false);
             }
-            SetCLRPinHigh();
+            await SetCLRPinHighAsync().ConfigureAwait(false);
         }
 
         public ushort GetDacChannelGain(ChannelAddress channel)
         {
+            return GetDacChannelGainAsync(channel).Result;
+        }
+        public async Task<ushort> GetDacChannelGainAsync(ChannelAddress channel)
+        {
             if ((int) channel >= 8 && (int) channel <= 47)
             {
-                return ReadbackMRegister(channel);
+                return await ReadbackMRegisterAsync(channel).ConfigureAwait(false);
             }
             throw new ArgumentOutOfRangeException("channel");
         }
 
-        public void SetDacChannelGain(ChannelAddress channels, ushort newVal)
+        public void SetDacChannelGain(ChannelAddress channel, ushort newVal)
         {
-            SetCLRPinLow();
+            SetDacChannelGainAsync(channel, newVal).RunSynchronously();
+        }
+        public async Task SetDacChannelGainAsync(ChannelAddress channel, ushort newVal)
+        {
+            await SetCLRPinLowAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | newVal));
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | newVal)).ConfigureAwait(false);
             }
             else
             {
-                SendSPI(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channels & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2)));
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACGainRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2))).ConfigureAwait(false);
             }
-            SetCLRPinHigh();
+            await SetCLRPinHighAsync().ConfigureAwait(false);
         }
 
         #endregion
 
         #region Device Enumeration
-
         public static IDenseDacEvalBoard[] Enumerate()
+        {
+            return EnumerateAsync().Result;
+        }
+        public static async Task<IDenseDacEvalBoard[]> EnumerateAsync()
         {
             var discoveredDevices = new List<string>();
             var toReturn = new List<DenseDacEvalBoard>();
-            var devs = UsbDevice.AllDevices;
+            var devs = await Task.FromResult(UsbDevice.AllDevices).ConfigureAwait(false);
             for (var i = 0; i < devs.Count; i++)
             {
-                var device = devs[i].Device;
+                var device = await Task.FromResult(devs[i].Device).ConfigureAwait(false);
                 if (device != null)
                 {
+                    var registryInfo = await Task.FromResult(device.UsbRegistryInfo).ConfigureAwait(false);
                     if (
-                        device.UsbRegistryInfo.Vid == 0x0456
+                        registryInfo.Vid == 0x0456
                         &&
                         (
-                            (ushort) device.UsbRegistryInfo.Pid == 0xB20F
+                            (ushort)registryInfo.Pid == 0xB20F
                             ||
-                            (ushort) device.UsbRegistryInfo.Pid == 0xB20E
+                            (ushort)registryInfo.Pid == 0xB20E
                         )
                         )
                     {
-                        if (!discoveredDevices.Contains(device.UsbRegistryInfo.SymbolicName))
+                        if (!discoveredDevices.Contains(registryInfo.SymbolicName))
                         {
-                            toReturn.Add(new DenseDacEvalBoard(device));
+                            var newDevice = await Task.FromResult(new DenseDacEvalBoard(device));
+                            toReturn.Add(newDevice);
                         }
-                        discoveredDevices.Add(device.UsbRegistryInfo.SymbolicName);
+                        discoveredDevices.Add(registryInfo.SymbolicName);
                     }
                 }
             }
@@ -747,7 +853,7 @@ namespace AnalogDevices
 
         #region Channel Monitoring Options Change Handling
 
-        private void SendNewChannelMonitorOptionsToDevice(ChannelMonitorOptions value)
+        private async Task SendNewChannelMonitorOptionsToDeviceAsync(ChannelMonitorOptions value)
         {
             if (value == null) throw new ArgumentNullException("value");
 
@@ -789,23 +895,23 @@ namespace AnalogDevices
                     throw new ArgumentOutOfRangeException("value", "value.ChannelMonitorSource is not valid.");
                 }
             }
-            SendSpecialFunction(SpecialFunctionCode.ConfigureMonitoring, (ushort)_monitorFlags);
+            await SendSpecialFunctionAsync(SpecialFunctionCode.ConfigureMonitoring, (ushort)_monitorFlags).ConfigureAwait(false);
         }
 
-        private void MonitorOptionsPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
+        private async void MonitorOptionsPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
-            SendNewChannelMonitorOptionsToDevice((ChannelMonitorOptions) sender);
+            await SendNewChannelMonitorOptionsToDeviceAsync((ChannelMonitorOptions) sender).ConfigureAwait(false);
         }
 
         #endregion
 
         #region Register Readback Functions
 
-        private ushort ReadbackX1ARegister(ChannelAddress channelNum)
+        private async Task<ushort> ReadbackX1ARegisterAsync(ChannelAddress channelNum)
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7));
-            var val = ReadSPI();
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback,
+                                (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)).ConfigureAwait(false);
+            var val = await ReadSPIAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.FourteenBit)
             {
                 val &= (ushort)BasicMasks.FourteenBits;
@@ -813,11 +919,11 @@ namespace AnalogDevices
             return val;
         }
 
-        private ushort ReadbackX1BRegister(ChannelAddress channelNum)
+        private async Task<ushort> ReadbackX1BRegisterAsync(ChannelAddress channelNum)
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) ((ushort)(AddressCodesForDataReadback.X1BRegister) | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
-            var val = ReadSPI();
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback,
+                                (ushort) ((ushort)(AddressCodesForDataReadback.X1BRegister) | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7))).ConfigureAwait(false);
+            var val = await ReadSPIAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.FourteenBit)
             {
                 val &= (ushort)BasicMasks.FourteenBits;
@@ -825,11 +931,11 @@ namespace AnalogDevices
             return val;
         }
 
-        private ushort ReadbackCRegister(ChannelAddress channelNum)
+        private async Task<ushort> ReadbackCRegisterAsync(ChannelAddress channelNum)
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) ((ushort)(AddressCodesForDataReadback.CRegister)| (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
-            var val = ReadSPI();
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback,
+                                (ushort) ((ushort)(AddressCodesForDataReadback.CRegister)| (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7))).ConfigureAwait(false);
+            var val = await ReadSPIAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.FourteenBit)
             {
                 val &= (ushort)BasicMasks.FourteenBits;
@@ -837,11 +943,11 @@ namespace AnalogDevices
             return val;
         }
 
-        private ushort ReadbackMRegister(ChannelAddress channelNum)
+        private async Task<ushort> ReadbackMRegisterAsync(ChannelAddress channelNum)
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
-                                (ushort) ((ushort)(AddressCodesForDataReadback.MRegister) | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7)));
-            var val = ReadSPI();
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback,
+                                (ushort) ((ushort)(AddressCodesForDataReadback.MRegister) | (ushort) ((((byte) channelNum) & (byte)BasicMasks.SixBits) << 7))).ConfigureAwait(false);
+            var val = await ReadSPIAsync().ConfigureAwait(false);
             if (DacPrecision == DacPrecision.FourteenBit)
             {
                 val &= (ushort)BasicMasks.FourteenBits;
@@ -849,35 +955,23 @@ namespace AnalogDevices
             return val;
         }
 
-        private ControlRegisterBits ReadbackControlRegister()
+        private async Task<ControlRegisterBits> ReadbackControlRegisterAsync()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ControlRegister);
-            return (ControlRegisterBits) (ReadSPI() & (ushort)ControlRegisterBits.ReadableBits);
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ControlRegister).ConfigureAwait(false);
+            return (ControlRegisterBits) (await ReadSPIAsync().ConfigureAwait(false) & (ushort)ControlRegisterBits.ReadableBits);
         }
 
-        private ushort ReadbackOFS0Register()
-        {
-            return ReadbackOFS0RegisterAsync().Result;
-        }
         private async Task<ushort> ReadbackOFS0RegisterAsync()
         {
             await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF0Register).ConfigureAwait(false);
             var spi = await ReadSPIAsync().ConfigureAwait(false);
             return (ushort) (spi & (ushort)BasicMasks.FourteenBits);
         }
-        private ushort ReadbackOFS1Register()
-        {
-            return ReadbackOFS1RegisterAsync().Result;
-        }
         private async Task<ushort> ReadbackOFS1RegisterAsync()
         {
             await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF1Register).ConfigureAwait(false);
             var spi = await ReadSPIAsync().ConfigureAwait(false);
             return (ushort) (spi & (ushort)BasicMasks.FourteenBits);
-        }
-        private ushort ReadbackOFS2Register()
-        {
-            return ReadbackOFS2RegisterAsync().Result;
         }
         private async Task<ushort> ReadbackOFS2RegisterAsync()
         {
@@ -886,39 +980,37 @@ namespace AnalogDevices
             return (ushort) (spi & (ushort)BasicMasks.FourteenBits);
         }
 
-        private ABSelectRegisterBits ReadbackABSelect0Register()
+        private async Task<ABSelectRegisterBits> ReadbackABSelect0RegisterAsync()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect0Register);
-            return (ABSelectRegisterBits) (ReadSPI() & (ushort)ABSelectRegisterBits.ReadableBits);
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect0Register).ConfigureAwait(false);
+            var spi = await ReadSPIAsync().ConfigureAwait(false);
+            return (ABSelectRegisterBits) (spi & (ushort)ABSelectRegisterBits.ReadableBits);
+        }
+        private async Task<ABSelectRegisterBits> ReadbackABSelect1RegisterAsync()
+        {
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect1Register).ConfigureAwait(false);
+            var spi = await ReadSPIAsync().ConfigureAwait(false);
+            return (ABSelectRegisterBits)(spi & (ushort)ABSelectRegisterBits.ReadableBits);
+        }
+        private async Task<ABSelectRegisterBits> ReadbackABSelect2RegisterAsync()
+        {
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect2Register).ConfigureAwait(false);
+            var spi = await ReadSPIAsync().ConfigureAwait(false);
+            return (ABSelectRegisterBits)(spi & (ushort)ABSelectRegisterBits.ReadableBits);
+        }
+        private async Task<ABSelectRegisterBits> ReadbackABSelect3RegisterAsync()
+        {
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect3Register).ConfigureAwait(false);
+            var spi = await ReadSPIAsync().ConfigureAwait(false);
+            return (ABSelectRegisterBits)(spi & (ushort)ABSelectRegisterBits.ReadableBits);
+        }
+        private async Task<ABSelectRegisterBits> ReadbackABSelect4RegisterAsync()
+        {
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect4Register).ConfigureAwait(false);
+            var spi = await ReadSPIAsync().ConfigureAwait(false);
+            return (ABSelectRegisterBits)(spi & (ushort)ABSelectRegisterBits.ReadableBits);
         }
 
-        private ABSelectRegisterBits ReadbackABSelect1Register()
-        {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect1Register);
-            return (ABSelectRegisterBits)(ReadSPI() & (ushort)ABSelectRegisterBits.ReadableBits);
-        }
-
-        private ABSelectRegisterBits ReadbackABSelect2Register()
-        {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect2Register);
-            return (ABSelectRegisterBits)(ReadSPI() & (ushort)ABSelectRegisterBits.ReadableBits);
-        }
-
-        private ABSelectRegisterBits ReadbackABSelect3Register()
-        {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect3Register);
-            return (ABSelectRegisterBits)(ReadSPI() & (ushort)ABSelectRegisterBits.ReadableBits);
-        }
-
-        private ABSelectRegisterBits ReadbackABSelect4Register()
-        {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect4Register);
-            return (ABSelectRegisterBits)(ReadSPI() & (ushort)ABSelectRegisterBits.ReadableBits);
-        }
-        private GpioRegisterBits ReadbackGPIORegister()
-        {
-            return ReadbackGPIORegisterAsync().Result;
-        }
         private async Task<GpioRegisterBits> ReadbackGPIORegisterAsync()
         {
             await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.GPIORegister).ConfigureAwait(false);
@@ -930,73 +1022,77 @@ namespace AnalogDevices
 
         #region Register Writing Functions
 
-        private void WriteControlRegister(ControlRegisterBits controlRegisterBits)
+        private async Task WriteControlRegisterAsync(ControlRegisterBits controlRegisterBits)
         {
             controlRegisterBits &= ControlRegisterBits.WritableBits;
-            SendSpecialFunction(SpecialFunctionCode.WriteControlRegister, (ushort) controlRegisterBits);
+            await SendSpecialFunctionAsync(SpecialFunctionCode.WriteControlRegister, (ushort)controlRegisterBits).ConfigureAwait(false);
         }
 
-        private void WriteOFS0Register(ushort newVal)
+        private async Task WriteOFS0RegisterAsync(ushort newVal)
         {
             newVal &= (ushort)BasicMasks.FourteenBits;
-            SendSpecialFunction(SpecialFunctionCode.WriteOSF0Register, newVal);
+            await SendSpecialFunctionAsync(SpecialFunctionCode.WriteOSF0Register, newVal).ConfigureAwait(false);
+        }
+        private async Task WriteOFS1RegisterAsync(ushort newVal)
+        {
+            newVal &= (ushort)BasicMasks.FourteenBits;
+            await SendSpecialFunctionAsync(SpecialFunctionCode.WriteOSF1Register, newVal).ConfigureAwait(false);
+        }
+        private async Task WriteOFS2RegisterAsync(ushort newVal)
+        {
+            newVal &= (ushort)BasicMasks.FourteenBits;
+            await SendSpecialFunctionAsync(SpecialFunctionCode.WriteOSF2Register, newVal).ConfigureAwait(false);
         }
 
-        private void WriteOFS1Register(ushort newVal)
-        {
-            newVal &= (ushort)BasicMasks.FourteenBits;
-            SendSpecialFunction(SpecialFunctionCode.WriteOSF1Register, newVal);
-        }
-
-        private void WriteOFS2Register(ushort newVal)
-        {
-            newVal &= (ushort)BasicMasks.FourteenBits;
-            SendSpecialFunction(SpecialFunctionCode.WriteOSF2Register, newVal);
-        }
 
         #endregion
 
         #region Pin Manipulation Functions
 
-        private void SetRESETPinHigh()
+        private async Task SetRESETPinHighAsync()
         {
-            SendDeviceCommand(DeviceCommand.SetRESETPinHigh, 0);
+            await SendDeviceCommandAsync(DeviceCommand.SetRESETPinHigh, 0).ConfigureAwait(false);
+        }
+        private async Task SetRESETPinLowAsync()
+        {
+            await SendDeviceCommandAsync(DeviceCommand.SetRESETPinLow, 0).ConfigureAwait(false);
+        }
+        private async Task SetCLRPinHighAsync()
+        {
+            await SendDeviceCommandAsync(DeviceCommand.SetCLRPinHigh, 0);
+        }
+        private async Task SetCLRPinLowAsync()
+        {
+            await SendDeviceCommandAsync(DeviceCommand.SetCLRPinLow, 0).ConfigureAwait(false);
         }
 
-        private void SetRESETPinLow()
+        public void PulseLDACPin()
         {
-            SendDeviceCommand(DeviceCommand.SetRESETPinLow, 0);
+            PulseLDACPinAsync().RunSynchronously();
+        }
+        public async Task PulseLDACPinAsync()
+        {
+            await SendDeviceCommandAsync(DeviceCommand.PulseLDACPin, 0).ConfigureAwait(false);
         }
 
-        private void SetCLRPinHigh()
+        public void SetLDACPinLow()
         {
-            SendDeviceCommand(DeviceCommand.SetCLRPinHigh, 0);
+            SetLDACPinLowAsync().RunSynchronously();
+        }
+        public async Task SetLDACPinLowAsync()
+        {
+            await SendDeviceCommandAsync(DeviceCommand.SetLDACPinLow, 0).ConfigureAwait(false);
         }
 
-        private void SetCLRPinLow()
+        public void SetLDACPinHigh()
         {
-            SendDeviceCommand(DeviceCommand.SetCLRPinLow, 0);
+            SetLDACPinHighAsync().RunSynchronously();
+        }
+        public async Task SetLDACPinHighAsync()
+        {
+            await SendDeviceCommandAsync(DeviceCommand.SetLDACPinHigh, 0).ConfigureAwait(false);
         }
 
-        public void PulseLDacPin()
-        {
-            SendDeviceCommand(DeviceCommand.PulseLDacPin, 0);
-        }
-
-        public void SetLDacPinLow()
-        {
-            SendDeviceCommand(DeviceCommand.SetLDacPinLow, 0);
-        }
-
-        public void SetLDacPinHigh()
-        {
-            SendDeviceCommand(DeviceCommand.SetLDacPinHigh, 0);
-        }
-
-        private void InitializeSPIPins()
-        {
-            InitializeSPIPinsAsync().RunSynchronously();
-        }
         private async Task InitializeSPIPinsAsync()
         {
             await SendDeviceCommandAsync(DeviceCommand.InitializeSPIPins, 0).ConfigureAwait(false);
@@ -1006,25 +1102,13 @@ namespace AnalogDevices
         #endregion
 
         #region Device Communications
-        private void SendSpecialFunction(SpecialFunctionCode specialFunction, ushort data)
-        {
-            SendSpecialFunctionAsync(specialFunction, data).RunSynchronously();
-        }
         private async Task SendSpecialFunctionAsync(SpecialFunctionCode specialFunction, ushort data)
         {
             await SendSPIAsync((uint) ((((byte) specialFunction & (byte)BasicMasks.SixBits) << 16) | data)).ConfigureAwait(false);
         }
-        private int SendSPI(uint data)
-        {
-            return SendSPIAsync(data).Result;
-        }
         private async Task<int> SendSPIAsync(uint data)
         {
             return await SendDeviceCommandAsync(DeviceCommand.SendSPI, data).ConfigureAwait(false);
-        }
-        private ushort ReadSPI()
-        {
-            return ReadSPIAsync().Result;
         }
         private async Task<ushort> ReadSPIAsync()
         {
@@ -1048,11 +1132,6 @@ namespace AnalogDevices
             var lengthTransferred = await UsbControlTransferAsync(setupPacket, buf, buf.Length).ConfigureAwait(false);
             return (ushort)(((ushort)buf[0]) |  (((ushort)buf[1])<<8));
         }
-        private void UsbControlTransfer(ref UsbSetupPacket setupPacket, object buffer, int bufferLength,
-                                        out int lengthTransferred)
-        {
-            lengthTransferred = UsbControlTransferAsync(setupPacket, buffer, bufferLength).Result;
-        }
         private async Task<int> UsbControlTransferAsync(UsbSetupPacket setupPacket, object buffer, int bufferLength)
         {
             int lengthTransferred = 0;
@@ -1067,17 +1146,9 @@ namespace AnalogDevices
             return lengthTransferred;
         }
 
-        private int SendDeviceCommand(DeviceCommand command, uint setupData)
-        {
-            return SendDeviceCommand(command, setupData, _emptyBuf);
-        }
         private async Task<int> SendDeviceCommandAsync(DeviceCommand command, uint setupData)
         {
             return await SendDeviceCommandAsync(command, setupData, _emptyBuf).ConfigureAwait(false);
-        }
-        private int SendDeviceCommand(DeviceCommand command, uint setupData, byte[] data)
-        {
-            return SendDeviceCommandAsync(command, setupData, data).Result;
         }
         private async Task<int> SendDeviceCommandAsync(DeviceCommand command, uint setupData, byte[] data)
         {
@@ -1102,8 +1173,7 @@ namespace AnalogDevices
         #endregion
 
         #region EZ-USB firmware update
-
-        private void ResetDevice(bool r)
+        private async Task ResetDeviceAsync(bool r)
         {
             byte[] buffer = {(byte) (r ? 1 : 0)};
             var setupPacket = new UsbSetupPacket
@@ -1116,17 +1186,19 @@ namespace AnalogDevices
                 setupPacket.Value = (short) 0xE600;
             }
             setupPacket.Index = 0;
-            int lengthTransferred;
-            UsbControlTransfer(ref setupPacket, buffer, buffer.Length, out lengthTransferred);
-            Thread.Sleep(r ? 50 : 400); // give the firmware some time for initialization
+            int lengthTransferred = await UsbControlTransferAsync(setupPacket, buffer, buffer.Length).ConfigureAwait(false);
+            await Task.Delay(r ? 50 : 400).ConfigureAwait(false); // give the firmware some time for initialization
         }
-
         public long UploadFirmware(IhxFile ihxFile)
+        {
+            return UploadFirmwareAsync(ihxFile).Result;
+        }
+        public async Task<long> UploadFirmwareAsync(IhxFile ihxFile)
         {
             const int transactionBytes = 256;
             var buffer = new byte[transactionBytes];
 
-            ResetDevice(true); // reset = 1
+            await ResetDeviceAsync(true).ConfigureAwait(false); // reset = 1
 
             var startTime = DateTime.UtcNow;
             var j = 0;
@@ -1143,13 +1215,12 @@ namespace AnalogDevices
                             Value = (short) (i - j),
                             Index = 0
                         };
-                        int k;
-                        UsbControlTransfer(ref setupPacket, buffer, j, out k);
+                        int k = await UsbControlTransferAsync(setupPacket, buffer, j).ConfigureAwait(false);
                         if (k < 0 || k != j)
                         {
                             throw new ApplicationException();
                         }
-                        Thread.Sleep(1); // to avoid package loss
+                        await Task.Delay(1).ConfigureAwait(false); // to avoid package loss
                     }
                     j = 0;
                 }
@@ -1160,7 +1231,7 @@ namespace AnalogDevices
             }
             var endTime = DateTime.UtcNow;
 
-            ResetDevice(false); //error (may caused re-numeration) can be ignored
+            await ResetDeviceAsync(false).ConfigureAwait(false); //error (may caused re-numeration) can be ignored
             return (long) endTime.Subtract(startTime).TotalMilliseconds;
         }
 
