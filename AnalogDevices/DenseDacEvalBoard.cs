@@ -5,6 +5,7 @@ using System.Threading;
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AnalogDevices
 {
@@ -44,45 +45,69 @@ namespace AnalogDevices
         {
             get
             {
-                if (GeneralPurposeIOPinDirection != IODirection.Input)
-                {
-                    throw new InvalidOperationException(
-                        "GeneralPurposeIOPinDirection must be set to Input in order to read the GeneralPurposeIOPinState property.");
-                }
-                return (ReadbackGPIORegister() & GpioRegisterBits.Data) == GpioRegisterBits.Data; //readback GPIO register and return bit F0
+                return GetGeneralPurposeIOPinStateAsync().Result;
             }
             set
             {
-                if (GeneralPurposeIOPinDirection != IODirection.Output)
-                {
-                    throw new InvalidOperationException(
-                        "GeneralPurposeIOPinDirection must be set to Output in order to set the GeneralPurposeIOPinState property.");
-                }
-                SendSpecialFunction(SpecialFunctionCode.GPIOConfigureAndWrite,
-                    value
-                        ? (ushort)(GpioRegisterBits.Direction | GpioRegisterBits.Data) //sets bit F1=1 to configure GPIO as an output; sets bit F0=1 to write a 1 to the GPIO output 
-                        : (ushort)(GpioRegisterBits.Direction) //sets bit F1=1 to configure GPIO as an output, bit F0 will not be set so will be written as a 0 to the GPIO output
-                ); 
+                SetGeneralPurposeIOPinStateAsync(value).RunSynchronously();
             }
+        }
+
+        public async Task<bool> GetGeneralPurposeIOPinStateAsync()
+        {
+            var gpioPinDirection = await GetGeneralPurposeIOPinDirectionAsync().ConfigureAwait(false);
+            if (gpioPinDirection!= IODirection.Input)
+            {
+                throw new InvalidOperationException(
+                    "GeneralPurposeIOPinDirection must be set to Input in order to read the GeneralPurposeIOPinState property.");
+            }
+            var gpioRegister = await ReadbackGPIORegisterAsync().ConfigureAwait(false);////readback GPIO register 
+            return (gpioRegister & GpioRegisterBits.Data) == GpioRegisterBits.Data; //return bit F0
+        }
+
+        public async Task SetGeneralPurposeIOPinStateAsync(bool value)
+        {
+            var gpioPinDirection = await GetGeneralPurposeIOPinDirectionAsync().ConfigureAwait(false);
+            if (gpioPinDirection!= IODirection.Output)
+            {
+                throw new InvalidOperationException(
+                    "GeneralPurposeIOPinDirection must be set to Output in order to set the GeneralPurposeIOPinState property.");
+            }
+            await SendSpecialFunctionAsync(SpecialFunctionCode.GPIOConfigureAndWrite,
+                value
+                    ? (ushort)(GpioRegisterBits.Direction | GpioRegisterBits.Data) //sets bit F1=1 to configure GPIO as an output; sets bit F0=1 to write a 1 to the GPIO output 
+                    : (ushort)(GpioRegisterBits.Direction) //sets bit F1=1 to configure GPIO as an output, bit F0 will not be set so will be written as a 0 to the GPIO output
+            ).ConfigureAwait(false);
         }
 
         public IODirection GeneralPurposeIOPinDirection
         {
             get
             {
-                var gpioRegisterVal = ReadbackGPIORegister();
-                return ((gpioRegisterVal & GpioRegisterBits.Direction) == GpioRegisterBits.Direction)//if bit F1 =1, GPIO pin is configured for output (else, is configured for input)
-                            ? IODirection.Output
-                            : IODirection.Input;
+                return GetGeneralPurposeIOPinDirectionAsync().Result;
             }
             set
             {
-                SendSpecialFunction(SpecialFunctionCode.GPIOConfigureAndWrite, 
-                    value==IODirection.Output 
-                        ? (ushort)GpioRegisterBits.Direction
-                        : (ushort)BasicMasks.AllBitsZero);
+                SetGeneralPurposeIOPinDirectionAsync(value).RunSynchronously();
             }
         }
+
+        public async Task<IODirection> GetGeneralPurposeIOPinDirectionAsync()
+        {
+            var gpioRegisterVal = await ReadbackGPIORegisterAsync().ConfigureAwait(false);
+            return ((gpioRegisterVal & GpioRegisterBits.Direction) == GpioRegisterBits.Direction)//if bit F1 =1, GPIO pin is configured for output (else, is configured for input)
+                        ? IODirection.Output
+                        : IODirection.Input;
+        }
+
+        public async Task SetGeneralPurposeIOPinDirectionAsync(IODirection value)
+        {
+            await SendSpecialFunctionAsync(SpecialFunctionCode.GPIOConfigureAndWrite,
+                                value == IODirection.Output
+                                    ? (ushort)GpioRegisterBits.Direction
+                                    : (ushort)BasicMasks.AllBitsZero).ConfigureAwait(false);
+        }
+
 
         public ushort OffsetDAC0
         {
@@ -94,6 +119,7 @@ namespace AnalogDevices
                 SetCLRPinHigh();
             }
         }
+
 
         public ushort OffsetDAC1
         {
@@ -831,20 +857,33 @@ namespace AnalogDevices
 
         private ushort ReadbackOFS0Register()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF0Register);
-            return (ushort) (ReadSPI() & (ushort)BasicMasks.FourteenBits);
+            return ReadbackOFS0RegisterAsync().Result;
         }
-
+        private async Task<ushort> ReadbackOFS0RegisterAsync()
+        {
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF0Register).ConfigureAwait(false);
+            var spi = await ReadSPIAsync().ConfigureAwait(false);
+            return (ushort) (spi & (ushort)BasicMasks.FourteenBits);
+        }
         private ushort ReadbackOFS1Register()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF1Register);
-            return (ushort) (ReadSPI() & (ushort)BasicMasks.FourteenBits);
+            return ReadbackOFS1RegisterAsync().Result;
         }
-
+        private async Task<ushort> ReadbackOFS1RegisterAsync()
+        {
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF1Register).ConfigureAwait(false);
+            var spi = await ReadSPIAsync().ConfigureAwait(false);
+            return (ushort) (spi & (ushort)BasicMasks.FourteenBits);
+        }
         private ushort ReadbackOFS2Register()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF2Register);
-            return (ushort) (ReadSPI() & (ushort)BasicMasks.FourteenBits);
+            return ReadbackOFS2RegisterAsync().Result;
+        }
+        private async Task<ushort> ReadbackOFS2RegisterAsync()
+        {
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.OSF2Register).ConfigureAwait(false);
+            var spi = await ReadSPIAsync().ConfigureAwait(false);
+            return (ushort) (spi & (ushort)BasicMasks.FourteenBits);
         }
 
         private ABSelectRegisterBits ReadbackABSelect0Register()
@@ -876,11 +915,15 @@ namespace AnalogDevices
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.ABSelect4Register);
             return (ABSelectRegisterBits)(ReadSPI() & (ushort)ABSelectRegisterBits.ReadableBits);
         }
-
         private GpioRegisterBits ReadbackGPIORegister()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.GPIORegister);
-            return (GpioRegisterBits)((ReadSPI() & (ushort)GpioRegisterBits.ReadableBits));
+            return ReadbackGPIORegisterAsync().Result;
+        }
+        private async Task<GpioRegisterBits> ReadbackGPIORegisterAsync()
+        {
+            await SendSpecialFunctionAsync(SpecialFunctionCode.SelectRegisterForReadback, (ushort)AddressCodesForDataReadback.GPIORegister).ConfigureAwait(false);
+            var spi = await ReadSPIAsync().ConfigureAwait(false);
+            return (GpioRegisterBits)(spi & (ushort)GpioRegisterBits.ReadableBits);
         }
 
         #endregion
@@ -952,29 +995,42 @@ namespace AnalogDevices
 
         private void InitializeSPIPins()
         {
-            SendDeviceCommand(DeviceCommand.InitializeSPIPins, 0);
+            InitializeSPIPinsAsync().RunSynchronously();
+        }
+        private async Task InitializeSPIPinsAsync()
+        {
+            await SendDeviceCommandAsync(DeviceCommand.InitializeSPIPins, 0).ConfigureAwait(false);
             _spiInitialized = true;
         }
 
         #endregion
 
         #region Device Communications
-
         private void SendSpecialFunction(SpecialFunctionCode specialFunction, ushort data)
         {
-            SendSPI((uint) ((((byte) specialFunction & (byte)BasicMasks.SixBits) << 16) | data));
+            SendSpecialFunctionAsync(specialFunction, data).RunSynchronously();
         }
-
-        private int SendSPI(UInt32 data)
+        private async Task SendSpecialFunctionAsync(SpecialFunctionCode specialFunction, ushort data)
         {
-            return SendDeviceCommand(DeviceCommand.SendSPI, data);
+            await SendSPIAsync((uint) ((((byte) specialFunction & (byte)BasicMasks.SixBits) << 16) | data)).ConfigureAwait(false);
         }
-
+        private int SendSPI(uint data)
+        {
+            return SendSPIAsync(data).Result;
+        }
+        private async Task<int> SendSPIAsync(uint data)
+        {
+            return await SendDeviceCommandAsync(DeviceCommand.SendSPI, data).ConfigureAwait(false);
+        }
         private ushort ReadSPI()
+        {
+            return ReadSPIAsync().Result;
+        }
+        private async Task<ushort> ReadSPIAsync()
         {
             if (!_spiInitialized)
             {
-                InitializeSPIPins();
+                await InitializeSPIPinsAsync().ConfigureAwait(false);
             }
 
             const ushort len = 3;
@@ -989,32 +1045,46 @@ namespace AnalogDevices
 
             };
             
-            int lengthTransferred;
-            UsbControlTransfer(ref setupPacket, buf, buf.Length, out lengthTransferred);
+            var lengthTransferred = await UsbControlTransferAsync(setupPacket, buf, buf.Length).ConfigureAwait(false);
             return (ushort)(((ushort)buf[0]) |  (((ushort)buf[1])<<8));
         }
-
         private void UsbControlTransfer(ref UsbSetupPacket setupPacket, object buffer, int bufferLength,
                                         out int lengthTransferred)
         {
+            lengthTransferred = UsbControlTransferAsync(setupPacket, buffer, bufferLength).Result;
+        }
+        private async Task<int> UsbControlTransferAsync(UsbSetupPacket setupPacket, object buffer, int bufferLength)
+        {
+            int lengthTransferred = 0;
             if (_usbDevice != null)
             {
-                _usbDevice.ControlTransfer(ref setupPacket, buffer, bufferLength, out lengthTransferred);
+                await Task.Run(()=>_usbDevice.ControlTransfer(ref setupPacket, buffer, bufferLength, out lengthTransferred)).ConfigureAwait(false);
             }
             else
             {
                 lengthTransferred = bufferLength;
             }
+            return lengthTransferred;
         }
 
-        private int SendDeviceCommand(DeviceCommand command, UInt32 setupData)
+        private int SendDeviceCommand(DeviceCommand command, uint setupData)
         {
             return SendDeviceCommand(command, setupData, _emptyBuf);
         }
-
-        private int SendDeviceCommand(DeviceCommand command, UInt32 setupData, byte[] data)
+        private async Task<int> SendDeviceCommandAsync(DeviceCommand command, uint setupData)
         {
-            if (!_spiInitialized && command != DeviceCommand.InitializeSPIPins) InitializeSPIPins();
+            return await SendDeviceCommandAsync(command, setupData, _emptyBuf).ConfigureAwait(false);
+        }
+        private int SendDeviceCommand(DeviceCommand command, uint setupData, byte[] data)
+        {
+            return SendDeviceCommandAsync(command, setupData, data).Result;
+        }
+        private async Task<int> SendDeviceCommandAsync(DeviceCommand command, uint setupData, byte[] data)
+        {
+            if (!_spiInitialized && command != DeviceCommand.InitializeSPIPins)
+            {
+                await InitializeSPIPinsAsync().ConfigureAwait(false);
+            }
             var bRequest = (byte) command;
             var setupPacket = new UsbSetupPacket
             {
@@ -1024,9 +1094,7 @@ namespace AnalogDevices
                 RequestType = (byte)UsbRequestType.TypeVendor,
                 Length = 0
             };
-            int lengthTransferred;
-            UsbControlTransfer(ref setupPacket, data, data.Length, out lengthTransferred);
-            return lengthTransferred;
+            return await UsbControlTransferAsync(setupPacket, data, data.Length).ConfigureAwait(false);
         }
 
         #endregion
