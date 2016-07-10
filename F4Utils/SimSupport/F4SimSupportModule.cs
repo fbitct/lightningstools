@@ -85,8 +85,7 @@ namespace F4Utils.SimSupport
 
         private void GetNextFlightDataFromSharedMem()
         {
-            EnsureSharedmemReaderIsCreated();
-            _lastFlightData =_smReader !=null && IsSimRunning ? _smReader.GetCurrentData() : new FlightData();
+            _lastFlightData =IsSimRunning && _smReader != null ? _smReader.GetCurrentData() : new FlightData();
         }
 
 
