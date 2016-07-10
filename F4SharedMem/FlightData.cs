@@ -30,8 +30,8 @@ namespace F4SharedMem
         {
             PopulateFromStruct(data);
         }
-        private Dictionary<Type, FieldInfo[]> _headerFields =new Dictionary<Type, FieldInfo[]>();
-        private Dictionary<string, FieldInfo> _flightDataFields = new Dictionary<string, FieldInfo>();
+        private static Dictionary<Type, FieldInfo[]> _headerFields =new Dictionary<Type, FieldInfo[]>();
+        private static Dictionary<string, FieldInfo> _flightDataFields = new Dictionary<string, FieldInfo>();
         internal void PopulateFromStruct<T>(T data)
         {
             FieldInfo[] relevantHeaderFields = null;
