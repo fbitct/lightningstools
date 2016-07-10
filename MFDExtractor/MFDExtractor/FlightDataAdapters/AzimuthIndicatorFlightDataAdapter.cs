@@ -101,10 +101,10 @@ namespace MFDExtractor.FlightDataAdapters
                     //Set test start time
                     if (azimuthIndicator.InstrumentState.TestStartTime == DateTime.MinValue)
                     {
-                        azimuthIndicator.InstrumentState.TestStartTime = DateTime.Now;
+                        azimuthIndicator.InstrumentState.TestStartTime = DateTime.UtcNow;
                     }
 
-                    DateTime thisTestTime = DateTime.Now;
+                    DateTime thisTestTime = DateTime.UtcNow;
                     TimeSpan TimeDiff = thisTestTime.Subtract(azimuthIndicator.InstrumentState.TestStartTime);
                     if (TimeDiff >= TimeSpan.FromSeconds(5))
                     {

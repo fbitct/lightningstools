@@ -28,7 +28,7 @@ namespace MFDExtractor
             {
                 latestState = storedState;
             }
-            var timeSinceLastRendered = DateTime.Now.Subtract(instrumentForm.LastRenderedOn).TotalMilliseconds;
+            var timeSinceLastRendered = DateTime.UtcNow.Subtract(instrumentForm.LastRenderedOn).TotalMilliseconds;
             var isStale = newStateIsDifferent || instrumentForm.LastRenderedOn < latestState.DateTime || timeSinceLastRendered > StaleDataTimeoutMilliseconds; 
             return isStale;
 		}
@@ -39,7 +39,7 @@ namespace MFDExtractor
 			return new InstrumentStateSnapshot
 			{
 				HashCode = newState != null ? newState.GetHashCode() : 0,
-				DateTime = DateTime.Now
+				DateTime = DateTime.UtcNow
 			};
 		}
 
@@ -47,7 +47,7 @@ namespace MFDExtractor
 		{
 			public DateTime DateTime { get; set; }
 			public int HashCode { get; set; }
-			public static InstrumentStateSnapshot Default { get { return new InstrumentStateSnapshot { DateTime = DateTime.Now.Subtract(TimeSpan.FromDays(1)), HashCode = 0 }; } }
+			public static InstrumentStateSnapshot Default { get { return new InstrumentStateSnapshot { DateTime = DateTime.UtcNow.Subtract(TimeSpan.FromDays(1)), HashCode = 0 }; } }
 		}
 	}
 }

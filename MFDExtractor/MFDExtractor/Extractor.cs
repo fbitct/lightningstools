@@ -332,7 +332,7 @@ namespace MFDExtractor
                 var pollingDelay = Settings.Default.PollingDelay;
                 while (State.KeepRunning)
                 {
-                    var thisLoopStartTime = DateTime.Now;
+                    var thisLoopStartTime = DateTime.UtcNow;
                     Application.DoEvents();
 
                     ProcessNetworkMessages();
@@ -357,7 +357,7 @@ namespace MFDExtractor
                     
                     Application.DoEvents();
 
-                    var thisLoopFinishTime = DateTime.Now;
+                    var thisLoopFinishTime = DateTime.UtcNow;
                     var timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
                     var millisToSleep = pollingDelay - ((int)timeElapsed.TotalMilliseconds);
                     if (millisToSleep < 5) millisToSleep = 5;

@@ -105,9 +105,9 @@ namespace MFDExtractor.UI
 	    {
 		    get
 		    {
-		        if (DateTime.Now.Subtract(_lastMousePositionTime).TotalMilliseconds > 100)
+		        if (DateTime.UtcNow.Subtract(_lastMousePositionTime).TotalMilliseconds > 100)
 		        {
-		            _lastMousePositionTime = DateTime.Now;
+		            _lastMousePositionTime = DateTime.UtcNow;
 		            _lastMousePosition = MousePosition;
 		        }
 			    return (

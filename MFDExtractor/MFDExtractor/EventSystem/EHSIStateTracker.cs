@@ -34,7 +34,7 @@ namespace MFDExtractor.EventSystem
 			{
 				if (RightKnobDepressedTime.HasValue)
 				{
-					var howLongPressed = DateTime.Now.Subtract(RightKnobDepressedTime.Value);
+					var howLongPressed = DateTime.UtcNow.Subtract(RightKnobDepressedTime.Value);
 					if (howLongPressed.TotalMilliseconds > 2000)
 					{
 						showBrightnessLabel = true;
@@ -45,8 +45,8 @@ namespace MFDExtractor.EventSystem
 			{
 				if (RightKnobReleasedTime.HasValue && RightKnobLastActivityTime.HasValue)
 				{
-					var howLongAgoReleased = DateTime.Now.Subtract(RightKnobReleasedTime.Value);
-					var howLongAgoLastActivity = DateTime.Now.Subtract(RightKnobLastActivityTime.Value);
+					var howLongAgoReleased = DateTime.UtcNow.Subtract(RightKnobReleasedTime.Value);
+					var howLongAgoLastActivity = DateTime.UtcNow.Subtract(RightKnobLastActivityTime.Value);
 					if (howLongAgoReleased.TotalMilliseconds < 2000 || howLongAgoLastActivity.TotalMilliseconds < 2000)
 					{
 						showBrightnessLabel = EHSI.InstrumentState.ShowBrightnessLabel;

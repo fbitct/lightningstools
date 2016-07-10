@@ -17,7 +17,7 @@ namespace MFDExtractor.Networking
     public static class ExtractorClient
     {
         private static BackgroundWorker _connectionTestingBackgroundWorker;
-        private static DateTime _lastConnectionCheckTime = DateTime.Now.Subtract(new TimeSpan(0, 5, 0));
+        private static DateTime _lastConnectionCheckTime = DateTime.UtcNow.Subtract(new TimeSpan(0, 5, 0));
         private static ExtractorServer _server;
         private static bool _wasConnected;
 
@@ -29,7 +29,7 @@ namespace MFDExtractor.Networking
             get
             {
                 var toReturn = false;
-                var secondsSinceLastCheck = (int) DateTime.Now.Subtract(_lastConnectionCheckTime).TotalSeconds;
+                var secondsSinceLastCheck = (int) DateTime.UtcNow.Subtract(_lastConnectionCheckTime).TotalSeconds;
                 if (secondsSinceLastCheck > 0 && secondsSinceLastCheck < 5)
                 {
                     return _wasConnected;
@@ -37,7 +37,7 @@ namespace MFDExtractor.Networking
                 if (_server == null) return toReturn;
                 try
                 {
-                    _lastConnectionCheckTime = DateTime.Now;
+                    _lastConnectionCheckTime = DateTime.UtcNow;
                     Application.DoEvents();
                     if (_connectionTestingBackgroundWorker == null)
                     {

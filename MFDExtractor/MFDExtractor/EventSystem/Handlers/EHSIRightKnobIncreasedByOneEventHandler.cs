@@ -20,7 +20,7 @@ namespace MFDExtractor.EventSystem.Handlers
 		public void Handle(bool forwardEvent)
 		{
 		    var ehsi = _ehsiStateTracker.EHSI;
-		    _ehsiStateTracker.RightKnobLastActivityTime = DateTime.Now;
+		    _ehsiStateTracker.RightKnobLastActivityTime = DateTime.UtcNow;
 		    if (ehsi.InstrumentState.ShowBrightnessLabel)
 		    {
 		        var newBrightness =

@@ -106,7 +106,7 @@ namespace MFDExtractor
             {
                 try
                 {
-                    var startTime = DateTime.Now;
+                    var startTime = DateTime.UtcNow;
                     _renderCycle++;
                     if (_renderCycle > 999) _renderCycle = 0;
                     if (ShouldRenderNow())
@@ -130,7 +130,7 @@ namespace MFDExtractor
                         IncrementPerformanceCounter(SkippedFramesCounter);
                         IncrementPerformanceCounter(Extractor.State.SkippedFramesCounter);
                     }
-                    var endTime = DateTime.Now;
+                    var endTime = DateTime.UtcNow;
                     var elapsed = endTime.Subtract(startTime).TotalMilliseconds;
                     var toWait = pollingPeriod - elapsed;
                     if (toWait < 1) toWait = 1;

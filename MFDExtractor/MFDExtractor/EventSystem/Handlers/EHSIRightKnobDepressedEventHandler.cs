@@ -15,9 +15,9 @@ namespace MFDExtractor.EventSystem.Handlers
 
 		public void Handle(bool forwardEvent)
 		{
-            _ehsiStateTracker.RightKnobDepressedTime = DateTime.Now;
+            _ehsiStateTracker.RightKnobDepressedTime = DateTime.UtcNow;
             _ehsiStateTracker.RightKnobReleasedTime = null;
-            _ehsiStateTracker.RightKnobLastActivityTime = DateTime.Now;
+            _ehsiStateTracker.RightKnobLastActivityTime = DateTime.UtcNow;
 		    if (!forwardEvent) return;
 		    switch (Extractor.State.NetworkMode)
 		    {
