@@ -177,7 +177,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                                                     : null;
 
                     var device = devices != null && devices.Length > index ? devices[index] : new SimulatedAnalogDevicesDenseDacEvalBoard();
-                    var hsmInstance = Task.Run(async () => await CreateAsync(device, index, thisDeviceConfig).ConfigureAwait(false)).Result;
+                    var hsmInstance = CreateAsync(device, index, thisDeviceConfig).Result;
                     toReturn.Add(hsmInstance);
                     index++;
                 }

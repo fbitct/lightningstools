@@ -82,50 +82,41 @@ namespace SimLinkup.Runtime
             IsRunning = true;
             while (_keepRunning)
             {
-                var startTime = DateTime.UtcNow;
-                UpdateSimSignals();
-                Synchronize();
-                if (_loopScripts != null && _loopScripts.Length > 0)
-                {
-                    RunLoopScripts();
-                }
-                Thread.Sleep(0);
-                var endTime = DateTime.UtcNow;
-                var loopDuration = endTime.Subtract(startTime);
-                _loopDurationSignal.State = loopDuration.TotalMilliseconds;
-                _loopFrequencySignal.State = 1000 / loopDuration.TotalMilliseconds;
-
+                ExecuteOneLoopIteration();
             }
             IsRunning = false;
         }
 
-        private void Synchronize()
+        private async Task ExecuteOneLoopIteration()
         {
-            if (ScriptingContext.HardwareSupportModules != null)
+            var startTime = DateTime.UtcNow;
+            await UpdateSimSignalsAsync().ConfigureAwait(false);
+            await SynchronizeAsync().ConfigureAwait(false);
+            if (_loopScripts != null && _loopScripts.Length > 0)
             {
-                foreach (var hsm in ScriptingContext.HardwareSupportModules)
-                {
-                    try
-                    {
-                        hsm.SynchronizeAsync();
-                    }
-                    catch (Exception e)
-                    {
-                        _log.Error(e.ToString(), e);
-                    }
-                }
+                RunLoopScripts();
             }
+            Thread.Sleep(0);
+            var endTime = DateTime.UtcNow;
+            var loopDuration = endTime.Subtract(startTime);
+            _loopDurationSignal.State = loopDuration.TotalMilliseconds;
+            _loopFrequencySignal.State = 1000 / loopDuration.TotalMilliseconds;
         }
 
-        private void UpdateSimSignals()
+        private async Task SynchronizeAsync()
         {
-            if (ScriptingContext.SimSupportModules != null)
-            {
-                foreach (var ssm in ScriptingContext.SimSupportModules)
-                {
-                    ssm.Update();
-                }
-            }
+            if (ScriptingContext.HardwareSupportModules == null) return;
+            await Task.WhenAll(
+                ScriptingContext.HardwareSupportModules.Select(hsm => hsm.SynchronizeAsync())
+                ).ConfigureAwait(false);
+        }
+
+        private async Task UpdateSimSignalsAsync()
+        {
+            if (ScriptingContext.SimSupportModules == null) return;
+            await Task.WhenAll(
+                            ScriptingContext.SimSupportModules.Select(ssm => ssm.UpdateAsync())
+                            ).ConfigureAwait(false);
         }
 
         public void Stop()

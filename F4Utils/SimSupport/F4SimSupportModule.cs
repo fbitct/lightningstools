@@ -39,9 +39,8 @@ namespace F4Utils.SimSupport
             EnsureSharedmemReaderIsCreated();
             CreateSimOutputsList();
             CreateSimCommandsList();
-            UpdateSimOutputValues();
+            UpdateSimOutputsAsync().Wait();
         }
-
         public override string FriendlyName
         {
             get { return "Falcon BMS"; }
@@ -90,7 +89,7 @@ namespace F4Utils.SimSupport
         }
 
 
-        private void UpdateSimOutputValues()
+        private async Task UpdateSimOutputsAsync()
         {
 
             if (_simOutputs == null) return;
@@ -103,18 +102,9 @@ namespace F4Utils.SimSupport
             UpdateHsiData(_lastFlightData, out courseDeviationDegrees, out deviationLimitDegrees);
 
             if (_lastFlightData == null) return;
-            var tasks = _simOutputs.Values.Select
-                (
-                    simOutput =>
-                        Task.Run(
-                                    () => UpdateSimOutput
-                                    (
-                                        showToFromFlag, showCommandBars,
-                                        courseDeviationDegrees, deviationLimitDegrees, simOutput
-                                    )
-                                )
-                ).ToList();
-            Task.WhenAll(tasks).Wait();
+            await Task.Run(()=>
+                Parallel.ForEach(_simOutputs.Values, (simOutput)=>UpdateSimOutput(showToFromFlag, showCommandBars, courseDeviationDegrees, deviationLimitDegrees, simOutput))
+            ).ConfigureAwait(false);
         }
 
         private void UpdateSimOutput(bool showToFromFlag, bool showCommandBars, float courseDeviationDegrees, float deviationLimitDegrees, ISimOutput output)
@@ -2264,9 +2254,9 @@ namespace F4Utils.SimSupport
                                                 typeof(string)));
         }
 
-        public override void Update()
+        public override async Task UpdateAsync()
         {
-            UpdateSimOutputValues();
+            await UpdateSimOutputsAsync().ConfigureAwait(false);
         }
 
         private void UpdateHsiData(FlightData flightData, out float courseDeviationDecimalDegrees, out float deviationLimitDecimalDegrees )
