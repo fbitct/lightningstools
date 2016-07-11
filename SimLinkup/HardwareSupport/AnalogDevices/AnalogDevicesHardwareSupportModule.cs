@@ -177,7 +177,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                                                     : null;
 
                     var device = devices != null && devices.Length > index ? devices[index] : new SimulatedAnalogDevicesDenseDacEvalBoard();
-                    var hsmInstance = Task.Run(()=> CreateAsync(device, index, thisDeviceConfig)).Result;
+                    var hsmInstance = Task.Run(async () => await CreateAsync(device, index, thisDeviceConfig).ConfigureAwait(false)).Result;
                     toReturn.Add(hsmInstance);
                     index++;
                 }
@@ -267,11 +267,11 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                     var channelAddress = (a.ChannelAddress)outputSignal.SubSource;
                     if (dacChannelDataSource == a.DacChannelDataSource.DataValueA) 
                     {
-                        await _device.SetDacChannelDataValueAAsync(channelAddress, value); 
+                        await _device.SetDacChannelDataValueAAsync(channelAddress, value).ConfigureAwait(false); 
                     }
                     else
                     {
-                        await _device.SetDacChannelDataValueBAsync(channelAddress, value);
+                        await _device.SetDacChannelDataValueBAsync(channelAddress, value).ConfigureAwait(false);
                     }
                 }
             }

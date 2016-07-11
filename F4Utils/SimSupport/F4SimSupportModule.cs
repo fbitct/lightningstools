@@ -106,7 +106,7 @@ namespace F4Utils.SimSupport
             var tasks = _simOutputs.Values.Select
                 (
                     simOutput =>
-                        new Task(
+                        Task.Run(
                                     () => UpdateSimOutput
                                     (
                                         showToFromFlag, showCommandBars,
@@ -114,8 +114,7 @@ namespace F4Utils.SimSupport
                                     )
                                 )
                 ).ToList();
-            tasks.ForEach(x=>x.Start());
-            Task.WaitAll(tasks.ToArray());
+            Task.WhenAll(tasks).Wait();
         }
 
         private void UpdateSimOutput(bool showToFromFlag, bool showCommandBars, float courseDeviationDegrees, float deviationLimitDegrees, ISimOutput output)
