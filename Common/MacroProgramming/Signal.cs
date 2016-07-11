@@ -72,7 +72,7 @@ namespace Common.MacroProgramming
         public string SubcollectionName { get; set; }
 
         public int? Index { get; set; }
-
+        public virtual bool HasListeners { get; }
         #region Object Overrides (ToString, GetHashCode, Equals)
 
         /// <summary>

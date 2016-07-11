@@ -46,10 +46,7 @@ namespace Common.MacroProgramming
                 if (_state == value) return;
                 var previousState = _state;
                 _state = value;
-                if (SignalChanged != null)
-                {
-                    SignalChanged(this, new TextSignalChangedEventArgs(value, previousState));
-                }
+                SignalChanged?.Invoke(this, new TextSignalChangedEventArgs(value, previousState));
             }
         }
 
@@ -58,7 +55,15 @@ namespace Common.MacroProgramming
             get { return "Text / Characters"; }
         }
 
-        [field: NonSerializedAttribute]
+        [field: NonSerialized]
         public event TextSignalChangedEventHandler SignalChanged;
+
+        public override bool HasListeners
+        {
+            get
+            {
+                return SignalChanged !=null;
+            }
+        }
     }
 }

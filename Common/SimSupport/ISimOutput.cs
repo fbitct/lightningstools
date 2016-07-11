@@ -4,5 +4,6 @@
     {
         string FriendlyName { get; }
         string Id { get; }
+        bool HasListeners { get; }
     }
 }

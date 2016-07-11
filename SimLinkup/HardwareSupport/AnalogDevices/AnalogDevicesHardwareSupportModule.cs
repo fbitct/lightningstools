@@ -22,7 +22,6 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private a.IDenseDacEvalBoard _device;
         private bool _isDisposed;
         private int _deviceIndex;
-        private a.DacChannelDataSource _dacChannelDataSourceForPendingData = a.DacChannelDataSource.DataValueA;
         #endregion
 
         #region Constructors
@@ -254,10 +253,12 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         private async void DAC_OutputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
-            await SetDACOutputAsync((AnalogSignal) sender, _dacChannelDataSourceForPendingData);
+            await Task.WhenAll(
+                SetDACChannelOutputValueAsync((AnalogSignal)sender, a.DacChannelDataSource.DataValueA)
+                ).ConfigureAwait(false);
         }
 
-        private async Task SetDACOutputAsync(AnalogSignal outputSignal, a.DacChannelDataSource dacChannelDataSource)
+        private async Task SetDACChannelOutputValueAsync(AnalogSignal outputSignal, a.DacChannelDataSource dacChannelDataSource)
         {
             if (!outputSignal.Index.HasValue || _device == null) return;
 
@@ -273,8 +274,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             await Task.WhenAll(
                 _analogOutputSignals.Select(signal => 
-                    SetDACOutputAsync(signal, _dacChannelDataSourceForPendingData)
-                )
+                    SetDACChannelOutputValueAsync(signal, a.DacChannelDataSource.DataValueA))
             ).ConfigureAwait(false);
             await SynchronizeAsync().ConfigureAwait(false);
         }
@@ -283,26 +283,10 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             if (_device != null)
             {
-                //await ToggleDACChannelDataSourceAsync().ConfigureAwait(false);
                 await _device.UpdateAllDacOutputsAsync().ConfigureAwait(false);
             }
         }
 
-        private async Task ToggleDACChannelDataSourceAsync()
-        {
-            //tell device to use pending data source as data source for all DAC channels
-            await _device.SetDacChannelDataSourceAllChannelsAsync(_dacChannelDataSourceForPendingData).ConfigureAwait(false); 
-
-            //now set pending data source to alternate data source so signal updates will accumulate there
-            _dacChannelDataSourceForPendingData = _dacChannelDataSourceForPendingData == a.DacChannelDataSource.DataValueA
-                                                                                            ? a.DacChannelDataSource.DataValueB
-                                                                                            : a.DacChannelDataSource.DataValueA;
-            //populate the pending data source with all current values
-            await Task.WhenAll(
-                _analogOutputSignals.Select(outputSignal => 
-                    SetDACOutputAsync(outputSignal, _dacChannelDataSourceForPendingData))
-            ).ConfigureAwait(false);
-        }
 
         #endregion
 

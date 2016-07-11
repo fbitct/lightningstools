@@ -1,5 +1,6 @@
 ﻿using AnalogDevices;
 using LibUsbDotNet;
+using System;
 using System.Threading.Tasks;
 
 namespace SimLinkup.HardwareSupport.AnalogDevices

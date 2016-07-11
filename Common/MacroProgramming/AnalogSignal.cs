@@ -63,7 +63,7 @@ namespace Common.MacroProgramming
         public bool IsPercentage { get; set; }
         public double MinValue { get; set; }
         public double MaxValue { get; set; }
-        public Nullable<double> TimeConstant { get; set; }
+        public double? TimeConstant { get; set; }
         [XmlIgnore]
         public virtual double State
         {
@@ -125,9 +125,13 @@ namespace Common.MacroProgramming
 
         protected virtual void UpdateEventListeners()
         {
-            if (SignalChanged != null)
+            SignalChanged?.Invoke(this, new AnalogSignalChangedEventArgs(State, _previousState.Value, CorrelatedState));
+        }
+        public override bool HasListeners
+        {
+            get
             {
-                SignalChanged(this, new AnalogSignalChangedEventArgs(State, _previousState.Value, CorrelatedState));
+                return SignalChanged != null;
             }
         }
     }

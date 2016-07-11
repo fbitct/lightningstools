@@ -102,9 +102,11 @@ namespace F4Utils.SimSupport
             UpdateHsiData(_lastFlightData, out courseDeviationDegrees, out deviationLimitDegrees);
 
             if (_lastFlightData == null) return;
+            var subscribedSimOutputs = _simOutputs.Values.Where(x => x.HasListeners);
             await Task.Run(()=>
-                Parallel.ForEach(_simOutputs.Values, (simOutput)=>UpdateSimOutput(showToFromFlag, showCommandBars, courseDeviationDegrees, deviationLimitDegrees, simOutput))
+                Parallel.ForEach(subscribedSimOutputs, (simOutput)=>UpdateSimOutput(showToFromFlag, showCommandBars, courseDeviationDegrees, deviationLimitDegrees, simOutput))
             ).ConfigureAwait(false);
+
         }
 
         private void UpdateSimOutput(bool showToFromFlag, bool showCommandBars, float courseDeviationDegrees, float deviationLimitDegrees, ISimOutput output)

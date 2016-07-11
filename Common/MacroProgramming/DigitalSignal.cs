@@ -63,14 +63,19 @@ namespace Common.MacroProgramming
                 if (_state == value) return;
                 var previousState = _state;
                 _state = value;
-                if (SignalChanged != null)
-                {
-                    SignalChanged(this, new DigitalSignalChangedEventArgs(value, previousState));
-                }
+                SignalChanged?.Invoke(this, new DigitalSignalChangedEventArgs(value, previousState));
             }
         }
 
-        [field: NonSerializedAttribute]
+        [field: NonSerialized]
         public event SignalChangedEventHandler SignalChanged;
+
+        public override bool HasListeners
+        {
+            get
+            {
+                return SignalChanged !=null;
+            }
+        }
     }
 }
