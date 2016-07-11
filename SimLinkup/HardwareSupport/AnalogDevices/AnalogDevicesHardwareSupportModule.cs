@@ -254,34 +254,26 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         private async void DAC_OutputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
-            await UpdateDACOutputAsync((AnalogSignal) sender, _dacChannelDataSourceForPendingData);
+            await SetDACOutputAsync((AnalogSignal) sender, _dacChannelDataSourceForPendingData);
         }
 
-        private async Task UpdateDACOutputAsync(AnalogSignal outputSignal, a.DacChannelDataSource dacChannelDataSource)
+        private async Task SetDACOutputAsync(AnalogSignal outputSignal, a.DacChannelDataSource dacChannelDataSource)
         {
-            if (outputSignal.Index.HasValue)
-            {
-                if (_device != null)
-                {
-                    var value = (ushort)(((outputSignal.State + 10.0000) / 20.0000) * 0xFFFF);
-                    var channelAddress = (a.ChannelAddress)outputSignal.SubSource;
-                    if (dacChannelDataSource == a.DacChannelDataSource.DataValueA) 
-                    {
-                        await _device.SetDacChannelDataValueAAsync(channelAddress, value).ConfigureAwait(false); 
-                    }
-                    else
-                    {
-                        await _device.SetDacChannelDataValueBAsync(channelAddress, value).ConfigureAwait(false);
-                    }
-                }
-            }
+            if (!outputSignal.Index.HasValue || _device == null) return;
+
+            var value = (ushort)(((outputSignal.State + 10.0000) / 20.0000) * 0xFFFF);
+            var channelAddress = (a.ChannelAddress)outputSignal.SubSource;
+            await (dacChannelDataSource == a.DacChannelDataSource.DataValueA
+                    ? _device.SetDacChannelDataValueAAsync(channelAddress, value)
+                    : _device.SetDacChannelDataValueBAsync(channelAddress, value)
+                ).ConfigureAwait(false);
         }
 
         private async Task InitializeOutputsAsync()
         {
             await Task.WhenAll(
                 _analogOutputSignals.Select(signal => 
-                    UpdateDACOutputAsync(signal, _dacChannelDataSourceForPendingData)
+                    SetDACOutputAsync(signal, _dacChannelDataSourceForPendingData)
                 )
             ).ConfigureAwait(false);
             await SynchronizeAsync().ConfigureAwait(false);
@@ -291,7 +283,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             if (_device != null)
             {
-                await ToggleDACChannelDataSourceAsync().ConfigureAwait(false);
+                //await ToggleDACChannelDataSourceAsync().ConfigureAwait(false);
                 await _device.UpdateAllDacOutputsAsync().ConfigureAwait(false);
             }
         }
@@ -308,7 +300,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             //populate the pending data source with all current values
             await Task.WhenAll(
                 _analogOutputSignals.Select(outputSignal => 
-                    UpdateDACOutputAsync(outputSignal, _dacChannelDataSourceForPendingData))
+                    SetDACOutputAsync(outputSignal, _dacChannelDataSourceForPendingData))
             ).ConfigureAwait(false);
         }
 

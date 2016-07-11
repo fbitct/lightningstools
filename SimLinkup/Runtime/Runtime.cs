@@ -76,13 +76,13 @@ namespace SimLinkup.Runtime
                 };
             ScriptingContext[_loopFrequencySignal.Id] = _loopFrequencySignal;
         }
-        private void MainLoop()
+        private async Task MainLoop()
         {
             _keepRunning = true;
             IsRunning = true;
             while (_keepRunning)
             {
-                ExecuteOneLoopIteration();
+                await ExecuteOneLoopIteration().ConfigureAwait(false);
             }
             IsRunning = false;
         }
