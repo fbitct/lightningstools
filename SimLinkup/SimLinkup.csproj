@@ -70,10 +70,6 @@
     <StartupObject>SimLinkup.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CSScriptLibrary, Version=3.13.2.0, Culture=neutral, PublicKeyToken=70fcc3d18c749033, processorArchitecture=MSIL">
-      <HintPath>..\MasterBuild\packages\CS-Script.bin.3.13.2.0\lib\net46\CSScriptLibrary.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="LibUsbDotNet, Version=2.2.8.104, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\LibUsbDotNet.2.2.8\lib\LibUsbDotNet.dll</HintPath>
       <Private>True</Private>
@@ -82,47 +78,15 @@
       <HintPath>packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\MasterBuild\packages\CS-Script.bin.3.13.2.0\lib\net46\Microsoft.CodeAnalysis.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\MasterBuild\packages\CS-Script.bin.3.13.2.0\lib\net46\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\MasterBuild\packages\CS-Script.bin.3.13.2.0\lib\net46\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\MasterBuild\packages\CS-Script.bin.3.13.2.0\lib\net46\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Windows\assembly\GAC\Microsoft.DirectX.DirectInput\1.0.2902.0__31bf3856ad364e35\Microsoft.DirectX.DirectInput.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Mono.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\MasterBuild\packages\CS-Script.bin.3.13.2.0\lib\net46\Mono.CSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.FileSystem, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\MasterBuild\packages\CS-Script.bin.3.13.2.0\lib\net46\System.IO.FileSystem.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\MasterBuild\packages\CS-Script.bin.3.13.2.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\MasterBuild\packages\CS-Script.bin.3.13.2.0\lib\net46\System.Reflection.Metadata.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -215,13 +179,7 @@
     <Compile Include="HardwareSupport\Westin\Westin521993HardwareSupportModuleConfig.cs" />
     <Compile Include="Runtime\Runtime.cs" />
     <Compile Include="Runtime\SimSupportModuleLoader.cs" />
-    <Compile Include="Scripting.evaluator.cs" />
-    <Compile Include="Scripting.Extensions.cs" />
-    <Compile Include="Scripting.native.cs" />
-    <Compile Include="Scripting\CSSCodeProvider.cs" />
-    <Compile Include="Scripting\Script.cs" />
     <Compile Include="Scripting\ScriptingContext.cs" />
-    <Compile Include="Scripting\ScriptRegistry.cs" />
     <Compile Include="Signals\MappingProfile.cs" />
     <Compile Include="Signals\MappingType.cs" />
     <Compile Include="Signals\SignalMapping.cs" />

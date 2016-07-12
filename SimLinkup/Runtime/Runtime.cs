@@ -32,7 +32,6 @@ namespace SimLinkup.Runtime
 
         public void Start()
         {
-            RunSetupScripts();
             Task.Run(() => MainLoop());
         }
         private void AddPerformanceMonitoringSignals()
@@ -92,10 +91,6 @@ namespace SimLinkup.Runtime
             var startTime = DateTime.UtcNow;
             await UpdateSimSignalsAsync().ConfigureAwait(false);
             await SynchronizeAsync().ConfigureAwait(false);
-            if (_loopScripts != null && _loopScripts.Length > 0)
-            {
-                RunLoopScripts();
-            }
             Thread.Sleep(0);
             var endTime = DateTime.UtcNow;
             var loopDuration = endTime.Subtract(startTime);
@@ -133,65 +128,9 @@ namespace SimLinkup.Runtime
                     IsRunning = false;
                 }
             }
-            RunTeardownScripts();
             IsRunning = false;
         }
-
-        private void RunSetupScripts()
-        {
-            if (_setupScripts != null && _setupScripts.Length > 0)
-            {
-                IsRunning = true;
-                RunScripts(_setupScripts, false);
-            }
-        }
-
-        private void RunLoopScripts()
-        {
-            if (_loopScripts != null && _loopScripts.Length > 0)
-            {
-                RunScripts(_loopScripts, true);
-            }
-        }
-
-        private void RunTeardownScripts()
-        {
-            if (_teardownScripts != null && _teardownScripts.Length > 0)
-            {
-                RunScripts(_teardownScripts, false);
-            }
-        }
-
-        private void RunScripts(Script[] scripts, bool checkIsRunning)
-        {
-            if (scripts == null || scripts.Length == 0) return;
-            foreach (var script in scripts)
-            {
-                if (script != null)
-                {
-                    var scriptAssembly = script.Assembly;
-                    if (scriptAssembly != null)
-                    {
-                        try
-                        {
-                            var invoker = scriptAssembly.GetStaticMethod();
-                            if (!checkIsRunning || (checkIsRunning && IsRunning && _keepRunning))
-                            {
-                                invoker.Invoke(ScriptingContext);
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            _log.Error(e.Message, e);
-                        }
-                    }
-                }
-            }
-        }
+        
 
         private void Initialize()
         {
@@ -306,63 +245,6 @@ namespace SimLinkup.Runtime
         private void LoadScripts()
         {
             var contentDirectory = Path.Combine(Util.ApplicationDirectory, "Content");
-            var scriptsDirectory = Path.Combine(contentDirectory, "Scripts");
-            var scriptsRegistryFileName = Path.Combine(scriptsDirectory, "Scripts.xml");
-
-            var scriptRegistry = ScriptRegistry.Load(scriptsRegistryFileName);
-            if (scriptRegistry.SetupScripts != null)
-            {
-                var setupScripts = new List<Script>();
-                foreach (var script in scriptRegistry.SetupScripts)
-                {
-                    if (!string.IsNullOrEmpty(script.Src))
-                    {
-                        var loadedScript = Script.Load(Util.ApplicationDirectory, script.Src, script.Language);
-                        setupScripts.Add(loadedScript);
-                    }
-                    else
-                    {
-                        setupScripts.Add(script);
-                    }
-                }
-                _setupScripts = setupScripts.ToArray();
-            }
-
-            if (scriptRegistry.LoopScripts != null)
-            {
-                var loopScripts = new List<Script>();
-                foreach (var script in scriptRegistry.LoopScripts)
-                {
-                    if (!string.IsNullOrEmpty(script.Src))
-                    {
-                        var loadedScript = Script.Load(Util.ApplicationDirectory, script.Src, script.Language);
-                        loopScripts.Add(loadedScript);
-                    }
-                    else
-                    {
-                        loopScripts.Add(script);
-                    }
-                }
-                _loopScripts = loopScripts.ToArray();
-            }
-
-            if (scriptRegistry.TeardownScripts != null)
-            {
-                var teardownScripts = new List<Script>();
-                foreach (var script in scriptRegistry.TeardownScripts)
-                {
-                    if (!string.IsNullOrEmpty(script.Src))
-                    {
-                        var loadedScript = Script.Load(Util.ApplicationDirectory, script.Src, script.Language);
-                        teardownScripts.Add(loadedScript);
-                    }
-                    else
-                    {
-                        teardownScripts.Add(script);
-                    }
-                }
-                _teardownScripts = teardownScripts.ToArray();
-            }
         }
 
         #region Instance variables
@@ -370,9 +252,6 @@ namespace SimLinkup.Runtime
         private readonly List<Chainable> _passthroughs = new List<Chainable>();
         private bool _initialized;
         private bool _keepRunning;
-        private Script[] _loopScripts;
-        private Script[] _setupScripts;
-        private Script[] _teardownScripts;
         private readonly List<SignalMapping> _mappings = new List<SignalMapping>();
 
         #endregion
