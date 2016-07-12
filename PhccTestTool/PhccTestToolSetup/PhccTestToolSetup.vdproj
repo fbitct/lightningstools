@@ -15,18 +15,18 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_84AF633425F4624D3AE5E156BDA81A53"
+        "OwnerKey" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_F2547DCC77FE566EF667400F7D487ADA"
-        "OwnerKey" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
         "MsmSig" = "8:_UNDEFINED"
@@ -34,7 +34,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F2547DCC77FE566EF667400F7D487ADA"
+        "OwnerKey" = "8:_84AF633425F4624D3AE5E156BDA81A53"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -132,14 +132,14 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F2547DCC77FE566EF667400F7D487ADA"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_84AF633425F4624D3AE5E156BDA81A53"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:Phcc, Version=0.2.2.0, Culture=neutral, PublicKeyToken=d747a6aa7a16ca9c, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_F2547DCC77FE566EF667400F7D487ADA"
+                    "_84AF633425F4624D3AE5E156BDA81A53"
                     {
                     "Name" = "8:Phcc.dll"
                     "Attributes" = "3:512"
@@ -159,7 +159,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -766,7 +766,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_980E5B407D5D4E51B1BA49713C3383A5"
             {
-            "SourcePath" = "8:..\\PhccTestTool\\obj\\x86\\Release\\PhccTestTool.exe"
+            "SourcePath" = "8:..\\PhccTestTool\\obj\\x86\\Debug\\PhccTestTool.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6893A8ACEA854862B34060E3614415E6"
