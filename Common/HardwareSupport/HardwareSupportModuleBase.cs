@@ -13,7 +13,7 @@ namespace Common.HardwareSupport
         public abstract AnalogSignal[] AnalogOutputs { get; }
         public abstract DigitalSignal[] DigitalOutputs { get; }
         public abstract string FriendlyName { get; }
-        public virtual async Task SynchronizeAsync() { }
+        public virtual async Task SynchronizeAsync() { await Task.Yield(); }
         public virtual void Render(Graphics g, Rectangle destinationRectangle) { }
 
         #endregion

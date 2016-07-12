@@ -232,7 +232,9 @@
     <Content Include="Content\Mapping\AMI900157501angleofattack.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="FodyWeavers.xml" />
+    <None Include="FodyWeavers.xml">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="SimLinkup.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
