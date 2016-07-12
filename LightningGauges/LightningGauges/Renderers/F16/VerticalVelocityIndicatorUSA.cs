@@ -23,7 +23,7 @@ namespace LightningGauges.Renderers.F16
         private const string VVI_NUMBER_TAPE_IMAGE_FILENAME = "vvinum.bmp";
 
         private static readonly string IMAGES_FOLDER_NAME =
-            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName +
             Path.DirectorySeparatorChar + "images";
 
         #endregion

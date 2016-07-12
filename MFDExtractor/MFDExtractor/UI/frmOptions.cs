@@ -50,8 +50,9 @@ namespace MFDExtractor.UI
         private bool _extractorRunningStateOnFormOpen;
         private bool _formLoading = true;
 
-        private bool _loadingSettings;
-
+        private bool _loadingSettings = false;
+        private bool _savingSettings = false;
+        private bool _settingsChanging = false;
         /// <summary>
         ///     Event handler for the form's Load event
         /// </summary>
@@ -257,17 +258,24 @@ namespace MFDExtractor.UI
         }
         private void SettingsChanged(object sender, EventArgs e)
         {
-            if (_loadingSettings) return;
-            //store the currently-selected user control on the Options form (required because
-            //when we reload the user settings in the next step, the currenty-selected
-            //control will go out of focus
-            var currentControl = ActiveControl;
+            if (_loadingSettings || _savingSettings || _settingsChanging) return;
+            _settingsChanging = true;
+            try {
+                //store the currently-selected user control on the Options form (required because
+                //when we reload the user settings in the next step, the currenty-selected
+                //control will go out of focus
+                var currentControl = ActiveControl;
 
-            //reload user settings from the in-memory user config
-            LoadSettings();
+                //reload user settings from the in-memory user config
+                LoadSettings();
 
-            //refocus the control that was in focus before we reloaded the user settings
-            ActiveControl = currentControl;
+                //refocus the control that was in focus before we reloaded the user settings
+                ActiveControl = currentControl;
+            }
+            finally
+            {
+                _settingsChanging = false;
+            }
         }
 
 
@@ -282,7 +290,6 @@ namespace MFDExtractor.UI
                 _loadingSettings = true;
                 //unregister for settings change notifications
                 Settings.Default.PropertyChanged -= SettingsChanged;
-
                 //load all committed user settings from memory (these may not mirror the settings
                 //which have been persisted to the user-config file on disk; that only happens 
                 //when Properties.Settings.Default.Save() is called)
@@ -685,6 +692,7 @@ namespace MFDExtractor.UI
         /// </param>
         private void SaveSettings(bool persist)
         {
+            _savingSettings = true;
             Settings.Default.PropertyChanged -= SettingsChanged;
             Settings settings = Settings.Default;
             settings.UpgradeNeeded = false;
@@ -865,6 +873,7 @@ namespace MFDExtractor.UI
                 }
             }
             Settings.Default.PropertyChanged += SettingsChanged;
+            _savingSettings = false;
         }
 
         /// <summary>

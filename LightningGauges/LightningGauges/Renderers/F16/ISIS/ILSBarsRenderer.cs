@@ -3,6 +3,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
+using System;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
@@ -10,7 +11,7 @@ namespace LightningGauges.Renderers.F16.ISIS
     {
         private const string ISIS_ILS_DOT_IMAGE_FILENAME = "isis_ilsdot.bmp";
         private static readonly string IMAGES_FOLDER_NAME =
-            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName +
             Path.DirectorySeparatorChar + "images";
 
         internal static readonly Bitmap MarkerDiamond;

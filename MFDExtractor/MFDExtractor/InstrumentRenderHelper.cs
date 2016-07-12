@@ -56,7 +56,7 @@ namespace MFDExtractor
                     {
                         renderer.Render(destinationGraphics,
                             new Rectangle(0, 0, renderSurface.Width, renderSurface.Height));
-                        targetForm.LastRenderedOn = DateTime.Now;
+                        targetForm.LastRenderedOn = DateTime.UtcNow;
                         if (highlightBorder)
                         {
                             HighlightBorder(targetForm, destinationGraphics, renderSurface);
@@ -180,8 +180,8 @@ namespace MFDExtractor
             {
                 _renderSurfaces[targetForm] =
                     (targetForm.Rotation.ToString().Contains("90") || targetForm.Rotation.ToString().Contains("270")
-                        ? new Bitmap(targetForm.ClientRectangle.Height, targetForm.ClientRectangle.Width, PixelFormat.Format16bppRgb565)
-                        : new Bitmap(targetForm.ClientRectangle.Width, targetForm.ClientRectangle.Height, PixelFormat.Format16bppRgb565));
+                        ? new Bitmap(targetForm.ClientRectangle.Height, targetForm.ClientRectangle.Width, PixelFormat.Format32bppPArgb)
+                        : new Bitmap(targetForm.ClientRectangle.Width, targetForm.ClientRectangle.Height, PixelFormat.Format32bppPArgb));
                 _formRotations[targetForm] = targetForm.Rotation;
             }
             return _renderSurfaces[targetForm];

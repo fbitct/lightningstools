@@ -6,6 +6,7 @@ using System.Reflection;
 using Common.Imaging;
 using Common.SimSupport;
 using Util = Common.Imaging.Util;
+using System;
 
 namespace LightningGauges.Renderers.F16.AzimuthIndicator
 {
@@ -24,7 +25,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
         private const string RWR_BACKGROUND_HAF_IMAGE_FILENAME = "rwr2.bmp";
 
         private static readonly string IMAGES_FOLDER_NAME =
-            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName +
             Path.DirectorySeparatorChar + "images";
 
         #endregion

@@ -22,7 +22,7 @@ namespace LightningGauges.Renderers.F16
         private const string EPU_NEEDLE_MASK_FILENAME = "arrow_rpmmask.bmp";
 
         private static readonly string IMAGES_FOLDER_NAME =
-            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName +
             Path.DirectorySeparatorChar + "images";
 
         #endregion

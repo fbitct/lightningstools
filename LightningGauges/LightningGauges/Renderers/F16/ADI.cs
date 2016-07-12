@@ -39,7 +39,7 @@ namespace LightningGauges.Renderers.F16
         private const string ADI_SLIP_INDICATOR_BALL_MASK_FILENAME = "adislip_mask.bmp";
 
         private static readonly string IMAGES_FOLDER_NAME =
-            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName +
             Path.DirectorySeparatorChar + "images";
 
         #endregion

@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using Common.Imaging;
 using Common.SimSupport;
+using System;
 
 namespace LightningGauges.Renderers.F16.HSI
 {
@@ -43,7 +44,7 @@ namespace LightningGauges.Renderers.F16.HSI
         private const string HSI_RANGE_FONT_FILENAME = "font1.bmp";
 
         private static readonly string IMAGES_FOLDER_NAME =
-            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName +
             Path.DirectorySeparatorChar + "images";
 
         #endregion

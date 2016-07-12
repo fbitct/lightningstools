@@ -26,7 +26,7 @@ namespace LightningGauges.Renderers.F16
         private const string NWSI_RDY_MASK_FILENAME = "ind2ready_mask.bmp";
 
         private static readonly string IMAGES_FOLDER_NAME =
-            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName +
             Path.DirectorySeparatorChar + "images";
 
         #endregion

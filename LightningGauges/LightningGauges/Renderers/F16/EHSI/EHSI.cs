@@ -7,6 +7,7 @@ using Common.Imaging;
 using Common.SimSupport;
 using log4net;
 using Util = Common.Imaging.Util;
+using System;
 
 namespace LightningGauges.Renderers.F16.EHSI
 {
@@ -21,7 +22,7 @@ namespace LightningGauges.Renderers.F16.EHSI
         #region Image Location Constants
 
         private static readonly string IMAGES_FOLDER_NAME =
-            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName +
             Path.DirectorySeparatorChar + "images";
 
         #endregion
