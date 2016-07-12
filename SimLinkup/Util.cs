@@ -7,7 +7,7 @@ namespace SimLinkup
     {
         public static string ApplicationDirectory
         {
-            get { return new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName; }
+            get { return new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName; }
         }
 
         public static string ApplicationPath
