@@ -52,13 +52,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_205FF2188A5DE86DE408D284D7F33F0A"
+        "OwnerKey" = "8:_BD4125D1DF3DB4EF435379A2ADCA7EC6"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BD4125D1DF3DB4EF435379A2ADCA7EC6"
+        "OwnerKey" = "8:_205FF2188A5DE86DE408D284D7F33F0A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -126,10 +126,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
                     }
                 }
             }
@@ -154,9 +154,9 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.5.1"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.6.1"
                 "AllowLaterVersions" = "11:FALSE"
-                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=395269"
+                "InstallUrl" = "8:https://www.microsoft.com/en-us/download/details.aspx?id=49981"
                 }
             }
         }
@@ -323,7 +323,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Falcon 4 Shared Memory Viewer"
         "ProductCode" = "8:{BF8654ED-75B6-403E-BF5C-E90523198FE6}"
-        "PackageCode" = "8:{B13D9537-8E2F-4466-BACF-297635D52306}"
+        "PackageCode" = "8:{0C66D1BA-46FE-4D33-B6EA-1AFA669C8227}"
         "UpgradeCode" = "8:{427D1B6E-B7B4-4153-909E-CF6AF4F75583}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -858,7 +858,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_3D9F1F1CFB134283AB569835F4FC35D0"
             {
-            "SourcePath" = "8:..\\obj\\x86\\Debug\\F4SharedMemViewer.exe"
+            "SourcePath" = "8:..\\obj\\x86\\Release\\F4SharedMemViewer.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_9011B04D358242AEBA9F18D63DEA4317"

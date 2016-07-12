@@ -21,20 +21,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_29131BCBDDFE138C52D5C12C44BCDD8D"
+        "MsmKey" = "8:_1C56CC33DCC9B840AF47037D37D25F19"
         "OwnerKey" = "8:_83DE0582FF75464696D549BDE666B238"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4EE50F54705E1401DDB48B5F514BDE41"
-        "OwnerKey" = "8:_83DE0582FF75464696D549BDE666B238"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4EE50F54705E1401DDB48B5F514BDE41"
-        "OwnerKey" = "8:_29131BCBDDFE138C52D5C12C44BCDD8D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -52,19 +40,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_29131BCBDDFE138C52D5C12C44BCDD8D"
+        "OwnerKey" = "8:_1C56CC33DCC9B840AF47037D37D25F19"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_0DAFD814AB7D3BF22C7E416ACEC3FB5E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4EE50F54705E1401DDB48B5F514BDE41"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -126,10 +108,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
                     }
                 }
             }
@@ -154,9 +136,9 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.5.1"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.6.1"
                 "AllowLaterVersions" = "11:FALSE"
-                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=76617"
+                "InstallUrl" = "8:https://www.microsoft.com/en-us/download/details.aspx?id=49981"
                 }
             }
         }
@@ -193,51 +175,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_29131BCBDDFE138C52D5C12C44BCDD8D"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1C56CC33DCC9B840AF47037D37D25F19"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:SDI, Version=0.1.0.0, Culture=neutral, PublicKeyToken=81b1c007ef9a37db, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_29131BCBDDFE138C52D5C12C44BCDD8D"
+                    "_1C56CC33DCC9B840AF47037D37D25F19"
                     {
                     "Name" = "8:SDI.dll"
                     "Attributes" = "3:512"
                     }
                 }
             "SourcePath" = "8:SDI.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_6893A8ACEA854862B34060E3614415E6"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4EE50F54705E1401DDB48B5F514BDE41"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Phcc, Version=0.2.2.0, Culture=neutral, PublicKeyToken=d747a6aa7a16ca9c, processorArchitecture=x86"
-                "ScatterAssemblies"
-                {
-                    "_4EE50F54705E1401DDB48B5F514BDE41"
-                    {
-                    "Name" = "8:Phcc.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Phcc.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6893A8ACEA854862B34060E3614415E6"
@@ -323,7 +274,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SDI Test Tool"
         "ProductCode" = "8:{F8D7C2FB-2316-4031-AADC-2AEE4D2C7542}"
-        "PackageCode" = "8:{501143A1-0FCA-4ED4-8D31-E7B137499A2D}"
+        "PackageCode" = "8:{67D29297-B581-4E43-85D9-212EA3CFA2AC}"
         "UpgradeCode" = "8:{988E7AAB-A159-4025-B90D-FF778ACFB561}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

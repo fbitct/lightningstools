@@ -33,48 +33,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_581EBA8AD6C3D6837721AD4B04A46072"
-        "OwnerKey" = "8:_D3F14189DC1A7C0687346FE924CC2739"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_581EBA8AD6C3D6837721AD4B04A46072"
-        "OwnerKey" = "8:_25E879C23B4D45DFABDCF669E7F6E043"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_74844AC6079E68680DF6ED39441157E4"
-        "OwnerKey" = "8:_D3F14189DC1A7C0687346FE924CC2739"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_74844AC6079E68680DF6ED39441157E4"
-        "OwnerKey" = "8:_25E879C23B4D45DFABDCF669E7F6E043"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9126499873816EDF089C19473BAFFDDA"
-        "OwnerKey" = "8:_581EBA8AD6C3D6837721AD4B04A46072"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9126499873816EDF089C19473BAFFDDA"
-        "OwnerKey" = "8:_25E879C23B4D45DFABDCF669E7F6E043"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9126499873816EDF089C19473BAFFDDA"
-        "OwnerKey" = "8:_D3F14189DC1A7C0687346FE924CC2739"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_D3F14189DC1A7C0687346FE924CC2739"
         "OwnerKey" = "8:_25E879C23B4D45DFABDCF669E7F6E043"
         "MsmSig" = "8:_UNDEFINED"
@@ -88,31 +46,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_064A55C142C7E5D134A0E07A48FC32F2"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_D3F14189DC1A7C0687346FE924CC2739"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_74844AC6079E68680DF6ED39441157E4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_581EBA8AD6C3D6837721AD4B04A46072"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9126499873816EDF089C19473BAFFDDA"
+        "OwnerKey" = "8:_064A55C142C7E5D134A0E07A48FC32F2"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -174,10 +114,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
                     }
                 }
             }
@@ -202,9 +142,9 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.5.1"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.6.1"
                 "AllowLaterVersions" = "11:FALSE"
-                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=76617"
+                "InstallUrl" = "8:https://www.microsoft.com/en-us/download/details.aspx?id=49981"
                 }
             }
         }
@@ -259,99 +199,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_581EBA8AD6C3D6837721AD4B04A46072"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86"
-                "ScatterAssemblies"
-                {
-                    "_581EBA8AD6C3D6837721AD4B04A46072"
-                    {
-                    "Name" = "8:Common.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Common.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_2314EB949F544DC997AEF87FFBDABEAA"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_74844AC6079E68680DF6ED39441157E4"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Common.Win32, Version=0.1.0.0, Culture=neutral, PublicKeyToken=7c81027c3540c5ee, processorArchitecture=x86"
-                "ScatterAssemblies"
-                {
-                    "_74844AC6079E68680DF6ED39441157E4"
-                    {
-                    "Name" = "8:Common.Win32.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Common.Win32.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_2314EB949F544DC997AEF87FFBDABEAA"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9126499873816EDF089C19473BAFFDDA"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_9126499873816EDF089C19473BAFFDDA"
-                    {
-                    "Name" = "8:log4net.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:log4net.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_2314EB949F544DC997AEF87FFBDABEAA"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D3F14189DC1A7C0687346FE924CC2739"
@@ -453,7 +300,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Falcon 4 Shared Memory Mirror"
         "ProductCode" = "8:{D5EEC1EC-D895-49CD-AB32-03AF2AC2558D}"
-        "PackageCode" = "8:{C97AAA1E-2027-4645-BC92-79A5D3623FE0}"
+        "PackageCode" = "8:{13240136-3ED0-42E4-A2AE-20D68E98CF59}"
         "UpgradeCode" = "8:{88DCE1F7-00D3-40D0-AA6F-3A1288486DFC}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -988,7 +835,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_25E879C23B4D45DFABDCF669E7F6E043"
             {
-            "SourcePath" = "8:..\\F4SharedMemMirror\\obj\\x86\\Debug\\F4SharedMemMirror.exe"
+            "SourcePath" = "8:..\\F4SharedMemMirror\\obj\\x86\\Release\\F4SharedMemMirror.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_2314EB949F544DC997AEF87FFBDABEAA"

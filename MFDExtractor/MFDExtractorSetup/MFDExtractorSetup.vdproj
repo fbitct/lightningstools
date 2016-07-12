@@ -46,13 +46,13 @@
         "Entry"
         {
         "MsmKey" = "8:_3EF06BB0C98C310C7F9CBA117DB0D7C7"
-        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
+        "OwnerKey" = "8:_DEFB0106047DDFE0E2A854D74FFB51A7"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_3EF06BB0C98C310C7F9CBA117DB0D7C7"
-        "OwnerKey" = "8:_DEFB0106047DDFE0E2A854D74FFB51A7"
+        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -166,18 +166,6 @@
         "Entry"
         {
         "MsmKey" = "8:_64C90C0341C19A3ACEF08090FC2C0C3B"
-        "OwnerKey" = "8:_4ADF88DDC4855CAEAC840A523D0C1F28"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_64C90C0341C19A3ACEF08090FC2C0C3B"
-        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_64C90C0341C19A3ACEF08090FC2C0C3B"
         "OwnerKey" = "8:_57EBA45DFCC995D57C5B45A7E7779135"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -203,12 +191,6 @@
         {
         "MsmKey" = "8:_64C90C0341C19A3ACEF08090FC2C0C3B"
         "OwnerKey" = "8:_DF5D7C152637E6EA2AFEC9947F000D36"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_64C90C0341C19A3ACEF08090FC2C0C3B"
-        "OwnerKey" = "8:_6B2E67EE6CB68649606E16FE59D74826"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -251,6 +233,24 @@
         {
         "MsmKey" = "8:_64C90C0341C19A3ACEF08090FC2C0C3B"
         "OwnerKey" = "8:_B0995C3F52E0CF825E2D2CFA1191A8B7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_64C90C0341C19A3ACEF08090FC2C0C3B"
+        "OwnerKey" = "8:_4ADF88DDC4855CAEAC840A523D0C1F28"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_64C90C0341C19A3ACEF08090FC2C0C3B"
+        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_64C90C0341C19A3ACEF08090FC2C0C3B"
+        "OwnerKey" = "8:_6B2E67EE6CB68649606E16FE59D74826"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -370,12 +370,6 @@
         "Entry"
         {
         "MsmKey" = "8:_D566C7CE7AD3CE45E3C9BB16DB938AA6"
-        "OwnerKey" = "8:_B0995C3F52E0CF825E2D2CFA1191A8B7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D566C7CE7AD3CE45E3C9BB16DB938AA6"
         "OwnerKey" = "8:_80BD7205BE92B274166333518555573A"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -383,18 +377,6 @@
         {
         "MsmKey" = "8:_D566C7CE7AD3CE45E3C9BB16DB938AA6"
         "OwnerKey" = "8:_1D28E39F187600EF3DF448D19C77811F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D566C7CE7AD3CE45E3C9BB16DB938AA6"
-        "OwnerKey" = "8:_6B2E67EE6CB68649606E16FE59D74826"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D566C7CE7AD3CE45E3C9BB16DB938AA6"
-        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -413,6 +395,24 @@
         {
         "MsmKey" = "8:_D566C7CE7AD3CE45E3C9BB16DB938AA6"
         "OwnerKey" = "8:_47CBF9EE40797B30D5F2B82C64CC75CE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D566C7CE7AD3CE45E3C9BB16DB938AA6"
+        "OwnerKey" = "8:_B0995C3F52E0CF825E2D2CFA1191A8B7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D566C7CE7AD3CE45E3C9BB16DB938AA6"
+        "OwnerKey" = "8:_6B2E67EE6CB68649606E16FE59D74826"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D566C7CE7AD3CE45E3C9BB16DB938AA6"
+        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -514,24 +514,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F2FECC2FF42EF2B1FEB9FD0ED3188B51"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B0BFAD95B86647E0B75CF2BA8D1E4799"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6B2E67EE6CB68649606E16FE59D74826"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_CF9E6511B1B593065E755C6413223285"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -562,18 +544,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_EF9B21AD281706C2D53464AD0745F905"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3EF06BB0C98C310C7F9CBA117DB0D7C7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_D9359B799B26C013D1A5B1F2FC245F5E"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -592,13 +562,43 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_D566C7CE7AD3CE45E3C9BB16DB938AA6"
+        "OwnerKey" = "8:_4ADF88DDC4855CAEAC840A523D0C1F28"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4ADF88DDC4855CAEAC840A523D0C1F28"
+        "OwnerKey" = "8:_F2FECC2FF42EF2B1FEB9FD0ED3188B51"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B0BFAD95B86647E0B75CF2BA8D1E4799"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_6B2E67EE6CB68649606E16FE59D74826"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_EF9B21AD281706C2D53464AD0745F905"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_3EF06BB0C98C310C7F9CBA117DB0D7C7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_D566C7CE7AD3CE45E3C9BB16DB938AA6"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -676,10 +676,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
                     }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.DirectX.9c"
                     {
@@ -1492,7 +1492,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Falcon MFD Extractor"
         "ProductCode" = "8:{B4BB204A-01FE-4F97-ACE6-F4209A36BEBC}"
-        "PackageCode" = "8:{CC43BAE6-B20B-4562-B6AC-95CF32CD17F9}"
+        "PackageCode" = "8:{EEFB2B7A-FA32-49AD-9050-20B8C5810C5F}"
         "UpgradeCode" = "8:{53D32A09-9B77-4C68-AE21-7F8024EEF04F}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -2055,7 +2055,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_AA8BE9BC07A644838AA1B37349C42BB9"
             {
-            "SourcePath" = "8:..\\MFDExtractor\\obj\\x86\\Debug\\MFDExtractor.exe"
+            "SourcePath" = "8:..\\MFDExtractor\\obj\\x86\\Release\\MFDExtractor.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_211EB4A9D5FF4EA382418DA0967E9719"

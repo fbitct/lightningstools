@@ -96,10 +96,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
                     }
                 }
             }
@@ -124,9 +124,9 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.5.1"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.6.1"
                 "AllowLaterVersions" = "11:FALSE"
-                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=76617"
+                "InstallUrl" = "8:https://www.microsoft.com/en-us/download/details.aspx?id=49981"
                 }
             }
         }
@@ -231,7 +231,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PHCC Test Tool"
         "ProductCode" = "8:{B7653035-1C98-404E-9207-E11777D3EC86}"
-        "PackageCode" = "8:{203ECF83-1521-4C54-A1CA-01D4622E1836}"
+        "PackageCode" = "8:{D2533107-9ACD-4029-BA34-711082E8FEA8}"
         "UpgradeCode" = "8:{7A3E44BE-41EF-4C67-B78F-E707504398FF}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -766,7 +766,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_980E5B407D5D4E51B1BA49713C3383A5"
             {
-            "SourcePath" = "8:..\\PhccTestTool\\obj\\x86\\Debug\\PhccTestTool.exe"
+            "SourcePath" = "8:..\\PhccTestTool\\obj\\x86\\Release\\PhccTestTool.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6893A8ACEA854862B34060E3614415E6"

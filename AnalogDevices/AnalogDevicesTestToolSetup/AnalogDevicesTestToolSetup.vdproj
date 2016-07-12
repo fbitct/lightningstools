@@ -144,10 +144,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
                     }
                 }
             }
@@ -172,9 +172,9 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.5.1"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.6.1"
                 "AllowLaterVersions" = "11:FALSE"
-                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=395269"
+                "InstallUrl" = "8:https://www.microsoft.com/en-us/download/details.aspx?id=49981"
                 }
             }
         }
@@ -361,7 +361,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Analog Devices AD53xx DenseDAC Eval Board Test Tool"
         "ProductCode" = "8:{E3B42BD6-C052-44BC-BBCD-574735C42970}"
-        "PackageCode" = "8:{FA3B5C0C-6E19-4139-BCCF-43376E8C38DE}"
+        "PackageCode" = "8:{C9EAFFC8-B3EE-4E62-90ED-2862D3887E17}"
         "UpgradeCode" = "8:{195C81CC-EA3D-45E1-A817-42713D1E1A31}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

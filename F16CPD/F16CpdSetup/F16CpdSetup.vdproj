@@ -700,18 +700,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_56B2C38D4598602673FBBE5477A46C0C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2AF8EAA235F265BE18D3673B54BF0BAC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_293F60F2EA4CD41E1DF35744829E1759"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -730,7 +718,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_619819D07FDC3DF95AB7DC9835420922"
+        "OwnerKey" = "8:_56B2C38D4598602673FBBE5477A46C0C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -754,7 +742,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_619819D07FDC3DF95AB7DC9835420922"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_BD21B7552B6995DF713EE96DF39D6559"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2AF8EAA235F265BE18D3673B54BF0BAC"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -816,10 +816,20 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.DirectX.9c"
+                    {
+                    "Name" = "8:Microsoft DirectX 9c Runtime"
+                    "ProductCode" = "8:Microsoft.DirectX.9c"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.14.0.x86"
+                    {
+                    "Name" = "8:Visual C++ \"14\" Runtime Libraries (x86)"
+                    "ProductCode" = "8:Microsoft.Visual.C++.14.0.x86"
                     }
                 }
             }
@@ -844,9 +854,9 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.5.1"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.6.1"
                 "AllowLaterVersions" = "11:FALSE"
-                "InstallUrl" = "8:http://www.microsoft.com/downloads/en/details.aspx?FamilyID=9CFB2D51-5FF4-4491-B0E5-B386F32C0992"
+                "InstallUrl" = "8:https://www.microsoft.com/en-us/download/details.aspx?id=49981"
                 }
             }
         }
@@ -1903,7 +1913,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:F-16 Center Pedestal Display"
         "ProductCode" = "8:{2EFE1C77-8875-4337-A5EF-B1A92E78127F}"
-        "PackageCode" = "8:{C38EA6FB-910E-467F-B728-D7285DCA38A8}"
+        "PackageCode" = "8:{EE0F2BD2-B9DA-4692-ACB2-2974B6560AC7}"
         "UpgradeCode" = "8:{7C3129E4-6A78-4D6F-87B3-A8784E98FD74}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

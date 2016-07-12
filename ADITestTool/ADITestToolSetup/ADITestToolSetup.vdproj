@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_29131BCBDDFE138C52D5C12C44BCDD8D"
+        "MsmKey" = "8:_1C56CC33DCC9B840AF47037D37D25F19"
         "OwnerKey" = "8:_C7D79DF4F1224155B7366CB071A2EE59"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -40,7 +40,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_29131BCBDDFE138C52D5C12C44BCDD8D"
+        "OwnerKey" = "8:_1C56CC33DCC9B840AF47037D37D25F19"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -108,10 +108,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
                     }
                 }
             }
@@ -136,22 +136,22 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.5.1"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.6.1"
                 "AllowLaterVersions" = "11:FALSE"
-                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=76617"
+                "InstallUrl" = "8:https://www.microsoft.com/en-us/download/details.aspx?id=49981"
                 }
             }
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_29131BCBDDFE138C52D5C12C44BCDD8D"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1C56CC33DCC9B840AF47037D37D25F19"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:SDI, Version=0.1.0.0, Culture=neutral, PublicKeyToken=81b1c007ef9a37db, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_29131BCBDDFE138C52D5C12C44BCDD8D"
+                    "_1C56CC33DCC9B840AF47037D37D25F19"
                     {
                     "Name" = "8:SDI.dll"
                     "Attributes" = "3:512"
@@ -274,7 +274,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ADI Test Tool"
         "ProductCode" = "8:{6BA1486A-AF09-4DA1-9936-C3E6115CE0F3}"
-        "PackageCode" = "8:{1985FAC0-477B-40A0-A086-A270A066B830}"
+        "PackageCode" = "8:{BCF7A67F-5F1C-4A23-ACF3-D7C07F7207F8}"
         "UpgradeCode" = "8:{E24263CD-09BB-4121-888A-222343900B62}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
