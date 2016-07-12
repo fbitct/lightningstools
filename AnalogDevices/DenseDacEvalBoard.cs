@@ -254,45 +254,45 @@ namespace AnalogDevices
         #endregion
 
         #region Dac Channel Data Source Selection
-        public void SetDacChannelDataSource(ChannelAddress channelAddress, DacChannelDataSource value)
+        public void SetDacChannelDataSource(ChannelAddress channel, DacChannelDataSource value)
         {
-            SetDacChannelDataSourceAsync(channelAddress, value).Wait();
+            SetDacChannelDataSourceAsync(channel, value).Wait();
         }
-        public async Task SetDacChannelDataSourceAsync(ChannelAddress channelAddress, DacChannelDataSource value)
+        public async Task SetDacChannelDataSourceAsync(ChannelAddress channel, DacChannelDataSource value)
         {
-            if ((int)channelAddress < 8 || (int)channelAddress > 47)
+            if ((int)channel < 8 || (int)channel > 47)
             {
-                if (channelAddress == ChannelAddress.AllGroupsAllChannels)
+                if (channel == ChannelAddress.AllGroupsAllChannels)
                 {
                     await SetDacChannelDataSourceAllChannelsAsync(value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group0AllChannels)
+                else if (channel == ChannelAddress.Group0AllChannels)
                 {
                     await SetDacChannelDataSourceAsync(ChannelGroup.Group0, value, value, value, value, value, value, value, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group1AllChannels)
+                else if (channel == ChannelAddress.Group1AllChannels)
                 {
                     await SetDacChannelDataSourceAsync(ChannelGroup.Group1, value, value, value, value, value, value, value, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group2AllChannels)
+                else if (channel == ChannelAddress.Group2AllChannels)
                 {
                     await SetDacChannelDataSourceAsync(ChannelGroup.Group2, value, value, value, value, value, value, value, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group3AllChannels)
+                else if (channel == ChannelAddress.Group3AllChannels)
                 {
                     await SetDacChannelDataSourceAsync(ChannelGroup.Group3, value, value, value, value, value, value, value, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group4AllChannels)
+                else if (channel == ChannelAddress.Group4AllChannels)
                 {
                     await SetDacChannelDataSourceAsync(ChannelGroup.Group4, value, value, value, value, value, value, value, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group0Through4Channel0)
+                else if (channel == ChannelAddress.Group0Through4Channel0)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel0, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel0, value).ConfigureAwait(false);
@@ -301,7 +301,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel0, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group0Through4Channel1)
+                else if (channel == ChannelAddress.Group0Through4Channel1)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel1, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel1, value).ConfigureAwait(false);
@@ -310,7 +310,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel1, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group0Through4Channel2)
+                else if (channel == ChannelAddress.Group0Through4Channel2)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel2, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel2, value).ConfigureAwait(false);
@@ -319,7 +319,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel2, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group0Through4Channel3)
+                else if (channel == ChannelAddress.Group0Through4Channel3)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel3, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel3, value).ConfigureAwait(false);
@@ -328,7 +328,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel3, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group0Through4Channel4)
+                else if (channel == ChannelAddress.Group0Through4Channel4)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel4, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel4, value).ConfigureAwait(false);
@@ -337,7 +337,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel4, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group0Through4Channel5)
+                else if (channel == ChannelAddress.Group0Through4Channel5)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel5, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel5, value).ConfigureAwait(false);
@@ -346,7 +346,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel5, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group0Through4Channel6)
+                else if (channel == ChannelAddress.Group0Through4Channel6)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel6, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel6, value).ConfigureAwait(false);
@@ -355,7 +355,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel6, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group0Through4Channel7)
+                else if (channel == ChannelAddress.Group0Through4Channel7)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group0Channel7, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel7, value).ConfigureAwait(false);
@@ -364,7 +364,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel7, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group1Through4Channel0)
+                else if (channel == ChannelAddress.Group1Through4Channel0)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel0, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel0, value).ConfigureAwait(false);
@@ -372,7 +372,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel0, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group1Through4Channel1)
+                else if (channel == ChannelAddress.Group1Through4Channel1)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel1, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel1, value).ConfigureAwait(false);
@@ -380,7 +380,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel1, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group1Through4Channel2)
+                else if (channel == ChannelAddress.Group1Through4Channel2)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel2, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel2, value).ConfigureAwait(false);
@@ -388,7 +388,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel2, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group1Through4Channel3)
+                else if (channel == ChannelAddress.Group1Through4Channel3)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel3, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel3, value).ConfigureAwait(false);
@@ -396,7 +396,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel3, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group1Through4Channel4)
+                else if (channel == ChannelAddress.Group1Through4Channel4)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel4, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel4, value).ConfigureAwait(false);
@@ -404,7 +404,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel4, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group1Through4Channel5)
+                else if (channel == ChannelAddress.Group1Through4Channel5)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel5, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel5, value).ConfigureAwait(false);
@@ -412,7 +412,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel5, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group1Through4Channel6)
+                else if (channel == ChannelAddress.Group1Through4Channel6)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel6, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel6, value).ConfigureAwait(false);
@@ -420,7 +420,7 @@ namespace AnalogDevices
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group4Channel6, value).ConfigureAwait(false);
                     return;
                 }
-                else if (channelAddress == ChannelAddress.Group1Through4Channel7)
+                else if (channel == ChannelAddress.Group1Through4Channel7)
                 {
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group1Channel7, value).ConfigureAwait(false);
                     await SetDacChannelDataSourceAsync(ChannelAddress.Group2Channel7, value).ConfigureAwait(false);
@@ -433,7 +433,7 @@ namespace AnalogDevices
                     throw new ArgumentOutOfRangeException("channelAddress");
                 }
             }
-            var channelNum = (byte)((byte)channelAddress - 8);
+            var channelNum = (byte)((byte)channel - 8);
             var currentSourceSelections = ABSelectRegisterBits.AllChannelsA;
 
             var specialFunctionCode = SpecialFunctionCode.NOP;
@@ -685,7 +685,7 @@ namespace AnalogDevices
         {
             SetDacChannelDataValueAAsync(channel, value).Wait();
         }
-        public async Task SetDacChannelDataValueAAsync(ChannelAddress channelAddress, ushort value)
+        public async Task SetDacChannelDataValueAAsync(ChannelAddress channel, ushort value)
         {
             var controlRegisterBits = await ReadbackControlRegisterAsync().ConfigureAwait(false);
             controlRegisterBits &= ~ControlRegisterBits.InputRegisterSelect; //set control register bit F2 =0 to select register X1A for input
@@ -693,11 +693,11 @@ namespace AnalogDevices
 
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                await SendSPIAsync((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | value).ConfigureAwait(false);
+                await SendSPIAsync((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | value).ConfigureAwait(false);
             }
             else
             {
-                await SendSPIAsync((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | (uint) ((value & (uint)BasicMasks.FourteenBits) << 2)).ConfigureAwait(false);
+                await SendSPIAsync((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | (uint) ((value & (uint)BasicMasks.FourteenBits) << 2)).ConfigureAwait(false);
             }
         }
 
@@ -706,18 +706,18 @@ namespace AnalogDevices
         {
             SetDacChannelDataValueBAsync(channel, value).Wait();
         }
-        public async Task SetDacChannelDataValueBAsync(ChannelAddress channelAddress, ushort newVal)
+        public async Task SetDacChannelDataValueBAsync(ChannelAddress channel, ushort value)
         {
             var controlRegisterBits = await ReadbackControlRegisterAsync().ConfigureAwait(false);
             controlRegisterBits |= ControlRegisterBits.InputRegisterSelect;//set control register bit F2 =1 to select register X1B for input
             await WriteControlRegisterAsync(controlRegisterBits).ConfigureAwait(false);
             if (DacPrecision == DacPrecision.SixteenBit)
             {
-                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | newVal)).ConfigureAwait(false);
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | value)).ConfigureAwait(false);
             }
             else
             {
-                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channelAddress & (byte)BasicMasks.SixBits) << 16) | (uint) ((newVal & (uint)BasicMasks.FourteenBits) << 2))).ConfigureAwait(false);
+                await SendSPIAsync(((uint)SerialInterfaceModeBits.WriteToDACInputDataRegister | (uint) (((byte) channel & (byte)BasicMasks.SixBits) << 16) | (uint) ((value & (uint)BasicMasks.FourteenBits) << 2))).ConfigureAwait(false);
             }
         }
 
