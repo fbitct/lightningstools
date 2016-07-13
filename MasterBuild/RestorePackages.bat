@@ -1,7 +1,7 @@
 @ECHO OFF
 :start
 SET MASTERBUILDDIR=%~dp0
-IF NOT EXIST "%MASTERBUILDDIR%nuget.exe" bitsadmin /transfer nuget /priority NORMAL http://dist.nuget.org/win-x86-commandline/latest/nuget.exe  "%MASTERBUILDDIR%nuget.exe" 
+IF NOT EXIST "%MASTERBUILDDIR%nuget.exe" bitsadmin /transfer nuget /priority HIGH http://dist.nuget.org/win-x86-commandline/latest/nuget.exe  "%MASTERBUILDDIR%nuget.exe" 
 IF ERRORLEVEL 1 GOTO END
 SET EnableNuGetPackageRestore=true
 
