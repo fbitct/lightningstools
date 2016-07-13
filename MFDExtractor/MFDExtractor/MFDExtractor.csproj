@@ -249,7 +249,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -264,7 +266,7 @@
     <Compile Include="ResizeHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="FodyWeavers.xml" />
+    <None Include="FodyWeavers.xml" />
     <Content Include="mfdextractoricon.ICO" />
     <None Include="Resources\restore.PNG" />
     <None Include="Resources\mfd4TestAlignmentImage.bmp" />
@@ -290,7 +292,11 @@
       <ProductName>Microsoft DirectX 9c Runtime</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Visual.C++.14.0.x86">
       <Visible>False</Visible>
       <ProductName>Visual C++ "14" Runtime Libraries %28x86%29</ProductName>
@@ -298,6 +304,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Application\Common.Application.csproj">
+      <Project>{0cdb21ca-a5f7-446c-837e-c7c37238f2d7}</Project>
+      <Name>Common.Application</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.csproj">
       <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
       <Name>Common</Name>
@@ -353,6 +363,10 @@
     <ProjectReference Include="..\..\F4Utils\Campaign\F4Utils.Campaign.csproj">
       <Project>{d386ec91-6d89-421f-87bc-4849e0232722}</Project>
       <Name>F4Utils.Campaign</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\F4Utils\PlayerOp\F4Utils.PlayerOp.csproj">
+      <Project>{ea92153f-08e5-42b1-b6c5-6b22366e7cf2}</Project>
+      <Name>F4Utils.PlayerOp</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\F4Utils\Process\F4Utils.Process.csproj">
       <Project>{66242024-b7e5-4f66-ac1a-f0e2f1d70899}</Project>

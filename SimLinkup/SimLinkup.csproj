@@ -214,7 +214,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="Content\Mapping\AMI9001584fuelquantityindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

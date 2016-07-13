@@ -169,6 +169,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Application\Common.Application.csproj">
+      <Project>{0cdb21ca-a5f7-446c-837e-c7c37238f2d7}</Project>
+      <Name>Common.Application</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
       <Name>Common</Name>
@@ -192,7 +196,9 @@
     <None Include="Resources\Save.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Resources\Delete.bmp" />
   </ItemGroup>
   <ItemGroup>
