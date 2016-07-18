@@ -265,7 +265,7 @@
     <Content Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Content\Mapping\PowellIP1310ALRazimuthindicator.mapping.disabled">
+    <None Include="Content\Mapping\PowellIP1310ALRazimuthindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Content\Mapping\Simtek100181altimeter.mapping">

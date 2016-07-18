@@ -25,24 +25,11 @@ namespace SimLinkup.HardwareSupport.Powell
         private const StopBits STOP_BITS = StopBits.One;
         private const Handshake HANDSHAKE = Handshake.None;
         private const int WRITE_BUFFER_SIZE = 2048;
-        private const int SERIAL_WRITE_TIMEOUT = 500;
-        private const bool FLUSH_WRITE_BUFFER = true;
-        private const bool DISCARD_WRITE_BUFFER_AFTER_OPEN = true;
+        private const int SERIAL_WRITE_TIMEOUT = 3000;
 
         //limits exceptions when we don't have the RWR plugged into the serial port
         private const int MAX_UNSUCCESSFUL_PORT_OPEN_ATTEMPTS = 5;
-        private const bool RESET_UNSUCCESSFUL_CONNECTION_ATTEMPT_COUNTER_AFTER_CLOSING_PORT = true;
-
-        //allows slowing down the rate of sending data across the bus
-        private const int DELAY_AFTER_WRITES_MILLIS = 20; //delay, when set, occurs after *each* byte!
-        private const int MAX_REFRESH_RATE_HZ = 25; //prevents more than this many occurrences per second of Synchronize() event from generating traffic
-
-        //enable hack which forces pending data across the RS232 bus - despite all reason, this seems to work, where other approaches have failed.
-        //The combination of the FTDI 232BL chip and the PIC microcontroller the way they're wired up right now seems to have flow control issues
-        //which are mitigated by this approach
-        private const bool CLOSE_AND_REOPEN_CONNECTION_AFTER_EACH_BYTE_SENT = false;
-        private const int DELAY_AFTER_CLOSING_SERIAL_PORT = 20;
-
+        private const int MAX_REFRESH_RATE_HZ = 20; //prevents more than this many occurrences per second of Synchronize() event from generating traffic
         #endregion
 
         #region Instance variables
@@ -51,25 +38,23 @@ namespace SimLinkup.HardwareSupport.Powell
         private readonly DigitalSignal[] _digitalInputSignals;
         private AnalogSignal _magneticHeadingDegreesInputSignal;
         private AnalogSignal _rwrSymbolCountInputSignal;
-        private AnalogSignal[] _rwrObjectSymbolIDInputSignals = new AnalogSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
-        private AnalogSignal[] _rwrObjectBearingInputSignals = new AnalogSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
-        private AnalogSignal[] _rwrObjectLethalityInputSignals = new AnalogSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
-        private DigitalSignal[] _rwrObjectMissileActivityFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
-        private DigitalSignal[] _rwrObjectMissileLaunchFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
-        private DigitalSignal[] _rwrObjectSelectedFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
-        private DigitalSignal[] _rwrObjectNewDetectionFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
-        private IFalconRWRSymbolTranslator _falconRWRSymbolTranslator = new FalconRWRSymbolTranslator();
+        private readonly AnalogSignal[] _rwrObjectSymbolIDInputSignals = new AnalogSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
+        private readonly AnalogSignal[] _rwrObjectBearingInputSignals = new AnalogSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
+        private readonly AnalogSignal[] _rwrObjectLethalityInputSignals = new AnalogSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
+        private readonly DigitalSignal[] _rwrObjectMissileActivityFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
+        private readonly DigitalSignal[] _rwrObjectMissileLaunchFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
+        private readonly DigitalSignal[] _rwrObjectSelectedFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
+        private readonly DigitalSignal[] _rwrObjectNewDetectionFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
+        private readonly IFalconRWRSymbolTranslator _falconRWRSymbolTranslator = new FalconRWRSymbolTranslator();
 
-        private string _deviceID;
+        private readonly string _deviceID;
         
         private Common.IO.Ports.ISerialPort _serialPort;
-        private object _serialPortLock = new object();
-        private string _comPort;
-        private int _unsuccessfulConnectionAttempts = 0;
+        private readonly object _serialPortLock = new object();
+        private readonly string _comPort;
+        private int _unsuccessfulConnectionAttempts = 3;
 
-        private DateTime _lastSynchronizedAt = DateTime.MinValue;
-        private bool _resetNeeded = true;
-        
+        private DateTime _lastSynchronizedAt = DateTime.MinValue;        
         private bool _isDisposed;
 
         
@@ -84,15 +69,11 @@ namespace SimLinkup.HardwareSupport.Powell
             CreateInputSignals(deviceID, out _analogInputSignals, out _digitalInputSignals);
         }
 
-        public override string FriendlyName
-        {
-            get { return string.Format("Powell IP-1310/ALR Azimuth Indicator (RWR) Driver: {0}", _deviceID); }
-        }
+        public override string FriendlyName => $"Powell IP-1310/ALR Azimuth Indicator (RWR) Driver: {_deviceID}";
 
         public static IHardwareSupportModule[] GetInstances()
         {
             var toReturn = new List<IHardwareSupportModule>();
-            return toReturn.ToArray();
             try
             {
                 var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
@@ -115,25 +96,14 @@ namespace SimLinkup.HardwareSupport.Powell
 
         #region Virtual Method Implementations
 
-        public override AnalogSignal[] AnalogInputs
-        {
-            get { return _analogInputSignals; }
-        }
+        public override AnalogSignal[] AnalogInputs => _analogInputSignals;
 
-        public override DigitalSignal[] DigitalInputs
-        {
-            get { return _digitalInputSignals; }
-        }
+        public override DigitalSignal[] DigitalInputs => _digitalInputSignals;
 
-        public override AnalogSignal[] AnalogOutputs
-        {
-            get { return null; }
-        }
+        public override AnalogSignal[] AnalogOutputs => null;
 
-        public override DigitalSignal[] DigitalOutputs
-        {
-            get { return null; }
-        }
+        public override DigitalSignal[] DigitalOutputs => null;
+
         public override async Task SynchronizeAsync()
         {
             await base.SynchronizeAsync().ConfigureAwait(false);
@@ -153,7 +123,7 @@ namespace SimLinkup.HardwareSupport.Powell
         
         private async Task UpdateOutputsAsync()
         {
-            bool connected = EnsureSerialPortConnected();
+            var connected = EnsureSerialPortConnected();
             if (connected)
             {
                 var commandList = GenerateCommandList();
@@ -184,12 +154,11 @@ namespace SimLinkup.HardwareSupport.Powell
                         _serialPort.WriteTimeout = SERIAL_WRITE_TIMEOUT;
                         _serialPort.ErrorReceived += _serialPort_ErrorReceived;
                         _serialPort.WriteBufferSize = WRITE_BUFFER_SIZE;
-                        _log.DebugFormat("Opening serial port {0}: Handshake:{1}, WriteTimeout:{2}, WriteBufferSize:{3}", _comPort, HANDSHAKE.ToString(), SERIAL_WRITE_TIMEOUT, WRITE_BUFFER_SIZE);
+                        _log.DebugFormat(
+                            $"Opening serial port {_comPort}: Handshake:{HANDSHAKE.ToString()}, WriteTimeout:{SERIAL_WRITE_TIMEOUT}, WriteBufferSize:{WRITE_BUFFER_SIZE}");
                         _serialPort.Open();
-                        if (DISCARD_WRITE_BUFFER_AFTER_OPEN)
-                        {
-                            _serialPort.DiscardOutBuffer();
-                        }
+                        GC.SuppressFinalize(_serialPort.BaseStream);
+                        _serialPort.DiscardOutBuffer();
                         _unsuccessfulConnectionAttempts = 0;
                     }
                     catch (Exception e)
@@ -204,9 +173,10 @@ namespace SimLinkup.HardwareSupport.Powell
            
         }
 
-        void _serialPort_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
+        private void _serialPort_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
-            _log.ErrorFormat("A serial port error occurred communicating with {0} on COM port {1}.\r\nError Type: {2}\r\nError Description:{3}", _deviceID, _comPort, e.EventType.ToString(), e.ToString());
+            _log.ErrorFormat(
+                $"A serial port error occurred communicating with {_deviceID} on COM port {_comPort}.\r\nError Type: {e.EventType.ToString()}\r\nError Description:{e}");
         }
 
         private void CloseSerialPortConnection()
@@ -219,40 +189,26 @@ namespace SimLinkup.HardwareSupport.Powell
                     {
                         if (_serialPort.IsOpen)
                         {
-                            _log.DebugFormat("Closing serial port {0}", _comPort);
-                            _serialPort.Close();
-
-                            Thread.Sleep(DELAY_AFTER_CLOSING_SERIAL_PORT);
+                            _log.DebugFormat($"Closing serial port {_comPort}");
                             _serialPort.DiscardOutBuffer();
+                            _serialPort.Close();
                         }
+                        GC.ReRegisterForFinalize(_serialPort.BaseStream);
                         _serialPort.Dispose();
                     }
                     catch {}
                     _serialPort = null;
                 }
-                if (RESET_UNSUCCESSFUL_CONNECTION_ATTEMPT_COUNTER_AFTER_CLOSING_PORT)
-                {
-                    _unsuccessfulConnectionAttempts = 0; //reset unsuccessful connection attempts counter
-                }
+                _unsuccessfulConnectionAttempts = 0; //reset unsuccessful connection attempts counter
             }
         }
 
         private IEnumerable<RWRCommand> GenerateCommandList()
         {
             var rwrCommands = new List<RWRCommand>();
-            if (_resetNeeded)
-            {
-                //**IF** this is necessary at all, it should only be necessary when we first open the COM port and send our initial command.  
-                //This will cause the device to reinitialize itself.  Once we run the command, we clear the _resetNeeded flag so we don't run
-                //it a second time.
-                rwrCommands.Add(new ResetCommand()); 
-            }
-
             var blipList = GenerateBlipList();
-            if (blipList.Count() > 0)
-            {
-                rwrCommands.Add(new DrawBlipsCommand { Blips = blipList });
-            }
+            var enumerable = blipList as Blip[] ?? blipList.ToArray();
+            rwrCommands.Add(new DrawBlipsCommand { Blips = enumerable });
             return rwrCommands;
         }
 
@@ -263,9 +219,9 @@ namespace SimLinkup.HardwareSupport.Powell
             var usePrimarySymbol = DateTime.UtcNow.Millisecond < 500;
             for (var i = 0; i < numInputSymbols; i++)
             {
-                var falconRWRSymbol = new FalconRWRSymbol
+                var falconRwrSymbol = new FalconRWRSymbol
                 {
-                    SymbolID = (int)Math.Truncate(_rwrObjectSymbolIDInputSignals[i].State),
+                    SymbolId = (int)Math.Truncate(_rwrObjectSymbolIDInputSignals[i].State),
                     BearingDegrees = _rwrObjectBearingInputSignals[i].State,
                     Lethality = _rwrObjectLethalityInputSignals[i].State,
                     MissileActivity = _rwrObjectMissileActivityFlagInputSignals[i].State,
@@ -273,20 +229,23 @@ namespace SimLinkup.HardwareSupport.Powell
                     Selected = _rwrObjectSelectedFlagInputSignals[i].State,
                     NewDetection = _rwrObjectNewDetectionFlagInputSignals[i].State
                 };
-                var blips = _falconRWRSymbolTranslator.Translate(falconRWRSymbol, magneticHeadingDegrees: _magneticHeadingDegreesInputSignal.State, usePrimarySymbol: usePrimarySymbol, inverted: false);
+                var blips = _falconRWRSymbolTranslator.Translate(falconRwrSymbol, _magneticHeadingDegreesInputSignal.State, usePrimarySymbol);
                 blipList.AddRange(blips);
             }
             return blipList;
         }
+
+        private byte[] _lastBytesWritten=new byte[0];
         private async Task SendCommandListAsync(IEnumerable<RWRCommand> commandList)
         {
-            if (commandList.Count() == 0) return;
+            var rwrCommands = commandList as RWRCommand[] ?? commandList.ToArray();
+            if (!rwrCommands.Any()) return;
             lock (_serialPortLock)
             {
                 using (var ms = new MemoryStream())
                 {
                     var totalBytes = 0;
-                    foreach (var command in commandList)
+                    foreach (var command in rwrCommands)
                     {
                         //write out device identifier to memory stream
                         var deviceIdBytes = Encoding.ASCII.GetBytes(_deviceID);
@@ -303,53 +262,34 @@ namespace SimLinkup.HardwareSupport.Powell
 
                         //write contents of memory stream to COM port
                         ms.Seek(0, SeekOrigin.Begin);
-                        var bytesToWrite = ms.GetBuffer();
+                        var bytesToWrite = new byte[totalBytes];
+                        Array.Copy(ms.GetBuffer(), 0, bytesToWrite, 0, totalBytes);
+                        if (bytesToWrite.SequenceEqual(_lastBytesWritten)) continue;
                         try
                         {
-                            _log.DebugFormat("Sending bytes to serial port {0}:{1}", _comPort, BytesToString(bytesToWrite, 0, totalBytes));
-                            
-                            //write out each byte, optionally flushing the buffer and optionally delaying between each byte to allow for slow remote end processing
-                            for (int i = 0; i < totalBytes; i++)
-                            {
-                                EnsureSerialPortConnected();
+                            _log.DebugFormat(
+                                $"Sending bytes to serial port {_comPort}:{BytesToString(bytesToWrite, 0, totalBytes)}");
 
-                                _serialPort.Write(bytesToWrite, i, 1);
-                                if (FLUSH_WRITE_BUFFER)
-                                {
-                                    _serialPort.BaseStream.Flush();
-                                }
-                                
-                                Thread.Sleep(DELAY_AFTER_WRITES_MILLIS);
-                                
-                                if (CLOSE_AND_REOPEN_CONNECTION_AFTER_EACH_BYTE_SENT)
-                                {
-                                    CloseSerialPortConnection();
-                                }
-                            }
+                            _serialPort.Write(bytesToWrite, 0, totalBytes);
+                            _serialPort.BaseStream.Flush();
+                            _lastBytesWritten = bytesToWrite;
                         }
                         catch (Exception e)
                         {
                             _log.Error(e.Message, e);
                         }
-
-                        //if we've just run a RESET command, ensure we don't run it again unless flagged to do so elsewhere
-                        if (command is ResetCommand)
-                        {
-                            _resetNeeded = false;
-                        }
-
                     }
                 }
             }
         }
-        private string BytesToString(byte[] bytes, int offset, int count)
+        private static string BytesToString(byte[] bytes, int offset, int count)
         {
             var sb = new StringBuilder();
-            sb.AppendFormat("{0} bytes:", count);
+            sb.Append($"{count} bytes:");
             for (var i = offset; i < offset + count; i++)
             {
                 sb.Append("0x");
-                sb.AppendFormat("{0:X} ", bytes[i]);
+                sb.Append($"{bytes[i]:X} ");
             }
             return sb.ToString();
         }
@@ -366,187 +306,205 @@ namespace SimLinkup.HardwareSupport.Powell
             var digitalSignalsToReturn = new List<DigitalSignal>();
 
             {
-                var thisSignal = new AnalogSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Analog Inputs";
-                thisSignal.FriendlyName = "Magnetic Heading (Degrees)";
-                thisSignal.Id = "IP1310ALR__Magnetic_Heading_Degrees";
-                thisSignal.Index = 0;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = this;
-                thisSignal.SourceFriendlyName = FriendlyName;
-                thisSignal.SourceAddress = _deviceID;
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = 0;
-                thisSignal.IsAngle = true;
-                thisSignal.MinValue = 0;
-                thisSignal.MaxValue = 360;
+                var thisSignal = new AnalogSignal
+                {
+                    Category = "Inputs",
+                    CollectionName = "Analog Inputs",
+                    FriendlyName = "Magnetic Heading (Degrees)",
+                    Id = "IP1310ALR__Magnetic_Heading_Degrees",
+                    Index = 0,
+                    PublisherObject = this,
+                    Source = this,
+                    SourceFriendlyName = FriendlyName,
+                    SourceAddress = _deviceID,
+                    SubSource = null,
+                    SubSourceFriendlyName = null,
+                    SubSourceAddress = null,
+                    State = 0,
+                    IsAngle = true,
+                    MinValue = 0,
+                    MaxValue = 360
+                };
                 _magneticHeadingDegreesInputSignal = thisSignal;
                 analogSignalsToReturn.Add(thisSignal);
             }
             {
-                var thisSignal = new AnalogSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Analog Inputs";
-                thisSignal.FriendlyName = "RWR Symbol Count";
-                thisSignal.Id = "IP1310ALR__RWR_Symbol_Count";
-                thisSignal.Index = 0;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = this;
-                thisSignal.SourceFriendlyName = FriendlyName;
-                thisSignal.SourceAddress = _deviceID;
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = 0;
-                thisSignal.MinValue = 0;
-                thisSignal.MaxValue = 64;
+                var thisSignal = new AnalogSignal
+                {
+                    Category = "Inputs",
+                    CollectionName = "Analog Inputs",
+                    FriendlyName = "RWR Symbol Count",
+                    Id = "IP1310ALR__RWR_Symbol_Count",
+                    Index = 0,
+                    PublisherObject = this,
+                    Source = this,
+                    SourceFriendlyName = FriendlyName,
+                    SourceAddress = _deviceID,
+                    SubSource = null,
+                    SubSourceFriendlyName = null,
+                    SubSourceAddress = null,
+                    State = 0,
+                    MinValue = 0,
+                    MaxValue = 64
+                };
                 _rwrSymbolCountInputSignal = thisSignal;
                 analogSignalsToReturn.Add(thisSignal);
             }
 
 
-            for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
+            for (var i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
-                var thisSignal = new AnalogSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Analog Inputs";
-                thisSignal.FriendlyName = string.Format("RWR Object #{0} Symbol ID", i);
-                thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Symbol_ID[{0}]", i);
-                thisSignal.Index = i;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = this;
-                thisSignal.SourceFriendlyName = FriendlyName;
-                thisSignal.SourceAddress = _deviceID;
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = 0;
-                thisSignal.MinValue = 0;
-                thisSignal.MaxValue = 64;
+                var thisSignal = new AnalogSignal
+                {
+                    Category = "Inputs",
+                    CollectionName = "Analog Inputs",
+                    FriendlyName = $"RWR Object #{i} Symbol ID",
+                    Id = $"IP1310ALR__RWR_Object_Symbol_ID[{i}]",
+                    Index = i,
+                    PublisherObject = this,
+                    Source = this,
+                    SourceFriendlyName = FriendlyName,
+                    SourceAddress = _deviceID,
+                    SubSource = null,
+                    SubSourceFriendlyName = null,
+                    SubSourceAddress = null,
+                    State = 0,
+                    MinValue = 0,
+                    MaxValue = 64
+                };
                 _rwrObjectSymbolIDInputSignals[i] = thisSignal;
                 analogSignalsToReturn.Add(thisSignal);
             }
-            for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
+            for (var i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
-                var thisSignal = new AnalogSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Analog Inputs";
-                thisSignal.FriendlyName = string.Format("RWR Object #{0} Bearing (degrees)", i);
-                thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Bearing_Degrees[{0}]", i);
-                thisSignal.Index = i;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = this;
-                thisSignal.SourceFriendlyName = FriendlyName;
-                thisSignal.SourceAddress = _deviceID;
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = 0;
-                thisSignal.IsAngle = true;
-                thisSignal.MinValue = 0;
-                thisSignal.MaxValue = 360;
+                var thisSignal = new AnalogSignal
+                {
+                    Category = "Inputs",
+                    CollectionName = "Analog Inputs",
+                    FriendlyName = $"RWR Object #{i} Bearing (degrees)",
+                    Id = $"IP1310ALR__RWR_Object_Bearing_Degrees[{i}]",
+                    Index = i,
+                    PublisherObject = this,
+                    Source = this,
+                    SourceFriendlyName = FriendlyName,
+                    SourceAddress = _deviceID,
+                    SubSource = null,
+                    SubSourceFriendlyName = null,
+                    SubSourceAddress = null,
+                    State = 0,
+                    IsAngle = true,
+                    MinValue = 0,
+                    MaxValue = 360
+                };
                 _rwrObjectBearingInputSignals[i] = thisSignal;
                 analogSignalsToReturn.Add(thisSignal);
             }
 
-            for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
+            for (var i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
-                var thisSignal = new AnalogSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Analog Inputs";
-                thisSignal.FriendlyName = string.Format("RWR Object #{0} Lethality", i);
-                thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Lethality[{0}]", i);
-                thisSignal.Index = i;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = this;
-                thisSignal.SourceFriendlyName = FriendlyName;
-                thisSignal.SourceAddress = _deviceID;
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = 0;
-                thisSignal.MinValue = -1;
-                thisSignal.MaxValue = 3;
+                var thisSignal = new AnalogSignal
+                {
+                    Category = "Inputs",
+                    CollectionName = "Analog Inputs",
+                    FriendlyName = $"RWR Object #{i} Lethality",
+                    Id = $"IP1310ALR__RWR_Object_Lethality[{i}]",
+                    Index = i,
+                    PublisherObject = this,
+                    Source = this,
+                    SourceFriendlyName = FriendlyName,
+                    SourceAddress = _deviceID,
+                    SubSource = null,
+                    SubSourceFriendlyName = null,
+                    SubSourceAddress = null,
+                    State = 0,
+                    MinValue = -1,
+                    MaxValue = 3
+                };
                 _rwrObjectLethalityInputSignals[i] = thisSignal;
                 analogSignalsToReturn.Add(thisSignal);
             }
 
-            for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
+            for (var i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
-                var thisSignal = new DigitalSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Digital Inputs";
-                thisSignal.FriendlyName = string.Format("RWR Object #{0} Missile Activity Flag", i);
-                thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Missile_Activity_Flag[{0}]", i);
-                thisSignal.Index = i;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = this;
-                thisSignal.SourceFriendlyName = FriendlyName;
-                thisSignal.SourceAddress = _deviceID;
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = false;
+                var thisSignal = new DigitalSignal
+                {
+                    Category = "Inputs",
+                    CollectionName = "Digital Inputs",
+                    FriendlyName = $"RWR Object #{i} Missile Activity Flag",
+                    Id = $"IP1310ALR__RWR_Object_Missile_Activity_Flag[{i}]",
+                    Index = i,
+                    PublisherObject = this,
+                    Source = this,
+                    SourceFriendlyName = FriendlyName,
+                    SourceAddress = _deviceID,
+                    SubSource = null,
+                    SubSourceFriendlyName = null,
+                    SubSourceAddress = null,
+                    State = false
+                };
                 _rwrObjectMissileActivityFlagInputSignals[i] = thisSignal;
                 digitalSignalsToReturn.Add(thisSignal);
             }
-            for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
+            for (var i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
-                var thisSignal = new DigitalSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Digital Inputs";
-                thisSignal.FriendlyName = string.Format("RWR Object #{0} Missile Launch Flag", i);
-                thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Missile_Launch_Flag[{0}]", i);
-                thisSignal.Index = i;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = this;
-                thisSignal.SourceFriendlyName = FriendlyName;
-                thisSignal.SourceAddress = _deviceID;
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = false;
+                var thisSignal = new DigitalSignal
+                {
+                    Category = "Inputs",
+                    CollectionName = "Digital Inputs",
+                    FriendlyName = $"RWR Object #{i} Missile Launch Flag",
+                    Id = $"IP1310ALR__RWR_Object_Missile_Launch_Flag[{i}]",
+                    Index = i,
+                    PublisherObject = this,
+                    Source = this,
+                    SourceFriendlyName = FriendlyName,
+                    SourceAddress = _deviceID,
+                    SubSource = null,
+                    SubSourceFriendlyName = null,
+                    SubSourceAddress = null,
+                    State = false
+                };
                 _rwrObjectMissileLaunchFlagInputSignals[i] = thisSignal;
                 digitalSignalsToReturn.Add(thisSignal);
             }
             for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
-                var thisSignal = new DigitalSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Digital Inputs";
-                thisSignal.FriendlyName = string.Format("RWR Object #{0} Selected Flag", i);
-                thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Selected_Flag[{0}]", i);
-                thisSignal.Index = i;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = this;
-                thisSignal.SourceFriendlyName = FriendlyName;
-                thisSignal.SourceAddress = _deviceID;
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = false;
+                var thisSignal = new DigitalSignal
+                {
+                    Category = "Inputs",
+                    CollectionName = "Digital Inputs",
+                    FriendlyName = $"RWR Object #{i} Selected Flag",
+                    Id = $"IP1310ALR__RWR_Object_Selected_Flag[{i}]",
+                    Index = i,
+                    PublisherObject = this,
+                    Source = this,
+                    SourceFriendlyName = FriendlyName,
+                    SourceAddress = _deviceID,
+                    SubSource = null,
+                    SubSourceFriendlyName = null,
+                    SubSourceAddress = null,
+                    State = false
+                };
                 _rwrObjectSelectedFlagInputSignals[i] = thisSignal;
                 digitalSignalsToReturn.Add(thisSignal);
             }
-            for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
+            for (var i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
-                var thisSignal = new DigitalSignal();
-                thisSignal.Category = "Inputs";
-                thisSignal.CollectionName = "Digital Inputs";
-                thisSignal.FriendlyName = string.Format("RWR Object #{0} New Detection Flag", i);
-                thisSignal.Id = string.Format("IP1310ALR__RWR_Object_New_Detection_Flag[{0}]", i);
-                thisSignal.Index = i;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = this;
-                thisSignal.SourceFriendlyName = FriendlyName;
-                thisSignal.SourceAddress = _deviceID;
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = false;
+                var thisSignal = new DigitalSignal
+                {
+                    Category = "Inputs",
+                    CollectionName = "Digital Inputs",
+                    FriendlyName = $"RWR Object #{i} New Detection Flag",
+                    Id = $"IP1310ALR__RWR_Object_New_Detection_Flag[{i}]",
+                    Index = i,
+                    PublisherObject = this,
+                    Source = this,
+                    SourceFriendlyName = FriendlyName,
+                    SourceAddress = _deviceID,
+                    SubSource = null,
+                    SubSourceFriendlyName = null,
+                    SubSourceAddress = null,
+                    State = false
+                };
                 _rwrObjectNewDetectionFlagInputSignals[i] = thisSignal;
                 digitalSignalsToReturn.Add(thisSignal);
             }

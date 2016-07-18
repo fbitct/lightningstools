@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SimLinkup.HardwareSupport.Powell
+﻿namespace SimLinkup.HardwareSupport.Powell
 {
     internal struct FalconRWRSymbol
     {
-        public int SymbolID { get; set; }
+        public int SymbolId { get; set; }
         public double BearingDegrees { get; set; }
         public double Lethality { get; set; }
         public bool MissileActivity { get; set; }

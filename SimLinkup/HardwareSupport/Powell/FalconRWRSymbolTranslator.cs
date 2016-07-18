@@ -14,7 +14,7 @@ namespace SimLinkup.HardwareSupport.Powell
         public IEnumerable<Blip> Translate(FalconRWRSymbol falconRWRSymbol,double magneticHeadingDegrees, bool primarySymbol=true, bool inverted=false)
         {
             var lethality = falconRWRSymbol.Lethality;
-            var radius = 0.00d;
+            double radius;
 
             if (lethality > 1)
             {
@@ -39,7 +39,7 @@ namespace SimLinkup.HardwareSupport.Powell
             var lineSpacingYOffset = (byte)15;
             var charSpacingXOffset = (byte)15;
             var charSpacingHalfXOffset = (byte)8;
-            switch (falconRWRSymbol.SymbolID)
+            switch (falconRWRSymbol.SymbolId)
             {
                 case 0:
                     break;
@@ -91,14 +91,9 @@ namespace SimLinkup.HardwareSupport.Powell
                     blips.Add(new Blip { Symbol = Symbols.Three, X = (byte)(x + charSpacingXOffset), Y = y });
                     break;
                 case 16: //alternating A or S
-                    if (primarySymbol)
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.A, X = x, Y = y });
-                    }
-                    else
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.S, X = x, Y = y });
-                    }
+                    blips.Add(primarySymbol
+                        ? new Blip {Symbol = Symbols.A, X = x, Y = y}
+                        : new Blip {Symbol = Symbols.S, X = x, Y = y});
                     break;
                 case 17: //S
                     blips.Add(new Blip { Symbol = Symbols.S, X = x, Y = y });
@@ -287,84 +282,44 @@ namespace SimLinkup.HardwareSupport.Powell
                     blips.Add(new Blip { Symbol = Symbols.A, X = x, Y = y });
                     break;
                 case 57: // alternating F and S
-                    if (primarySymbol)
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.F, X = x, Y = y });
-                    }
-                    else
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.S, X = x, Y = y });
-                    }
+                    blips.Add(primarySymbol
+                        ? new Blip {Symbol = Symbols.F, X = x, Y = y}
+                        : new Blip {Symbol = Symbols.S, X = x, Y = y});
                     break;
                 case 58://alternating F and A
-                    if (primarySymbol)
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.F, X = x, Y = y });
-                    }
-                    else
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.A, X = x, Y = y });
-                    }
+                    blips.Add(primarySymbol
+                        ? new Blip {Symbol = Symbols.F, X = x, Y = y}
+                        : new Blip {Symbol = Symbols.A, X = x, Y = y});
                     break;
                 case 59://alternating F and M
-                    if (primarySymbol)
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.F, X = x, Y = y });
-                    }
-                    else
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.M, X = x, Y = y });
-                    }
+                    blips.Add(primarySymbol
+                        ? new Blip {Symbol = Symbols.F, X = x, Y = y}
+                        : new Blip {Symbol = Symbols.M, X = x, Y = y});
                     break;
                 case 60: //alternating F and U
-                    if (primarySymbol)
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.F, X = x, Y = y });
-                    }
-                    else
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.U, X = x, Y = y });
-                    }
+                    blips.Add(primarySymbol
+                        ? new Blip {Symbol = Symbols.F, X = x, Y = y}
+                        : new Blip {Symbol = Symbols.U, X = x, Y = y});
                     break;
                 case 61: //alternating F and basic interceptor symbol
-                    if (primarySymbol)
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.F, X = x, Y = y });
-                    }
-                    else
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.BasicInterceptor, X = x, Y = y });
-                    }
+                    blips.Add(primarySymbol
+                        ? new Blip {Symbol = Symbols.F, X = x, Y = y}
+                        : new Blip {Symbol = Symbols.BasicInterceptor, X = x, Y = y});
                     break;
                 case 62: //alternating S and basic interceptor symbol
-                    if (primarySymbol)
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.S, X = x, Y = y });
-                    }
-                    else
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.BasicInterceptor, X = x, Y = y });
-                    }
+                    blips.Add(primarySymbol
+                        ? new Blip {Symbol = Symbols.S, X = x, Y = y}
+                        : new Blip {Symbol = Symbols.BasicInterceptor, X = x, Y = y});
                     break;
                 case 63: //alternating A and basic interceptor symbol
-                    if (primarySymbol)
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.A, X = x, Y = y });
-                    }
-                    else
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.BasicInterceptor, X = x, Y = y });
-                    }
+                    blips.Add(primarySymbol
+                        ? new Blip {Symbol = Symbols.A, X = x, Y = y}
+                        : new Blip {Symbol = Symbols.BasicInterceptor, X = x, Y = y});
                     break;
                 case 64: //alternating M and basic interceptor symbol
-                    if (primarySymbol)
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.M, X = x, Y = y });
-                    }
-                    else
-                    {
-                        blips.Add(new Blip { Symbol = Symbols.BasicInterceptor, X = x, Y = y });
-                    }
+                    blips.Add(primarySymbol
+                        ? new Blip {Symbol = Symbols.M, X = x, Y = y}
+                        : new Blip {Symbol = Symbols.BasicInterceptor, X = x, Y = y});
                     break;
                 case 65://A
                     blips.Add(new Blip { Symbol = Symbols.A, X = x, Y = y });
@@ -473,21 +428,24 @@ namespace SimLinkup.HardwareSupport.Powell
                     break;
 
                 default:
-                    if (falconRWRSymbol.SymbolID < 0) //show U for Unknown Threat
+                    if (falconRWRSymbol.SymbolId < 0) //show U for Unknown Threat
                     {
                         blips.Add(new Blip { Symbol = Symbols.U, X = x, Y = y });
-                        break;
                     }
-                    else if (falconRWRSymbol.SymbolID >= 100)
+                    else if (falconRWRSymbol.SymbolId >= 100)
                     {
                         //subtract 100 from the number, and that's the Number to display as digits
-                        var numberToDisplay = falconRWRSymbol.SymbolID - 100;
+                        var numberToDisplay = falconRWRSymbol.SymbolId - 100;
                         var digits = numberToDisplay.ToString();
-                        for (var i = 0; i < digits.Length; i++)
-                        {
-                            var thisDigit=(byte)Int32.Parse(digits.Substring(i,1));
-                            blips.Add(new Blip { Symbol = (Symbols)thisDigit, X = (byte)(x + (i * charSpacingXOffset)), Y = y });
-                        }
+                        blips.AddRange(digits.Select((t, i) => 
+                            (byte) int.Parse(digits.Substring(i, 1))).Select(
+                                (thisDigit, i) => 
+                                new Blip
+                                {
+                                    Symbol = (Symbols) thisDigit,
+                                    X = (byte) (x + (i*charSpacingXOffset)),
+                                    Y = y
+                                }));
                     }
                     
                     break;
