@@ -29,7 +29,7 @@ namespace SimLinkup.HardwareSupport.Powell
 
         //limits exceptions when we don't have the RWR plugged into the serial port
         private const int MAX_UNSUCCESSFUL_PORT_OPEN_ATTEMPTS = 5;
-        private const int MAX_REFRESH_RATE_HZ = 20; //prevents more than this many occurrences per second of Synchronize() event from generating traffic
+        private const int MAX_REFRESH_RATE_HZ = 3; //prevents more than this many occurrences per second of Synchronize() event from generating traffic
         #endregion
 
         #region Instance variables
