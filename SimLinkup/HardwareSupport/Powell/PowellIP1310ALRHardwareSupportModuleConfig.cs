@@ -12,7 +12,8 @@ namespace SimLinkup.HardwareSupport.Powell
         }
         public string DeviceID { get; set; }
         public string COMPort { get; set; }
-
+        public uint DelayBetweenCharactersMillis { get; set; }
+        public uint DelayBetweenCommandsMillis { get; set; }
         public void Save(string filePath)
         {
             Common.Serialization.Util.SerializeToXmlFile(this, filePath);

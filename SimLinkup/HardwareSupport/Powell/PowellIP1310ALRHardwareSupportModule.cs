@@ -52,6 +52,8 @@ namespace SimLinkup.HardwareSupport.Powell
         private Common.IO.Ports.ISerialPort _serialPort;
         private readonly object _serialPortLock = new object();
         private readonly string _comPort;
+        private readonly uint _delayBetweenCharactersMillis = 0;
+        private readonly uint _delayBetweenCommandsMillis = 0;
         private int _unsuccessfulConnectionAttempts = 3;
 
         private DateTime _lastSynchronizedAt = DateTime.MinValue;        
@@ -62,10 +64,12 @@ namespace SimLinkup.HardwareSupport.Powell
 
         #region Constructors
 
-        private PowellIP1310ALRHardwareSupportModule(string comPort,string deviceID=DEFAULT_DEVICE_ID)
+        private PowellIP1310ALRHardwareSupportModule(string comPort,string deviceID=DEFAULT_DEVICE_ID, uint delayBetweenCharactersMillis=0, uint delayBetweenCommandsMillis=0)
         {
             _deviceID = deviceID;
             _comPort = comPort;
+            _delayBetweenCharactersMillis = delayBetweenCharactersMillis;
+            _delayBetweenCommandsMillis = delayBetweenCharactersMillis;
             CreateInputSignals(deviceID, out _analogInputSignals, out _digitalInputSignals);
         }
 
@@ -82,7 +86,9 @@ namespace SimLinkup.HardwareSupport.Powell
                     PowellIP1310ALRHardwareSupportModuleConfig.Load(hsmConfigFilePath);
                 
                 IHardwareSupportModule thisHsm = new PowellIP1310ALRHardwareSupportModule(
-                    comPort: hsmConfig.COMPort, deviceID: hsmConfig.DeviceID ?? DEFAULT_DEVICE_ID);
+                    comPort: hsmConfig.COMPort, deviceID: hsmConfig.DeviceID ?? DEFAULT_DEVICE_ID, 
+                    delayBetweenCharactersMillis: hsmConfig.DelayBetweenCharactersMillis, 
+                    delayBetweenCommandsMillis: hsmConfig.DelayBetweenCommandsMillis);
                 
                 toReturn.Add(thisHsm);
             }
@@ -269,15 +275,19 @@ namespace SimLinkup.HardwareSupport.Powell
                         {
                             _log.DebugFormat(
                                 $"Sending bytes to serial port {_comPort}:{BytesToString(bytesToWrite, 0, totalBytes)}");
-
-                            _serialPort.Write(bytesToWrite, 0, totalBytes);
-                            _serialPort.BaseStream.Flush();
+                            for (var i = 0; i < bytesToWrite.Length; i++)
+                            {
+                                _serialPort.Write(bytesToWrite, i, 1);
+                                Thread.Sleep((int)_delayBetweenCharactersMillis);
+                                _serialPort.BaseStream.Flush();
+                            }
                             _lastBytesWritten = bytesToWrite;
                         }
                         catch (Exception e)
                         {
                             _log.Error(e.Message, e);
                         }
+                        Thread.Sleep((int)_delayBetweenCommandsMillis);
                     }
                 }
             }
