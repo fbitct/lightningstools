@@ -3,33 +3,33 @@
   <SignalMappings>
 
     <!-- *********************************************************************-->
-    <!-- MAPPINGS FROM F4 SIM VALUES TO WESTIN HARDWARE SUPPORT MODULE INPUTS -->
+    <!-- MAPPINGS FROM F4 SIM VALUES TO SIMTEK HARDWARE SUPPORT MODULE INPUTS -->
     <!-- *********************************************************************-->
-    <!-- EPU FUEL-->
+    <!-- FTIT-->
      <SignalMapping>
-      <!-- F4 EPU FUEL OUTPUT -->
+      <!-- F4 FTIT OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>F4_EPU_FUEL__EPU_FUEL_PERCENT</Id>
+        <Id>F4_FTIT1__FTIT_TEMP_DEG_CELCIUS</Id>
       </Source>
-      <!-- WESTIN EPU FUEL INPUT-->
+      <!-- SIMTEK FTIT INPUT-->
       <Destination xsi:type="AnalogSignal">
-        <Id>521993_EPU_From_Sim</Id>
+        <Id>100216_FTIT_From_Sim</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
     <!-- *********************************************************************-->
-    <!-- MAPPINGS FROM WESTIN HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
+    <!-- MAPPINGS FROM SIMTEK HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
     <!-- *********************************************************************-->
-    <!-- EPU FUEL INDICATOR  -->
+    <!-- FTIT INDICATOR  -->
     <SignalMapping>
-      <!-- WESTIN EPU FUEL INDICATOR HARDWARE SUPPORT MODULE OUTPUT -->
+      <!-- SIMTEK FTIT INDICATOR HARDWARE SUPPORT MODULE FTIT OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>521993_EPU_To_Instrument</Id>
+        <Id>100216_FTIT_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 35 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 24 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][35]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][24]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
