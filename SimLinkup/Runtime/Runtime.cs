@@ -232,11 +232,10 @@ namespace SimLinkup.Runtime
 
         public static IHardwareSupportModule[] GetRegisteredHardwareSupportModules()
         {
-            var appDirectory = Util.ApplicationDirectory;
-
+            var hardwareSupportModuleRegistryDirectory = Path.Combine(Path.Combine(Util.ApplicationDirectory, "Content"), "Mapping");
             //get a list of hardware support modules that are currently registered
             var hsmRegistry =
-                HardwareSupportModuleRegistry.Load(Path.Combine(appDirectory, "HardwareSupportModule.registry"));
+                HardwareSupportModuleRegistry.Load(Path.Combine(hardwareSupportModuleRegistryDirectory, "HardwareSupportModule.registry"));
 
             var modules = hsmRegistry.GetInstances();
             return modules != null ? modules.ToArray() : null;
