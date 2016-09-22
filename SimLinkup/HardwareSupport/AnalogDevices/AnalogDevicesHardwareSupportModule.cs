@@ -150,7 +150,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             get
             {
                 return String.Format("Analog Devices AD536x/AD537x on {0}",
-                    _device == null ? string.Format("{{FAKE{0}}}", _deviceIndex) : _device.SymbolicName);
+                    _device == null || _device is SimulatedAnalogDevicesDenseDacEvalBoard ? string.Format("{{FAKE{0}}}", _deviceIndex) : _device.SymbolicName);
             }
         }
 
