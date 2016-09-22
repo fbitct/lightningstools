@@ -269,14 +269,20 @@
     <Content Include="Content\Mapping\HenkADI\henksdi.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\HardwareSupportModule.registry">
+    <Content Include="Content\Mapping\HenkADI\SimSupportModule.registry">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\HenkF16ADISupportBoard.mapping">
+    <Content Include="Content\Mapping\Nigel\SimSupportModule.registry">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\henksdi.config">
+    <Content Include="Content\Mapping\PHCC\SimSupportModule.registry">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mapping\String\SimSupportModule.registry">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mapping\default.profile">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
@@ -284,11 +290,12 @@
     <Content Include="SimLinkup.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="PhccHardwareSupportModule.config">
+    <Content Include="Content\Mapping\PHCC\PhccHardwareSupportModule.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="phcc.config">
+    <Content Include="Content\Mapping\PHCC\phcc.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Content\Mapping\Nigel\AMI900158001horizontalsituationindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -437,9 +444,6 @@
       <DependentUpon>SignalsView.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
-    <Content Include="SimSupportModule.registry">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

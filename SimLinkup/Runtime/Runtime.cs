@@ -141,7 +141,6 @@ namespace SimLinkup.Runtime
                 HardwareSupportModules = GetRegisteredHardwareSupportModules()
             };
 
-            LoadScripts();
             AddPerformanceMonitoringSignals();
             InitializeMappings();
             _initialized = true;
@@ -158,11 +157,7 @@ namespace SimLinkup.Runtime
 
         private void InitializeMappings()
         {
-            var appDirectory = Util.ApplicationDirectory;
-            var mappingFiles = new DirectoryInfo(
-                Path.Combine(
-                    Path.Combine(appDirectory, "Content"), "Mapping")
-                ).GetFiles("*.mapping");
+            var mappingFiles = new DirectoryInfo(Util.CurrentMappingProfileDirectory).GetFiles("*.mapping");
             foreach (var mappingFile in mappingFiles)
             {
                 var profileToLoad = mappingFile.FullName;
@@ -217,11 +212,9 @@ namespace SimLinkup.Runtime
 
         public static SimSupportModule[] GetRegisteredSimSupportModules()
         {
-            var appDirectory = Util.ApplicationDirectory;
-
             //get a list of sim support modules that are currently registered
             var ssmRegistry =
-                SimSupportModuleRegistry.Load(Path.Combine(appDirectory, "SimSupportModule.registry"));
+                SimSupportModuleRegistry.Load(Path.Combine(Util.CurrentMappingProfileDirectory, "SimSupportModule.registry"));
             var modules = ssmRegistry.GetInstances();
             if (modules != null)
             {
@@ -232,18 +225,12 @@ namespace SimLinkup.Runtime
 
         public static IHardwareSupportModule[] GetRegisteredHardwareSupportModules()
         {
-            var hardwareSupportModuleRegistryDirectory = Path.Combine(Path.Combine(Util.ApplicationDirectory, "Content"), "Mapping");
             //get a list of hardware support modules that are currently registered
             var hsmRegistry =
-                HardwareSupportModuleRegistry.Load(Path.Combine(hardwareSupportModuleRegistryDirectory, "HardwareSupportModule.registry"));
+                HardwareSupportModuleRegistry.Load(Path.Combine(Util.CurrentMappingProfileDirectory, "HardwareSupportModule.registry"));
 
             var modules = hsmRegistry.GetInstances();
             return modules != null ? modules.ToArray() : null;
-        }
-
-        private void LoadScripts()
-        {
-            var contentDirectory = Path.Combine(Util.ApplicationDirectory, "Content");
         }
 
         #region Instance variables

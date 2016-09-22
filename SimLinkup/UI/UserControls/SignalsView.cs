@@ -22,7 +22,7 @@ namespace SimLinkup.UI.UserControls
             _columnSorter.SortColumn = 0;
             lvSignals.ListViewItemSorter = _columnSorter;
             _timer = new System.Windows.Forms.Timer();
-            _timer.Interval = 20;
+            _timer.Interval = 200;
             _timer.Tick += (s, e) =>
             {
                 pbVisualization.Invalidate();

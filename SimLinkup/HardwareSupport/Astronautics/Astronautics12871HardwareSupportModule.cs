@@ -88,7 +88,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             toReturn.Add(new Astronautics12871HardwareSupportModule());
             try
             {
-                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory,
                     "Astronautics12871HardwareSupportModuleConfig.config");
                 var hsmConfig =
                     Astronautics12871HardwareSupportModuleConfig.Load(hsmConfigFilePath);

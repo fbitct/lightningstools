@@ -160,7 +160,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             var toReturn = new List<IHardwareSupportModule>();
             try
             {
-                var hsmConfigFilePath = Path.Combine(Path.Combine(Path.Combine(Util.ApplicationDirectory, "Content"), "Mapping"), "AnalogDevicesHardwareSupportModule.config");
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory, "AnalogDevicesHardwareSupportModule.config");
                 var hsmConfig = AnalogDevicesHardwareSupportModuleConfig.Load(hsmConfigFilePath);
                 if (hsmConfig == null || hsmConfig.Devices ==null && hsmConfig.Devices.Length ==0)
                 {

@@ -53,7 +53,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             toReturn.Add(new Simtek10058102HardwareSupportModule());
             try
             {
-                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory,
                     "Simtek10058102HardwareSupportModule.config");
                 var hsmConfig =
                     Simtek10058102HardwareSupportModuleConfig.Load(hsmConfigFilePath);

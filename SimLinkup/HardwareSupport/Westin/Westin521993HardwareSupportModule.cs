@@ -52,7 +52,7 @@ namespace SimLinkup.HardwareSupport.Westin
             toReturn.Add(new Westin521993HardwareSupportModule());
             try
             {
-                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory,
                     "Westin521993HardwareSupportModule.config");
                 var hsmConfig =
                     Westin521993HardwareSupportModuleConfig.Load(hsmConfigFilePath);

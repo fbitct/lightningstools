@@ -52,7 +52,7 @@ namespace SimLinkup.HardwareSupport.Gould
             toReturn.Add(new GouldHS070D51341HardwareSupportModule());
             try
             {
-                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory,
                     "GouldHS070D51341HardwareSupportModule.config");
                 var hsmConfig =
                     GouldHS070D51341HardwareSupportModuleConfig.Load(hsmConfigFilePath);

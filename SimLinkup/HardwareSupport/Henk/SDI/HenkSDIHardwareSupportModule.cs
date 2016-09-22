@@ -66,7 +66,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
             try
             {
-                var hsmConfigFilePath = Path.Combine(Path.Combine(Path.Combine(Util.ApplicationDirectory, "Content"), "Mapping"),"henksdi.config");
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory,"henksdi.config");
                 var hsmConfig = HenkSDIHardwareSupportModuleConfig.Load(hsmConfigFilePath);
                 if (hsmConfig != null)
                 {

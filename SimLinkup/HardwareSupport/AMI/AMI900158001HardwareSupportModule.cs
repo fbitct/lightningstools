@@ -96,7 +96,7 @@ namespace SimLinkup.HardwareSupport.AMI
             var toReturn = new List<IHardwareSupportModule> {new AMI900158001HardwareSupportModule()};
             try
             {
-                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory,
                     "AMI900158001HardwareSupportModuleConfig.config");
                 var hsmConfig =
                     AMI900158001HardwareSupportModuleConfig.Load(hsmConfigFilePath);

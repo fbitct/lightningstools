@@ -50,7 +50,7 @@ namespace SimLinkup.HardwareSupport.Lilbern
             toReturn.Add(new Lilbern3239HardwareSupportModule());
             try
             {
-                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory,
                     "Lilbern3239HardwareSupportModuleConfig.config");
                 var hsmConfig =
                     Lilbern3239HardwareSupportModuleConfig.Load(hsmConfigFilePath);

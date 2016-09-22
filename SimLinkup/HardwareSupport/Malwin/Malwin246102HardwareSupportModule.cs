@@ -55,7 +55,7 @@ namespace SimLinkup.HardwareSupport.Malwin
             toReturn.Add(new Malwin246102HardwareSupportModule());
             try
             {
-                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory,
                     "Malwin246102HardwareSupportModuleConfig.config");
                 var hsmConfig =
                     Malwin246102HardwareSupportModuleConfig.Load(hsmConfigFilePath);

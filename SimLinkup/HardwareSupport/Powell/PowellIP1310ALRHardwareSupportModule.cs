@@ -80,7 +80,7 @@ namespace SimLinkup.HardwareSupport.Powell
             var toReturn = new List<IHardwareSupportModule>();
             try
             {
-                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory,
                     "PowellIP1310ALRHardwareSupportModule.config");
                 var hsmConfig =
                     PowellIP1310ALRHardwareSupportModuleConfig.Load(hsmConfigFilePath);

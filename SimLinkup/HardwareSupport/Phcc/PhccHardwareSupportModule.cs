@@ -86,7 +86,7 @@ namespace SimLinkup.HardwareSupport.Phcc
             var toReturn = new List<IHardwareSupportModule>();
             try
             {
-                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory, "PhccHardwareSupportModule.config");
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory, "PhccHardwareSupportModule.config");
                 var hsmConfig = PhccHardwareSupportModuleConfig.Load(hsmConfigFilePath);
                 var phccDeviceManagerConfigFilePath = hsmConfig.PhccDeviceManagerConfigFilePath;
                 var phccConfigManager = LoadConfiguration(phccDeviceManagerConfigFilePath);
