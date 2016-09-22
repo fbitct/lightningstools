@@ -93,9 +93,10 @@ namespace SimLinkup.Runtime
             await SynchronizeAsync().ConfigureAwait(false);
             Thread.Sleep(0);
             var endTime = DateTime.UtcNow;
-            var loopDuration = endTime.Subtract(startTime);
-            _loopDurationSignal.State = loopDuration.TotalMilliseconds;
-            _loopFrequencySignal.State = 1000 / loopDuration.TotalMilliseconds;
+            var loopDuration = endTime.Subtract(startTime).TotalMilliseconds;
+            if (loopDuration <= 0) loopDuration = 1; 
+            _loopDurationSignal.State = loopDuration;
+            _loopFrequencySignal.State = 1000 / loopDuration;
         }
 
         private async Task SynchronizeAsync()
