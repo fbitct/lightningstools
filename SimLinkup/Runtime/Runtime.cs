@@ -91,7 +91,7 @@ namespace SimLinkup.Runtime
             var startTime = DateTime.UtcNow;
             await UpdateSimSignalsAsync().ConfigureAwait(false);
             await SynchronizeAsync().ConfigureAwait(false);
-            Thread.Sleep(0);
+            await Task.Delay(5).ConfigureAwait(false);
             var endTime = DateTime.UtcNow;
             var loopDuration = endTime.Subtract(startTime).TotalMilliseconds;
             if (loopDuration <= 0) loopDuration = 1; 
