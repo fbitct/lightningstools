@@ -93,7 +93,7 @@ namespace F4Utils.SimSupport
                 _coordinates.PFL = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.PFL, 2);
                 _coordinates.DED = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.DED, 2);
                 _coordinates.RWR = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.RWR, 2);
-                _coordinates.RWR = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.HMS, 2);
+                _coordinates.HMS = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.HMS, 2);
             }
 		}
 
