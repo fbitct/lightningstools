@@ -7,9 +7,9 @@ namespace AnalogDevices
         /// </summary>
         NOP = 0,
         WriteControlRegister = 1,
-        WriteOSF0Register = 2,
-        WriteOSF1Register = 3,
-        WriteOSF2Register = 4,
+        WriteOFS0Register = 2,
+        WriteOFS1Register = 3,
+        WriteOFS2Register = 4,
         SelectRegisterForReadback = 5,
         WriteToABSelectRegister0 = 6,
         WriteToABSelectRegister1 = 7,
