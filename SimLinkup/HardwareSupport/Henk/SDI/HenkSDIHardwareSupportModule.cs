@@ -26,8 +26,8 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         private SDIDriver.Device _sdiDevice;
         private byte _deviceAddress;
         private DeviceConfig _deviceConfig;
-        private AnalogSignal _positionInputSignal;
-        private List<AnalogSignal> _inputSignalsForPwmOutputChannels = new List<AnalogSignal>();
+        private CalibratedAnalogSignal _positionInputSignal;
+        private List<CalibratedAnalogSignal> _inputSignalsForPwmOutputChannels = new List<CalibratedAnalogSignal>();
         private List<DigitalSignal> _inputSignalsForDigitalOutputChannels = new List<DigitalSignal>();
 
         #endregion
@@ -50,12 +50,12 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
         {
             get
             {
-                return string.Format("Henk Synchro Drive Interface: 0x{0} {1} on {2} [ {3} ]", 
+                return string.Format("Henk Synchro Drive Interface: 0x{0} {1} on {2} [ {3} ]",
                     _deviceAddress.ToString("X").PadLeft(2, '0'),
-                    string.IsNullOrWhiteSpace(DeviceFunction) ? string.Empty: string.Format("(\"{0}\")", DeviceFunction), 
-                    _deviceConfig.ConnectionType.HasValue 
-                        ? _deviceConfig.ConnectionType.Value.ToString() 
-                        : "UNKNOWN", 
+                    string.IsNullOrWhiteSpace(DeviceFunction) ? string.Empty : string.Format("(\"{0}\")", DeviceFunction),
+                    _deviceConfig.ConnectionType.HasValue
+                        ? _deviceConfig.ConnectionType.Value.ToString()
+                        : "UNKNOWN",
                     _deviceConfig.COMPort ?? "<UNKNOWN>");
             }
         }
@@ -66,7 +66,7 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
 
             try
             {
-                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory,"henksdi.config");
+                var hsmConfigFilePath = Path.Combine(Util.CurrentMappingProfileDirectory, "henksdi.config");
                 var hsmConfig = HenkSDIHardwareSupportModuleConfig.Load(hsmConfigFilePath);
                 if (hsmConfig != null)
                 {
@@ -176,9 +176,9 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             _inputSignalsForPwmOutputChannels = CreateInputSignalsForPWMOutputChannels();
         }
 
-        private AnalogSignal CreatePositionInputSignal()
+        private CalibratedAnalogSignal CreatePositionInputSignal()
         {
-            var thisSignal = new AnalogSignal();
+            var thisSignal = new CalibratedAnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Synchro Control";
             thisSignal.FriendlyName = "Synchro Position (0-1023)";
@@ -187,10 +187,10 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = DeviceFunction == "PITCH" 
+            thisSignal.State = DeviceFunction == "PITCH"
                                                     ? 424
-                                                    : DeviceFunction == "ROLL" 
-                                                        ? 512 
+                                                    : DeviceFunction == "ROLL"
+                                                        ? 512
                                                         : 0;
             thisSignal.MinValue = DeviceFunction == "PITCH"
                                                         ? 140
@@ -206,15 +206,15 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                 .Select(x => CreateInputSignalForOutputChannelConfiguredAsDigital(ChannelNumber(x)))
                 .ToList();
         }
-        private List<AnalogSignal> CreateInputSignalsForPWMOutputChannels()
+        private List<CalibratedAnalogSignal> CreateInputSignalsForPWMOutputChannels()
         {
             return AllOutputChannels.Where(x => OutputChannelMode(x) == SDIDriver.OutputChannelMode.PWM)
                 .Select(x => CreateInputSignalForOutputChannelConfiguredAsPWM(ChannelNumber(x)))
                 .ToList();
         }
-        private AnalogSignal CreateInputSignalForOutputChannelConfiguredAsPWM(int channelNumber)
+        private CalibratedAnalogSignal CreateInputSignalForOutputChannelConfiguredAsPWM(int channelNumber)
         {
-            var thisSignal = new AnalogSignal();
+            var thisSignal = new CalibratedAnalogSignal();
             thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Digital/PWM Output Channels";
             if (channelNumber < 8)
@@ -225,14 +225,15 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             else
             {
                 thisSignal.FriendlyName = string.Format("PWM_OUT (PWM) (% duty cycle)");
-                thisSignal.Id = string.Format("HenkSDI[{0}]__PWM_OUT","0x"+ _deviceAddress.ToString("X").PadLeft(2, '0'));
+                thisSignal.Id = string.Format("HenkSDI[{0}]__PWM_OUT", "0x" + _deviceAddress.ToString("X").PadLeft(2, '0'));
             }
 
             thisSignal.Index = channelNumber;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = OutputChannelInitialValue(OutputChannel(channelNumber)); 
+            thisSignal.State = OutputChannelInitialValue(OutputChannel(channelNumber));
+            thisSignal.CalibrationData = OutputChannelCalibrationData(OutputChannel(channelNumber));
             thisSignal.IsPercentage = true;
             thisSignal.MinValue = 0; //0% duty cycle
             thisSignal.MaxValue = 1; //100% duty cycle
@@ -294,47 +295,47 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
             switch (outputChannel)
             {
                 case SDIDriver.OutputChannels.DIG_PWM_1:
-                    return _deviceConfig !=null && _deviceConfig.OutputChannelsConfig !=null &&
-                            _deviceConfig.OutputChannelsConfig.DIG_PWM_1 !=null &&
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
+                            _deviceConfig.OutputChannelsConfig.DIG_PWM_1 != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_1.Mode.HasValue
                                 ? _deviceConfig.OutputChannelsConfig.DIG_PWM_1.Mode.Value
                                 : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_2:
-                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_2 != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_2.Mode.HasValue
                                 ? _deviceConfig.OutputChannelsConfig.DIG_PWM_2.Mode.Value
                                 : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_3:
-                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_3 != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_3.Mode.HasValue
                                 ? _deviceConfig.OutputChannelsConfig.DIG_PWM_3.Mode.Value
-                                : DeviceFunction =="PITCH"  //HORIZONTAL ILS COMMAND BAR
+                                : DeviceFunction == "PITCH"  //HORIZONTAL ILS COMMAND BAR
                                     ? SDIDriver.OutputChannelMode.PWM
                                     : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_4:
-                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_4 != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_4.Mode.HasValue
                                 ? _deviceConfig.OutputChannelsConfig.DIG_PWM_4.Mode.Value
                                 : DeviceFunction == "PITCH" //VERTICAL ILS COMMAND BAR
-                                    ? SDIDriver.OutputChannelMode.PWM 
+                                    ? SDIDriver.OutputChannelMode.PWM
                                     : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_5:
-                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_5 != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_5.Mode.HasValue
                                 ? _deviceConfig.OutputChannelsConfig.DIG_PWM_5.Mode.Value
                                 : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_6:
-                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_6 != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_6.Mode.HasValue
                                 ? _deviceConfig.OutputChannelsConfig.DIG_PWM_6.Mode.Value
                                 : SDIDriver.OutputChannelMode.Digital;
                 case SDIDriver.OutputChannels.DIG_PWM_7:
-                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null && 
+                    return _deviceConfig != null && _deviceConfig.OutputChannelsConfig != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_7 != null &&
                             _deviceConfig.OutputChannelsConfig.DIG_PWM_7.Mode.HasValue
                                 ? _deviceConfig.OutputChannelsConfig.DIG_PWM_7.Mode.Value
@@ -343,6 +344,60 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
                     return SDIDriver.OutputChannelMode.PWM;
             }
             return SDIDriver.OutputChannelMode.Digital;
+        }
+        private List<CalibrationPoint> OutputChannelCalibrationData(SDIDriver.OutputChannels outputChannel)
+        {
+            if (_deviceConfig == null || _deviceConfig.OutputChannelsConfig == null) return Enumerable.Empty<CalibrationPoint>().ToList();
+            CalibrationPoint[] calibrationData = null;
+            switch (outputChannel)
+            {
+                case SDIDriver.OutputChannels.PWM_OUT:
+                    calibrationData = _deviceConfig.OutputChannelsConfig.PWM_OUT != null
+                                        ? _deviceConfig.OutputChannelsConfig.PWM_OUT.CalibrationData
+                                        : null;
+                    break;
+                case SDIDriver.OutputChannels.DIG_PWM_1:
+                    calibrationData = _deviceConfig.OutputChannelsConfig.DIG_PWM_1 != null
+                                        ? _deviceConfig.OutputChannelsConfig.DIG_PWM_1.CalibrationData
+                                        : null;
+                    break;
+                case SDIDriver.OutputChannels.DIG_PWM_2:
+                    calibrationData = _deviceConfig.OutputChannelsConfig.DIG_PWM_2 != null
+                                        ? _deviceConfig.OutputChannelsConfig.DIG_PWM_2.CalibrationData
+                                        : null;
+                    break;
+                case SDIDriver.OutputChannels.DIG_PWM_3:
+                    calibrationData = _deviceConfig.OutputChannelsConfig.DIG_PWM_3 != null
+                                        ? _deviceConfig.OutputChannelsConfig.DIG_PWM_3.CalibrationData
+                                        : null;
+                    break;
+                case SDIDriver.OutputChannels.DIG_PWM_4:
+                    calibrationData = _deviceConfig.OutputChannelsConfig.DIG_PWM_4 != null
+                                        ? _deviceConfig.OutputChannelsConfig.DIG_PWM_4.CalibrationData
+                                        : null;
+                    break;
+                case SDIDriver.OutputChannels.DIG_PWM_5:
+                    calibrationData = _deviceConfig.OutputChannelsConfig.DIG_PWM_5 != null
+                                        ? _deviceConfig.OutputChannelsConfig.DIG_PWM_5.CalibrationData
+                                        : null;
+                    break;
+                case SDIDriver.OutputChannels.DIG_PWM_6:
+                    calibrationData = _deviceConfig.OutputChannelsConfig.DIG_PWM_6 != null
+                                        ? _deviceConfig.OutputChannelsConfig.DIG_PWM_6.CalibrationData
+                                        : null;
+                    break;
+                case SDIDriver.OutputChannels.DIG_PWM_7:
+                    calibrationData = _deviceConfig.OutputChannelsConfig.DIG_PWM_7 != null
+                                        ? _deviceConfig.OutputChannelsConfig.DIG_PWM_7.CalibrationData
+                                        : null;
+                    break;
+                default:
+                    break;
+            }
+
+            return (calibrationData ?? Enumerable.Empty<CalibrationPoint>())
+                    .Select(x => new CalibrationPoint(x.Input, x.Output / 255.000))
+                    .ToList();
         }
         private byte OutputChannelInitialValue(SDIDriver.OutputChannels outputChannel)
         {

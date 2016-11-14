@@ -1,5 +1,7 @@
-﻿using SDI;
+﻿using Common.MacroProgramming;
+using SDI;
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace SimLinkup.HardwareSupport.Henk.SDI
@@ -78,8 +80,11 @@ namespace SimLinkup.HardwareSupport.Henk.SDI
     [Serializable]
     public class OutputChannelConfig
     {
-        public OutputChannelMode ? Mode { get; set; }
+        public OutputChannelMode? Mode { get; set; }
         public byte? InitialValue { get; set; }
+        [XmlArray("CalibrationData")]
+        [XmlArrayItem("CalibrationPoint")]
+        public CalibrationPoint[] CalibrationData{ get; set; }
     }
 
     [Serializable]

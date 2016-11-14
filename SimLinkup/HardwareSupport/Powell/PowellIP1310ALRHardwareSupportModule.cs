@@ -110,13 +110,13 @@ namespace SimLinkup.HardwareSupport.Powell
 
         public override DigitalSignal[] DigitalOutputs => null;
 
-        public override async Task SynchronizeAsync()
+        public override void Synchronize()
         {
-            await base.SynchronizeAsync().ConfigureAwait(false);
+            base.Synchronize();
             var timeSinceLastSynchronizedInMillis=DateTime.UtcNow.Subtract(_lastSynchronizedAt).TotalMilliseconds;
             if (timeSinceLastSynchronizedInMillis > (1000.00 / MAX_REFRESH_RATE_HZ))
             {
-                await UpdateOutputsAsync().ConfigureAwait(false);
+                UpdateOutputs();
                 _lastSynchronizedAt = DateTime.UtcNow;
             }
         }
@@ -127,13 +127,13 @@ namespace SimLinkup.HardwareSupport.Powell
         #region Signals Event Handling
 
         
-        private async Task UpdateOutputsAsync()
+        private void UpdateOutputs()
         {
             var connected = EnsureSerialPortConnected();
             if (connected)
             {
                 var commandList = GenerateCommandList();
-                await SendCommandListAsync(commandList).ConfigureAwait(false);
+                SendCommandListAsync(commandList);
             }
         }
         private bool EnsureSerialPortConnected()
@@ -242,7 +242,7 @@ namespace SimLinkup.HardwareSupport.Powell
         }
 
         private byte[] _lastBytesWritten=new byte[0];
-        private async Task SendCommandListAsync(IEnumerable<RWRCommand> commandList)
+        private void SendCommandListAsync(IEnumerable<RWRCommand> commandList)
         {
             var rwrCommands = commandList as RWRCommand[] ?? commandList.ToArray();
             if (!rwrCommands.Any()) return;

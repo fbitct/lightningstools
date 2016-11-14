@@ -114,7 +114,6 @@
     <Compile Include="HardwareSupport\AMI\AMI900278002HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\AnalogDevices\AnalogDevicesHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\AnalogDevices\AnalogDevicesHardwareSupportModuleConfig.cs" />
-    <Compile Include="HardwareSupport\AnalogDevices\SimulatedAnalogDevicesDenseDacEvalBoard.cs" />
     <Compile Include="HardwareSupport\Astronautics\Astronautics12871HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Astronautics\Astronautics12871HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\DirectInput\DirectInputHardwareSupportModule.cs" />
@@ -217,10 +216,10 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Content\Mapping\Nigel\AMI9001584fuelquantityindicator.mapping">
+    <Content Include="Content\Mapping\Nigel\AMI9001584fuelquantityindicator.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\Nigel\AMI900157501angleofattack.mapping">
+    <Content Include="Content\Mapping\Nigel\AMI900157501angleofattack.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Mapping\String\AMI9001584fuelquantityindicator.mapping">
@@ -255,7 +254,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Mapping\Nigel\HardwareSupportModule.registry">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Content\Mapping\String\HardwareSupportModule.registry">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -273,7 +273,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Mapping\Nigel\SimSupportModule.registry">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Mapping\PHCC\SimSupportModule.registry">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -283,6 +283,18 @@
     </Content>
     <Content Include="Content\Mapping\default.profile">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mapping\Lightning\AnalogDevicesHardwareSupportModule.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mapping\Lightning\HardwareSupportModule.registry">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mapping\Lightning\SimSupportModule.registry">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mapping\Lightning\Simtek100285altimeter.mapping">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
@@ -303,21 +315,22 @@
     <Content Include="Content\Mapping\Nigel\AMI900278002primaryADI.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\Nigel\Astronautics128710primaryADI.mapping">
+    <Content Include="Content\Mapping\Nigel\Astronautics128710primaryADI.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Mapping\Nigel\AnalogDevicesHardwareSupportModule.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="Content\Mapping\Nigel\GouldHS070D51341standbyCompass.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
+    <Content Include="Content\Mapping\Nigel\GouldHS070D51341standbyCompass.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Mapping\Nigel\henksdi.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <None Include="Content\Mapping\Nigel\Lilbern3239FuelFlowIndicator.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Content\Mapping\Nigel\Lilbern3239FuelFlowIndicator.mapping.disabled">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Mapping\Nigel\Malwin19581hydraulicPressureA.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -330,7 +343,7 @@
     <Content Include="Content\Mapping\Nigel\PowellIP1310ALRazimuthindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\Nigel\Simtek100181altimeter.mapping">
+    <Content Include="Content\Mapping\Nigel\Simtek100181altimeter.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Mapping\Nigel\Simtek100194machmeter.mapping">
@@ -344,13 +357,14 @@
     </Content>
     <Content Include="Content\Mapping\Nigel\Simtek100285altimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
-    <None Include="Content\Mapping\Nigel\Simtek100294fuelquantityindicator.mapping.disabled">
+    <Content Include="Content\Mapping\Nigel\Simtek100294fuelquantityindicator.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Nigel\Simtek100295fuelflowindicator.mapping.disabled">
+    </Content>
+    <Content Include="Content\Mapping\Nigel\Simtek100295fuelflowindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <Content Include="Content\Mapping\Nigel\Simtek10033501standbyADI.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -360,21 +374,21 @@
     <Content Include="Content\Mapping\Nigel\Simtek10058201angleofattack.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\Nigel\Simtek101082machmeter.mapping">
+    <Content Include="Content\Mapping\Nigel\Simtek101082machmeter.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\Nigel\Simtek101084standbyADI.mapping">
+    <Content Include="Content\Mapping\Nigel\Simtek101084standbyADI.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Mapping\Nigel\Simtek101088nozzlePositionIndicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Content\Mapping\Nigel\Simtek10108902fuelquantityindicator.mapping.disabled">
+    <Content Include="Content\Mapping\Nigel\Simtek10108902fuelquantityindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Nigel\Simtek101090epuFuel.mapping.disabled">
+    </Content>
+    <Content Include="Content\Mapping\Nigel\Simtek101090epuFuel.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <Content Include="Content\Mapping\Nigel\Simtek101091oilPressure.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -382,9 +396,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Mapping\Nigel\HenkF16ADISupportBoard.mapping">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\Nigel\Simtek101079standbyCompass.mapping">
+    <Content Include="Content\Mapping\Nigel\Simtek101079standbyCompass.mapping.disabled">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />

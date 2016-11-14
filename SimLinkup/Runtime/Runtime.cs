@@ -75,23 +75,26 @@ namespace SimLinkup.Runtime
                 };
             ScriptingContext[_loopFrequencySignal.Id] = _loopFrequencySignal;
         }
-        private async Task MainLoop()
+        private void MainLoop()
         {
             _keepRunning = true;
             IsRunning = true;
             while (_keepRunning)
             {
-                await ExecuteOneLoopIteration().ConfigureAwait(false);
+                ExecuteOneLoopIteration();
             }
             IsRunning = false;
         }
 
-        private async Task ExecuteOneLoopIteration()
+        private void ExecuteOneLoopIteration()
         {
             var startTime = DateTime.UtcNow;
-            await UpdateSimSignalsAsync().ConfigureAwait(false);
-            await SynchronizeAsync().ConfigureAwait(false);
-            await Task.Delay(5).ConfigureAwait(false);
+            UpdateSimSignals();
+            Synchronize();
+            var elapsed = DateTime.UtcNow.Subtract(startTime).TotalMilliseconds;
+            var toSleep = 2 - (int)elapsed;
+            if (toSleep < 0) toSleep = 1;
+            Thread.Sleep(toSleep);
             var endTime = DateTime.UtcNow;
             var loopDuration = endTime.Subtract(startTime).TotalMilliseconds;
             if (loopDuration <= 0) loopDuration = 1; 
@@ -99,20 +102,16 @@ namespace SimLinkup.Runtime
             _loopFrequencySignal.State = 1000 / loopDuration;
         }
 
-        private async Task SynchronizeAsync()
+        private void Synchronize()
         {
             if (ScriptingContext.HardwareSupportModules == null) return;
-            await Task.WhenAll(
-                ScriptingContext.HardwareSupportModules.Select(hsm => hsm.SynchronizeAsync())
-                ).ConfigureAwait(false);
+            ScriptingContext.HardwareSupportModules.ToList().ForEach(hsm => hsm.Synchronize());
         }
 
-        private async Task UpdateSimSignalsAsync()
+        private void UpdateSimSignals()
         {
             if (ScriptingContext.SimSupportModules == null) return;
-            await Task.WhenAll(
-                            ScriptingContext.SimSupportModules.Select(ssm => ssm.UpdateAsync())
-                            ).ConfigureAwait(false);
+            ScriptingContext.SimSupportModules.ToList().ForEach(ssm => ssm.Update());
         }
 
         public void Stop()

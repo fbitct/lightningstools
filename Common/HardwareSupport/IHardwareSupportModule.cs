@@ -11,7 +11,7 @@ namespace Common.HardwareSupport
         AnalogSignal[] AnalogOutputs { get; }
         DigitalSignal[] DigitalOutputs { get; }
         string FriendlyName { get; }
-        Task SynchronizeAsync();
+        void Synchronize();
         void Render(Graphics g, Rectangle destinationRectangle);
     }
 }

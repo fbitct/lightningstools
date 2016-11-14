@@ -11,7 +11,7 @@ namespace Common.SimSupport
         public abstract Dictionary<string, ISimOutput> SimOutputs { get; }
         public abstract Dictionary<string, SimCommand> SimCommands { get; }
         public abstract string FriendlyName { get; }
-        public abstract Task UpdateAsync();
+        public abstract void Update();
 
         public abstract void Dispose();
     }

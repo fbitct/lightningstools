@@ -39,7 +39,7 @@ namespace F4Utils.SimSupport
             EnsureSharedmemReaderIsCreated();
             CreateSimOutputsList();
             CreateSimCommandsList();
-            UpdateSimOutputsAsync().Wait();
+            UpdateSimOutputs();
         }
         public override string FriendlyName
         {
@@ -89,7 +89,7 @@ namespace F4Utils.SimSupport
         }
 
 
-        private async Task UpdateSimOutputsAsync()
+        private void UpdateSimOutputs()
         {
 
             if (_simOutputs == null) return;
@@ -103,9 +103,7 @@ namespace F4Utils.SimSupport
 
             if (_lastFlightData == null) return;
             var subscribedSimOutputs = _simOutputs.Values.Where(x => x.HasListeners);
-            await Task.Run(()=>
-                Parallel.ForEach(subscribedSimOutputs, (simOutput)=>UpdateSimOutput(showToFromFlag, showCommandBars, courseDeviationDegrees, deviationLimitDegrees, simOutput))
-            ).ConfigureAwait(false);
+            Parallel.ForEach(subscribedSimOutputs, (simOutput) => UpdateSimOutput(showToFromFlag, showCommandBars, courseDeviationDegrees, deviationLimitDegrees, simOutput));
 
         }
 
@@ -2256,9 +2254,9 @@ namespace F4Utils.SimSupport
                                                 typeof(string)));
         }
 
-        public override async Task UpdateAsync()
+        public override void Update()
         {
-            await UpdateSimOutputsAsync().ConfigureAwait(false);
+            UpdateSimOutputs();
         }
 
         private void UpdateHsiData(FlightData flightData, out float courseDeviationDecimalDegrees, out float deviationLimitDecimalDegrees )
