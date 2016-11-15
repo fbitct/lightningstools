@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common.csproj", "{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}"
 EndProject
@@ -40,6 +40,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Win32", "Win32\Common.Win32.csproj", "{188090E9-8B00-457B-85EB-F48BCDD94B0B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{66B83B83-A462-4CF4-A800-2BF3088A6702}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Drawing", "Drawing\Common.Drawing.csproj", "{5649A340-1475-4116-B5A1-CD21A99387F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -119,6 +121,10 @@ Global
 		{188090E9-8B00-457B-85EB-F48BCDD94B0B}.Debug|x86.Build.0 = Debug|x86
 		{188090E9-8B00-457B-85EB-F48BCDD94B0B}.Release|x86.ActiveCfg = Release|x86
 		{188090E9-8B00-457B-85EB-F48BCDD94B0B}.Release|x86.Build.0 = Release|x86
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Debug|x86.ActiveCfg = Debug|x86
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Debug|x86.Build.0 = Debug|x86
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Release|x86.ActiveCfg = Release|x86
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,5 +145,6 @@ Global
 		{275C5E8D-A56A-45D2-8F70-93B0797C2E7B} = {66B83B83-A462-4CF4-A800-2BF3088A6702}
 		{3FC238BA-7FC2-47AE-AE45-7CF199EDBE08} = {66B83B83-A462-4CF4-A800-2BF3088A6702}
 		{188090E9-8B00-457B-85EB-F48BCDD94B0B} = {66B83B83-A462-4CF4-A800-2BF3088A6702}
+		{5649A340-1475-4116-B5A1-CD21A99387F5} = {66B83B83-A462-4CF4-A800-2BF3088A6702}
 	EndGlobalSection
 EndGlobal
