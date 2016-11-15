@@ -38,13 +38,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Drawing" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Drawing\Common.Drawing.csproj">
+      <Project>{5649a340-1475-4116-b5a1-cd21a99387f5}</Project>
+      <Name>Common.Drawing</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\packages\Fody.1.28.3\build\Fody.targets" Condition="Exists('$(SolutionDir)\packages\Fody.1.28.3\build\Fody.targets')" />

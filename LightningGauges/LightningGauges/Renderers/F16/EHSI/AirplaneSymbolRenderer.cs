@@ -1,4 +1,4 @@
-using System.Drawing;
+using Common.Drawing;
 using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.EHSI

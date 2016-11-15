@@ -1,6 +1,6 @@
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
+using Common.Drawing;
+using Common.Drawing.Drawing2D;
+using Common.Drawing.Imaging;
 using Common.Imaging;
 namespace F16CPD.FlightInstruments.Pfd
 {

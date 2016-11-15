@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalogDevices", "..\AnalogDevices\AnalogDevices.csproj", "{E8F9E0E2-6DCA-4C39-8E0C-2818C1D87DA9}"
 EndProject
@@ -164,6 +164,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADITestTool", "..\ADITestTool\ADITestTool\ADITestTool.csproj", "{074F1AD3-5D11-4072-B186-89067EB5D49C}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "ADITestToolSetup", "..\ADITestTool\ADITestToolSetup\ADITestToolSetup.vdproj", "{E94CAB26-E603-41BB-8F94-7ECAB43149BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Drawing", "..\Common\Drawing\Common.Drawing.csproj", "{5649A340-1475-4116-B5A1-CD21A99387F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -432,6 +434,10 @@ Global
 		{E94CAB26-E603-41BB-8F94-7ECAB43149BB}.Debug|x86.Build.0 = Debug
 		{E94CAB26-E603-41BB-8F94-7ECAB43149BB}.Release|x86.ActiveCfg = Release
 		{E94CAB26-E603-41BB-8F94-7ECAB43149BB}.Release|x86.Build.0 = Release
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Debug|x86.ActiveCfg = Debug|x86
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Debug|x86.Build.0 = Debug|x86
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Release|x86.ActiveCfg = Release|x86
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -500,5 +506,6 @@ Global
 		{77C1FF4F-6D97-4578-95CD-613BD81FAD0F} = {270B93E1-525F-4CFE-B10C-655710CE0A10}
 		{074F1AD3-5D11-4072-B186-89067EB5D49C} = {270B93E1-525F-4CFE-B10C-655710CE0A10}
 		{E94CAB26-E603-41BB-8F94-7ECAB43149BB} = {270B93E1-525F-4CFE-B10C-655710CE0A10}
+		{5649A340-1475-4116-B5A1-CD21A99387F5} = {C4A34955-72A3-4269-9790-40335BFEF688}
 	EndGlobalSection
 EndGlobal

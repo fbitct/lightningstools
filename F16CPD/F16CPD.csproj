@@ -339,6 +339,10 @@
       <Project>{1e857490-c70d-4ef8-9edd-a1fdbcf98ab6}</Project>
       <Name>Common.Compression</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common\Drawing\Common.Drawing.csproj">
+      <Project>{5649a340-1475-4116-b5a1-cd21a99387f5}</Project>
+      <Name>Common.Drawing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Imaging\Common.Imaging.csproj">
       <Project>{04157d6e-afe0-4399-94d5-306cf4aadac1}</Project>
       <Name>Common.Imaging</Name>

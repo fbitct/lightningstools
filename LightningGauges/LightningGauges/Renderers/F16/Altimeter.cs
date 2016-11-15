@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Text;
+using Common.Drawing;
+using Common.Drawing.Text;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;

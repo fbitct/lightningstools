@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using Common.Drawing;
 using System.Windows.Forms;
 using Common.SimSupport;
 using Common.Imaging;
@@ -59,7 +59,7 @@ namespace MFDExtractor
             instrumentForm.DataChanged += new InstrumentFormDataChangedHandler(instrumentType, instrumentForm).HandleDataChangedEvent;
 
             if (initialImage == null) return instrumentForm;
-            using (var graphics = instrumentForm.CreateGraphics())
+            using (var graphics = (Graphics)instrumentForm.CreateGraphics())
             {
                 graphics.DrawImageFast(initialImage, instrumentForm.ClientRectangle);
             }

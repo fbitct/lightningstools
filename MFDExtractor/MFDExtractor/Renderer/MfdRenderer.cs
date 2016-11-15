@@ -1,7 +1,8 @@
 ﻿using System;
 using Common.SimSupport;
-using System.Drawing;
+using Common.Drawing;
 using Common.Imaging;
+using Common.Drawing.Imaging;
 
 namespace MFDExtractor.Renderer
 {
@@ -70,7 +71,7 @@ namespace MFDExtractor.Renderer
 	        try
 	        {
 	            var mfdImage = InstrumentState.SourceImage;
-                if (mfdImage !=null  && mfdImage.PixelFormat != System.Drawing.Imaging.PixelFormat.Undefined)
+                if (mfdImage !=null  && mfdImage.PixelFormat != PixelFormat.Undefined)
                 {
 	                destinationGraphics.DrawImageFast(mfdImage, destinationRectangle, InstrumentState.SourceRectangle,
 	                    GraphicsUnit.Pixel);

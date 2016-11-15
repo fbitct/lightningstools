@@ -1,8 +1,8 @@
 using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
+using Common.Drawing;
+using Common.Drawing.Drawing2D;
+using Common.Drawing.Imaging;
+using Common.Drawing.Text;
 using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd

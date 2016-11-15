@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
+using Common.Drawing;
+using Common.Drawing.Imaging;
 
 namespace F4Utils.Terrain
 {

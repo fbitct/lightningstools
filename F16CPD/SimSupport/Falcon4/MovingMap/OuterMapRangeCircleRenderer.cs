@@ -1,5 +1,5 @@
 using System;
-using System.Drawing;
+using Common.Drawing;
 using Common.Imaging;
 
 namespace F16CPD.SimSupport.Falcon4.MovingMap

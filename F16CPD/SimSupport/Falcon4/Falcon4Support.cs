@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using Common.Drawing;
 using Common.SimSupport;
 using F16CPD.Mfd.Controls;
 using F16CPD.Networking;

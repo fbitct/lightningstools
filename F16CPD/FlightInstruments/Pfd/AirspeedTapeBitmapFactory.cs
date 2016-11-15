@@ -1,5 +1,5 @@
-using System.Drawing;
-using System.Drawing.Drawing2D;
+using Common.Drawing;
+using Common.Drawing.Drawing2D;
 using Common.UI.Layout;
 
 namespace F16CPD.FlightInstruments.Pfd

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
+using Common.Drawing;
+using Common.Drawing.Drawing2D;
+using Common.Drawing.Text;
 using System.Globalization;
 using System.Linq;
 using System.Net;

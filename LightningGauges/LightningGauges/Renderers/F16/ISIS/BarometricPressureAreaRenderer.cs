@@ -1,6 +1,6 @@
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
+using Common.Drawing;
+using Common.Drawing.Drawing2D;
+using Common.Drawing.Text;
 using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS

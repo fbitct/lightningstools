@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
+using Common.Drawing;
+using Common.Drawing.Imaging;
+using Common.Drawing.Text;
 using Common.Imaging;
 using Common.SimSupport;
 

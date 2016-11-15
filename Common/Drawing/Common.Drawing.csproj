@@ -130,11 +130,14 @@
     <Compile Include="StringFormat.cs" />
     <Compile Include="StringFormatFlags.cs" />
     <Compile Include="StringTrimming.cs" />
+    <Compile Include="SystemColors.cs" />
+    <Compile Include="SystemPens.cs" />
     <Compile Include="Text\FontCollection.cs" />
     <Compile Include="Text\GenericFontFamilies.cs" />
     <Compile Include="Text\HotkeyPrefix.cs" />
     <Compile Include="Text\PrivateFontCollection.cs" />
     <Compile Include="Text\TextRenderingHint.cs" />
+    <Compile Include="ToolboxBitmapAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml" />

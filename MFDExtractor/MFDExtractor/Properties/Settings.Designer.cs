@@ -6254,9 +6254,9 @@ namespace MFDExtractor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("HighQuality")]
-        public global::System.Drawing.Drawing2D.CompositingQuality CompositingQuality {
+        public global::Common.Drawing.Drawing2D.CompositingQuality CompositingQuality {
             get {
-                return ((global::System.Drawing.Drawing2D.CompositingQuality)(this["CompositingQuality"]));
+                return ((global::Common.Drawing.Drawing2D.CompositingQuality)(this["CompositingQuality"]));
             }
             set {
                 this["CompositingQuality"] = value;
@@ -6266,9 +6266,9 @@ namespace MFDExtractor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ClearTypeGridFit")]
-        public global::System.Drawing.Text.TextRenderingHint TextRenderingHint {
+        public global::Common.Drawing.Text.TextRenderingHint TextRenderingHint {
             get {
-                return ((global::System.Drawing.Text.TextRenderingHint)(this["TextRenderingHint"]));
+                return ((global::Common.Drawing.Text.TextRenderingHint)(this["TextRenderingHint"]));
             }
             set {
                 this["TextRenderingHint"] = value;
@@ -6278,9 +6278,9 @@ namespace MFDExtractor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("HighQuality")]
-        public global::System.Drawing.Drawing2D.SmoothingMode SmoothingMode {
+        public global::Common.Drawing.Drawing2D.SmoothingMode SmoothingMode {
             get {
-                return ((global::System.Drawing.Drawing2D.SmoothingMode)(this["SmoothingMode"]));
+                return ((global::Common.Drawing.Drawing2D.SmoothingMode)(this["SmoothingMode"]));
             }
             set {
                 this["SmoothingMode"] = value;
@@ -6290,9 +6290,9 @@ namespace MFDExtractor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("HighQuality")]
-        public global::System.Drawing.Drawing2D.PixelOffsetMode PixelOffsetMode {
+        public global::Common.Drawing.Drawing2D.PixelOffsetMode PixelOffsetMode {
             get {
-                return ((global::System.Drawing.Drawing2D.PixelOffsetMode)(this["PixelOffsetMode"]));
+                return ((global::Common.Drawing.Drawing2D.PixelOffsetMode)(this["PixelOffsetMode"]));
             }
             set {
                 this["PixelOffsetMode"] = value;
@@ -6302,9 +6302,9 @@ namespace MFDExtractor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("HighQualityBicubic")]
-        public global::System.Drawing.Drawing2D.InterpolationMode InterpolationMode {
+        public global::Common.Drawing.Drawing2D.InterpolationMode InterpolationMode {
             get {
-                return ((global::System.Drawing.Drawing2D.InterpolationMode)(this["InterpolationMode"]));
+                return ((global::Common.Drawing.Drawing2D.InterpolationMode)(this["InterpolationMode"]));
             }
             set {
                 this["InterpolationMode"] = value;

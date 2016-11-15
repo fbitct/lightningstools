@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
+using Common.Drawing;
+using Common.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace Common.Imaging
@@ -123,8 +123,8 @@ namespace Common.Imaging
 
         public static ImageMaskPair CreateFromFiles(string imagePath, string maskPath)
         {
-            var image = System.Drawing.Image.FromFile(imagePath);
-            var mask = System.Drawing.Image.FromFile(maskPath);
+            var image = Common.Drawing.Image.FromFile(imagePath);
+            var mask = Common.Drawing.Image.FromFile(maskPath);
             Util.ConvertPixelFormat(ref image, PixelFormat.Format32bppArgb);
             Util.ConvertPixelFormat(ref mask, PixelFormat.Format32bppArgb);
             return new ImageMaskPair((Bitmap) image, (Bitmap) mask, true);

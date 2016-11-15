@@ -483,6 +483,10 @@
       <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common\Drawing\Common.Drawing.csproj">
+      <Project>{5649a340-1475-4116-b5a1-cd21a99387f5}</Project>
+      <Name>Common.Drawing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\HardwareSupport\Common.HardwareSupport.csproj">
       <Project>{b8fcc824-2b39-4637-a447-64d60cf60811}</Project>
       <Name>Common.HardwareSupport</Name>

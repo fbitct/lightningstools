@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using Common.Drawing;
 using F16CPD.Mfd.Controls;
 
 namespace F16CPD.Mfd.Menus

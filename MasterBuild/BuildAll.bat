@@ -9,11 +9,13 @@ SET MASTERBUILDDIR=%~dp0
 REG IMPORT "%MASTERBUILDDIR%EnableCommandLineInstallerBuilds.reg" >NUL 2>NUL
 
 FOR /R "%MASTERBUILDDIR%".. %%S IN (*.sln) DO (
+	SET LAST_BUILT_SOLUTION="%%S"
 	"%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Release" "%%S"
 	IF ERRORLEVEL 1 GOTO END
 	"%ProgFiles86Root%\Microsoft Visual Studio 14.0\Common7\IDE\devenv.com"  /Build "Debug" "%%S"
 	IF ERRORLEVEL 1 GOTO END
 )
 :END
+
 
 

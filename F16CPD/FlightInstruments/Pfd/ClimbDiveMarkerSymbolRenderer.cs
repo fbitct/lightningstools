@@ -1,5 +1,5 @@
 using F16CPD.Properties;
-using System.Drawing;
+using Common.Drawing;
 using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd

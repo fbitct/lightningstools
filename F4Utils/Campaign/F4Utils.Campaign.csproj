@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -40,7 +40,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AcdFile.cs" />
@@ -217,6 +216,10 @@
     <Compile Include="WldFile.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Drawing\Common.Drawing.csproj">
+      <Project>{5649a340-1475-4116-b5a1-cd21a99387f5}</Project>
+      <Name>Common.Drawing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Lzss\LzssManaged\LzssManaged.csproj">
       <Project>{04f20e15-844a-4d30-9ec4-e8fd61a043a9}</Project>
       <Name>LzssManaged</Name>

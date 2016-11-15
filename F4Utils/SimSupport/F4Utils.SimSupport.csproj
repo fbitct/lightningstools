@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -61,6 +61,10 @@
     <ProjectReference Include="..\..\Common\Common.csproj">
       <Project>{aba9cc75-b778-4e46-a6f6-afec27f2eb59}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Drawing\Common.Drawing.csproj">
+      <Project>{5649a340-1475-4116-b5a1-cd21a99387f5}</Project>
+      <Name>Common.Drawing</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\MacroProgramming\Common.MacroProgramming.csproj">
       <Project>{320431c6-2454-4d95-8d3c-d27c8e2288e9}</Project>

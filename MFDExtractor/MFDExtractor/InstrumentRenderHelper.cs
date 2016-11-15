@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Drawing;
-using System.Drawing.Imaging;
+using Common.Drawing;
+using Common.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;

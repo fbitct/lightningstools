@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
+using Common.Drawing;
+using Common.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -20,8 +20,8 @@ namespace F4Utils.Resources
     {
         byte[] GetFlatResource(int resourceNum);
         byte[] GetFlatResource(string resourceId);
-        System.Drawing.Bitmap GetImageResource(int resourceNum);
-        System.Drawing.Bitmap GetImageResource(string resourceId);
+        Bitmap GetImageResource(int resourceNum);
+        Bitmap GetImageResource(string resourceId);
         string GetResourceID(int resourceNum);
         ResourceType GetResourceType(int resourceNum);
         byte[] GetSoundResource(int resourceNum);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+using Common.Drawing;
+using Common.Drawing.Drawing2D;
 using Common.Imaging;
 using F16CPD.Properties;
 

@@ -103,6 +103,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Drawing\Common.Drawing.csproj">
+      <Project>{5649a340-1475-4116-b5a1-cd21a99387f5}</Project>
+      <Name>Common.Drawing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\F4Utils\Resources\F4Utils.Resources.csproj">
       <Project>{a95b675e-e59b-4d44-b66e-8e642b2d825f}</Project>
       <Name>F4Utils.Resources</Name>

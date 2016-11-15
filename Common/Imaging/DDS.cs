@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using Common.Drawing;
 using System.IO;
 using FreeImageAPI;
 

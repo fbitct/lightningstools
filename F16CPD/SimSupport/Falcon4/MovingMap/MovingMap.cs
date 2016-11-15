@@ -1,12 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Imaging;
+using Common.Drawing;
+using Common.Drawing.Imaging;
 using System.Windows.Forms;
 using Common.Imaging;
 using F4Utils.Terrain;
 using log4net;
-using System.Drawing.Drawing2D;
+using Common.Drawing.Drawing2D;
 using F4Utils.Resources;
 using System.IO;
 using F16CPD.FlightInstruments.Pfd;

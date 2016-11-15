@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "MFDExtractorSetup", "MFDExtractorSetup\MFDExtractorSetup.vdproj", "{217B357C-70EF-4B17-B450-99500707CF64}"
 EndProject
@@ -63,6 +63,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.InputSupport.UI", "..\Common\InputSupport\UI\Common.InputSupport.UI.csproj", "{01ADFC8A-742B-4824-8501-8E0DB931B94F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils.Campaign", "..\F4Utils\Campaign\F4Utils.Campaign.csproj", "{D386EC91-6D89-421F-87BC-4849E0232722}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Drawing", "..\Common\Drawing\Common.Drawing.csproj", "{5649A340-1475-4116-B5A1-CD21A99387F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -182,6 +184,10 @@ Global
 		{D386EC91-6D89-421F-87BC-4849E0232722}.Debug|x86.Build.0 = Debug|x86
 		{D386EC91-6D89-421F-87BC-4849E0232722}.Release|x86.ActiveCfg = Release|x86
 		{D386EC91-6D89-421F-87BC-4849E0232722}.Release|x86.Build.0 = Release|x86
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Debug|x86.ActiveCfg = Debug|x86
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Debug|x86.Build.0 = Debug|x86
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Release|x86.ActiveCfg = Release|x86
+		{5649A340-1475-4116-B5A1-CD21A99387F5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -205,5 +211,6 @@ Global
 		{738063DA-F792-4081-A70A-4A3190DBC6D2} = {27C98DD2-B084-4153-B2BE-4FFE7CF9D32C}
 		{01ADFC8A-742B-4824-8501-8E0DB931B94F} = {27C98DD2-B084-4153-B2BE-4FFE7CF9D32C}
 		{D386EC91-6D89-421F-87BC-4849E0232722} = {82D9B38C-3394-4983-A358-4BCF1EB76BAE}
+		{5649A340-1475-4116-B5A1-CD21A99387F5} = {27C98DD2-B084-4153-B2BE-4FFE7CF9D32C}
 	EndGlobalSection
 EndGlobal

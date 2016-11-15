@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing.Text;
+using Common.Drawing;
+using Common.Drawing.Drawing2D;
+using Common.Drawing.Imaging;
+using Common.Drawing.Text;
 using System.Runtime.Remoting.Contexts;
 using System.Windows.Forms;
 using Common.Collections;
@@ -307,7 +307,7 @@ namespace F16CPD
                     }
                     attrs.SetColorMatrix(cm, ColorMatrixFlag.Default);
 
-                    using (var formGraphics = CreateGraphics())
+                    using (var formGraphics = (Graphics)CreateGraphics())
                     {
                         formGraphics.CompositingQuality = CompositingQuality.HighQuality;
                         formGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;

@@ -1,4 +1,4 @@
-using System.Drawing;
+using Common.Drawing;
 using System.Text;
 
 namespace LightningGauges.Renderers.F16.AzimuthIndicator

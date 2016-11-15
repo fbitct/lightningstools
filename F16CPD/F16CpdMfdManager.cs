@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
+using Common.Drawing;
+using Common.Drawing.Drawing2D;
+using Common.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
