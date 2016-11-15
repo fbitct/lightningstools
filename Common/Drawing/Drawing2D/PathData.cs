@@ -14,8 +14,8 @@ namespace Common.Drawing.Drawing2D
         /// <returns>An array of <see cref="T:Common.Drawing.PointF" /> objects that represents the points through which the path is constructed.</returns>
         public PointF[] Points
         {
-            get { return WrappedPathData.Points.Cast<PointF>().ToArray(); }
-            set { WrappedPathData.Points = value.Cast<System.Drawing.PointF>().ToArray(); }
+            get { return WrappedPathData.Points.Convert<PointF>().ToArray(); }
+            set { WrappedPathData.Points = value.Convert<System.Drawing.PointF>().ToArray(); }
         }
 
         /// <summary>Gets or sets the types of the corresponding points in the path.</summary>

@@ -27,7 +27,7 @@ namespace Common.Drawing
         /// <PermissionSet>
         ///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode, ControlEvidence" />
         /// </PermissionSet>
-        public static FontFamily[] Families { get { return System.Drawing.FontFamily.Families.Cast<FontFamily>().ToArray(); } }
+        public static FontFamily[] Families { get { return System.Drawing.FontFamily.Families.Convert<FontFamily>().ToArray(); } }
 
         /// <summary>Gets a generic sans serif <see cref="T:Common.Drawing.FontFamily" /> object.</summary>
         /// <returns>A <see cref="T:Common.Drawing.FontFamily" /> object that represents a generic sans serif font.</returns>
@@ -170,7 +170,7 @@ namespace Common.Drawing
         [Obsolete("Do not use method GetFamilies, use property Families instead")]
         public static FontFamily[] GetFamilies(Graphics graphics)
         {
-            return System.Drawing.FontFamily.GetFamilies(graphics).Cast<FontFamily>().ToArray();
+            return System.Drawing.FontFamily.GetFamilies(graphics).Convert<FontFamily>().ToArray();
         }
 
         /// <summary>Indicates whether the specified <see cref="T:Common.Drawing.FontStyle" /> enumeration is available.</summary>

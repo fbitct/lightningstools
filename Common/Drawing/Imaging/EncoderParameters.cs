@@ -15,8 +15,8 @@ namespace Common.Drawing.Imaging
         /// <returns>The array of <see cref="T:Common.Drawing.Imaging.EncoderParameter" /> objects.</returns>
         public EncoderParameter[] Param
         {
-            get { return WrappedEncoderParameters.Param.Cast<EncoderParameter>().ToArray(); }
-            set { WrappedEncoderParameters.Param = value.Cast<System.Drawing.Imaging.EncoderParameter>().ToArray(); }
+            get { return WrappedEncoderParameters.Param.Convert<EncoderParameter>().ToArray(); }
+            set { WrappedEncoderParameters.Param = value.Convert<System.Drawing.Imaging.EncoderParameter>().ToArray(); }
         }
 
         /// <summary>Initializes a new instance of the <see cref="T:Common.Drawing.Imaging.EncoderParameters" /> class that can contain the specified number of <see cref="T:Common.Drawing.Imaging.EncoderParameter" /> objects.</summary>

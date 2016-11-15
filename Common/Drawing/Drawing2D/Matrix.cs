@@ -84,7 +84,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="plgpts">An array of three <see cref="T:Common.Drawing.PointF" /> structures that represents the points of a parallelogram to which the upper-left, upper-right, and lower-left corners of the rectangle is to be transformed. The lower-right corner of the parallelogram is implied by the first three corners. </param>
         public Matrix(RectangleF rect, PointF[] plgpts)
         {
-            WrappedMatrix = new System.Drawing.Drawing2D.Matrix(rect, plgpts.Cast<System.Drawing.PointF>().ToArray());
+            WrappedMatrix = new System.Drawing.Drawing2D.Matrix(rect, plgpts.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Initializes a new instance of the <see cref="T:Common.Drawing.Drawing2D.Matrix" /> class to the geometric transform defined by the specified rectangle and array of points.</summary>
@@ -92,7 +92,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="plgpts">An array of three <see cref="T:Common.Drawing.Point" /> structures that represents the points of a parallelogram to which the upper-left, upper-right, and lower-left corners of the rectangle is to be transformed. The lower-right corner of the parallelogram is implied by the first three corners. </param>
         public Matrix(Rectangle rect, Point[] plgpts)
         {
-            WrappedMatrix = new System.Drawing.Drawing2D.Matrix(rect, plgpts.Cast<System.Drawing.Point>().ToArray());
+            WrappedMatrix = new System.Drawing.Drawing2D.Matrix(rect, plgpts.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Releases all resources used by this <see cref="T:Common.Drawing.Drawing2D.Matrix" />.</summary>
@@ -248,35 +248,35 @@ namespace Common.Drawing.Drawing2D
         /// <param name="pts">An array of <see cref="T:Common.Drawing.PointF" /> structures that represents the points to transform. </param>
         public void TransformPoints(PointF[] pts)
         {
-            WrappedMatrix.TransformPoints(pts.Cast<System.Drawing.PointF>().ToArray());
+            WrappedMatrix.TransformPoints(pts.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Applies the geometric transform represented by this <see cref="T:Common.Drawing.Drawing2D.Matrix" /> to a specified array of points.</summary>
         /// <param name="pts">An array of <see cref="T:Common.Drawing.Point" /> structures that represents the points to transform. </param>
         public void TransformPoints(Point[] pts)
         {
-            WrappedMatrix.TransformPoints(pts.Cast<System.Drawing.Point>().ToArray());
+            WrappedMatrix.TransformPoints(pts.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Multiplies each vector in an array by the matrix. The translation elements of this matrix (third row) are ignored.</summary>
         /// <param name="pts">An array of <see cref="T:Common.Drawing.Point" /> structures that represents the points to transform. </param>
         public void TransformVectors(PointF[] pts)
         {
-            WrappedMatrix.TransformVectors(pts.Cast<System.Drawing.PointF>().ToArray());
+            WrappedMatrix.TransformVectors(pts.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Multiplies each vector in an array by the matrix. The translation elements of this matrix (third row) are ignored.</summary>
         /// <param name="pts">An array of <see cref="T:Common.Drawing.Point" /> structures that represents the points to transform.</param>
         public void VectorTransformPoints(Point[] pts)
         {
-            WrappedMatrix.VectorTransformPoints(pts.Cast<System.Drawing.Point>().ToArray());
+            WrappedMatrix.VectorTransformPoints(pts.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Applies only the scale and rotate components of this <see cref="T:Common.Drawing.Drawing2D.Matrix" /> to the specified array of points.</summary>
         /// <param name="pts">An array of <see cref="T:Common.Drawing.Point" /> structures that represents the points to transform. </param>
         public void TransformVectors(Point[] pts)
         {
-            WrappedMatrix.TransformVectors(pts.Cast<System.Drawing.Point>().ToArray());
+            WrappedMatrix.TransformVectors(pts.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Tests whether the specified object is a <see cref="T:Common.Drawing.Drawing2D.Matrix" /> and is identical to this <see cref="T:Common.Drawing.Drawing2D.Matrix" />.</summary>

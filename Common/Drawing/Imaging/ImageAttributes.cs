@@ -352,7 +352,7 @@ namespace Common.Drawing.Imaging
         /// </PermissionSet>
         public void SetRemapTable(ColorMap[] map)
         {
-            WrappedImageAttributes.SetRemapTable(map.Cast<System.Drawing.Imaging.ColorMap>().ToArray());
+            WrappedImageAttributes.SetRemapTable(map.Convert<System.Drawing.Imaging.ColorMap>().ToArray());
         }
 
         /// <summary>Sets the color-remap table for a specified category.</summary>
@@ -363,7 +363,7 @@ namespace Common.Drawing.Imaging
         /// </PermissionSet>
         public void SetRemapTable(ColorMap[] map, ColorAdjustType type)
         {
-            WrappedImageAttributes.SetRemapTable(map.Cast<System.Drawing.Imaging.ColorMap>().ToArray(), (System.Drawing.Imaging.ColorAdjustType)type);
+            WrappedImageAttributes.SetRemapTable(map.Convert<System.Drawing.Imaging.ColorMap>().ToArray(), (System.Drawing.Imaging.ColorAdjustType)type);
         }
 
         /// <summary>Clears the color-remap table for the default category.</summary>
@@ -392,7 +392,7 @@ namespace Common.Drawing.Imaging
         /// </PermissionSet>
         public void SetBrushRemapTable(ColorMap[] map)
         {
-            WrappedImageAttributes.SetBrushRemapTable(map.Cast<System.Drawing.Imaging.ColorMap>().ToArray());
+            WrappedImageAttributes.SetBrushRemapTable(map.Convert<System.Drawing.Imaging.ColorMap>().ToArray());
         }
 
         /// <summary>Clears the brush color-remap table of this <see cref="T:Common.Drawing.Imaging.ImageAttributes" /> object.</summary>

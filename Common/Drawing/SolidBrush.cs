@@ -29,6 +29,7 @@
         public SolidBrush(Color color)
         {
             WrappedSolidBrush = new System.Drawing.SolidBrush(color);
+            base.WrappedBrush = WrappedSolidBrush;
         }
 
         /// <summary>Creates an exact copy of this <see cref="T:Common.Drawing.SolidBrush" /> object.</summary>

@@ -51,7 +51,7 @@ namespace Common.Drawing.Drawing2D
         /// <PermissionSet>
         ///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode, ControlEvidence" />
         /// </PermissionSet>
-        public PointF[] PathPoints { get { return WrappedGraphicsPath.PathPoints.Cast<PointF>().ToArray(); } }
+        public PointF[] PathPoints { get { return WrappedGraphicsPath.PathPoints.Convert<PointF>().ToArray(); } }
 
         /// <summary>Initializes a new instance of the <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" /> class with a <see cref="P:Common.Drawing.Drawing2D.GraphicsPath.FillMode" /> value of <see cref="F:Common.Drawing.Drawing2D.FillMode.Alternate" />.</summary>
         public GraphicsPath()
@@ -71,7 +71,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="types">An array of <see cref="T:Common.Drawing.Drawing2D.PathPointType" /> enumeration elements that specifies the type of each corresponding point in the <paramref name="pts" /> array. </param>
         public GraphicsPath(PointF[] pts, byte[] types) 
         {
-            WrappedGraphicsPath = new System.Drawing.Drawing2D.GraphicsPath(pts.Cast<System.Drawing.PointF>().ToArray(), types);
+            WrappedGraphicsPath = new System.Drawing.Drawing2D.GraphicsPath(pts.Convert<System.Drawing.PointF>().ToArray(), types);
         }
 
         /// <summary>Initializes a new instance of the <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" /> array with the specified <see cref="T:Common.Drawing.Drawing2D.PathPointType" /> and <see cref="T:Common.Drawing.PointF" /> arrays and with the specified <see cref="T:Common.Drawing.Drawing2D.FillMode" /> enumeration element.</summary>
@@ -80,7 +80,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="fillMode">A <see cref="T:Common.Drawing.Drawing2D.FillMode" /> enumeration that specifies how the interiors of shapes in this <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" /> are filled. </param>
         public GraphicsPath(PointF[] pts, byte[] types, FillMode fillMode)
         {
-            WrappedGraphicsPath = new System.Drawing.Drawing2D.GraphicsPath(pts.Cast<System.Drawing.PointF>().ToArray(), types, (System.Drawing.Drawing2D.FillMode)fillMode);
+            WrappedGraphicsPath = new System.Drawing.Drawing2D.GraphicsPath(pts.Convert<System.Drawing.PointF>().ToArray(), types, (System.Drawing.Drawing2D.FillMode)fillMode);
         }
 
         /// <summary>Initializes a new instance of the <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" /> class with the specified <see cref="T:Common.Drawing.Drawing2D.PathPointType" /> and <see cref="T:Common.Drawing.Point" /> arrays.</summary>
@@ -88,7 +88,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="types">An array of <see cref="T:Common.Drawing.Drawing2D.PathPointType" /> enumeration elements that specifies the type of each corresponding point in the <paramref name="pts" /> array. </param>
         public GraphicsPath(Point[] pts, byte[] types) 
         {
-            WrappedGraphicsPath = new System.Drawing.Drawing2D.GraphicsPath(pts.Cast<System.Drawing.Point>().ToArray(), types);
+            WrappedGraphicsPath = new System.Drawing.Drawing2D.GraphicsPath(pts.Convert<System.Drawing.Point>().ToArray(), types);
         }
 
         /// <summary>Initializes a new instance of the <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" /> class with the specified <see cref="T:Common.Drawing.Drawing2D.PathPointType" /> and <see cref="T:Common.Drawing.Point" /> arrays and with the specified <see cref="T:Common.Drawing.Drawing2D.FillMode" /> enumeration element.</summary>
@@ -97,7 +97,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="fillMode">A <see cref="T:Common.Drawing.Drawing2D.FillMode" /> enumeration that specifies how the interiors of shapes in this <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" /> are filled. </param>
         public GraphicsPath(Point[] pts, byte[] types, FillMode fillMode)
         {
-            WrappedGraphicsPath = new System.Drawing.Drawing2D.GraphicsPath(pts.Cast<System.Drawing.Point>().ToArray(), types, (System.Drawing.Drawing2D.FillMode)fillMode);
+            WrappedGraphicsPath = new System.Drawing.Drawing2D.GraphicsPath(pts.Convert<System.Drawing.Point>().ToArray(), types, (System.Drawing.Drawing2D.FillMode)fillMode);
         }
 
         /// <summary>Creates an exact copy of this path.</summary>
@@ -398,7 +398,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="points">An array of <see cref="T:Common.Drawing.PointF" /> structures that represents the points that define the line segments to add. </param>
         public void AddLines(PointF[] points)
         {
-            WrappedGraphicsPath.AddLines(points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphicsPath.AddLines(points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Appends a line segment to this <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" />.</summary>
@@ -426,7 +426,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="points">An array of <see cref="T:Common.Drawing.Point" /> structures that represents the points that define the line segments to add. </param>
         public void AddLines(Point[] points)
         {
-            WrappedGraphicsPath.AddLines(points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphicsPath.AddLines(points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Appends an elliptical arc to the current figure.</summary>
@@ -499,7 +499,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="points">An array of <see cref="T:Common.Drawing.PointF" /> structures that represents the points that define the curves. </param>
         public void AddBeziers(PointF[] points)
         {
-            WrappedGraphicsPath.AddBeziers(points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphicsPath.AddBeziers(points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Adds a cubic Bézier curve to the current figure.</summary>
@@ -530,14 +530,14 @@ namespace Common.Drawing.Drawing2D
         /// <param name="points">An array of <see cref="T:Common.Drawing.Point" /> structures that represents the points that define the curves. </param>
         public void AddBeziers(params Point[] points)
         {
-            WrappedGraphicsPath.AddBeziers(points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphicsPath.AddBeziers(points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Adds a spline curve to the current figure. A cardinal spline curve is used because the curve travels through each of the points in the array.</summary>
         /// <param name="points">An array of <see cref="T:Common.Drawing.PointF" /> structures that represents the points that define the curve. </param>
         public void AddCurve(PointF[] points)
         {
-            WrappedGraphicsPath.AddCurve(points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphicsPath.AddCurve(points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Adds a spline curve to the current figure.</summary>
@@ -545,7 +545,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="tension">A value that specifies the amount that the curve bends between control points. Values greater than 1 produce unpredictable results. </param>
         public void AddCurve(PointF[] points, float tension)
         {
-            WrappedGraphicsPath.AddCurve(points.Cast<System.Drawing.PointF>().ToArray(), tension);
+            WrappedGraphicsPath.AddCurve(points.Convert<System.Drawing.PointF>().ToArray(), tension);
         }
 
         /// <summary>Adds a spline curve to the current figure.</summary>
@@ -555,14 +555,14 @@ namespace Common.Drawing.Drawing2D
         /// <param name="tension">A value that specifies the amount that the curve bends between control points. Values greater than 1 produce unpredictable results. </param>
         public void AddCurve(PointF[] points, int offset, int numberOfSegments, float tension)
         {
-            WrappedGraphicsPath.AddCurve(points.Cast<System.Drawing.PointF>().ToArray(), offset, numberOfSegments, tension);
+            WrappedGraphicsPath.AddCurve(points.Convert<System.Drawing.PointF>().ToArray(), offset, numberOfSegments, tension);
         }
 
         /// <summary>Adds a spline curve to the current figure. A cardinal spline curve is used because the curve travels through each of the points in the array.</summary>
         /// <param name="points">An array of <see cref="T:Common.Drawing.Point" /> structures that represents the points that define the curve. </param>
         public void AddCurve(Point[] points)
         {
-            WrappedGraphicsPath.AddCurve(points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphicsPath.AddCurve(points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Adds a spline curve to the current figure.</summary>
@@ -570,7 +570,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="tension">A value that specifies the amount that the curve bends between control points. Values greater than 1 produce unpredictable results. </param>
         public void AddCurve(Point[] points, float tension)
         {
-            WrappedGraphicsPath.AddCurve(points.Cast<System.Drawing.Point>().ToArray(), tension);
+            WrappedGraphicsPath.AddCurve(points.Convert<System.Drawing.Point>().ToArray(), tension);
         }
 
         /// <summary>Adds a spline curve to the current figure.</summary>
@@ -580,14 +580,14 @@ namespace Common.Drawing.Drawing2D
         /// <param name="tension">A value that specifies the amount that the curve bends between control points. Values greater than 1 produce unpredictable results. </param>
         public void AddCurve(Point[] points, int offset, int numberOfSegments, float tension)
         {
-            WrappedGraphicsPath.AddCurve(points.Cast<System.Drawing.Point>().ToArray(), offset, numberOfSegments, tension);
+            WrappedGraphicsPath.AddCurve(points.Convert<System.Drawing.Point>().ToArray(), offset, numberOfSegments, tension);
         }
 
         /// <summary>Adds a closed curve to this path. A cardinal spline curve is used because the curve travels through each of the points in the array.</summary>
         /// <param name="points">An array of <see cref="T:Common.Drawing.PointF" /> structures that represents the points that define the curve. </param>
         public void AddClosedCurve(PointF[] points)
         {
-            WrappedGraphicsPath.AddClosedCurve(points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphicsPath.AddClosedCurve(points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Adds a closed curve to this path. A cardinal spline curve is used because the curve travels through each of the points in the array.</summary>
@@ -595,14 +595,14 @@ namespace Common.Drawing.Drawing2D
         /// <param name="tension">A value between from 0 through 1 that specifies the amount that the curve bends between points, with 0 being the smallest curve (sharpest corner) and 1 being the smoothest curve. </param>
         public void AddClosedCurve(PointF[] points, float tension)
         {
-            WrappedGraphicsPath.AddClosedCurve(points.Cast<System.Drawing.PointF>().ToArray(), tension);
+            WrappedGraphicsPath.AddClosedCurve(points.Convert<System.Drawing.PointF>().ToArray(), tension);
         }
 
         /// <summary>Adds a closed curve to this path. A cardinal spline curve is used because the curve travels through each of the points in the array.</summary>
         /// <param name="points">An array of <see cref="T:Common.Drawing.Point" /> structures that represents the points that define the curve. </param>
         public void AddClosedCurve(Point[] points)
         {
-            WrappedGraphicsPath.AddClosedCurve(points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphicsPath.AddClosedCurve(points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Adds a closed curve to this path. A cardinal spline curve is used because the curve travels through each of the points in the array.</summary>
@@ -610,7 +610,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="tension">A value between from 0 through 1 that specifies the amount that the curve bends between points, with 0 being the smallest curve (sharpest corner) and 1 being the smoothest curve. </param>
         public void AddClosedCurve(Point[] points, float tension)
         {
-            WrappedGraphicsPath.AddClosedCurve(points.Cast<System.Drawing.Point>().ToArray(), tension);
+            WrappedGraphicsPath.AddClosedCurve(points.Convert<System.Drawing.Point>().ToArray(), tension);
         }
 
         /// <summary>Adds a rectangle to this path.</summary>
@@ -627,7 +627,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="rects">An array of <see cref="T:Common.Drawing.RectangleF" /> structures that represents the rectangles to add. </param>
         public void AddRectangles(RectangleF[] rects)
         {
-            WrappedGraphicsPath.AddRectangles(rects.Cast<System.Drawing.RectangleF>().ToArray());
+            WrappedGraphicsPath.AddRectangles(rects.Convert<System.Drawing.RectangleF>().ToArray());
         }
 
         /// <summary>Adds a rectangle to this path.</summary>
@@ -644,7 +644,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="rects">An array of <see cref="T:Common.Drawing.Rectangle" /> structures that represents the rectangles to add. </param>
         public void AddRectangles(Rectangle[] rects)
         {
-            WrappedGraphicsPath.AddRectangles(rects.Cast<System.Drawing.Rectangle>().ToArray());
+            WrappedGraphicsPath.AddRectangles(rects.Convert<System.Drawing.Rectangle>().ToArray());
         }
 
         /// <summary>Adds an ellipse to the current path.</summary>
@@ -724,14 +724,14 @@ namespace Common.Drawing.Drawing2D
         /// <param name="points">An array of <see cref="T:Common.Drawing.PointF" /> structures that defines the polygon to add. </param>
         public void AddPolygon(PointF[] points)
         {
-            WrappedGraphicsPath.AddPolygon(points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphicsPath.AddPolygon(points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Adds a polygon to this path.</summary>
         /// <param name="points">An array of <see cref="T:Common.Drawing.Point" /> structures that defines the polygon to add. </param>
         public void AddPolygon(Point[] points)
         {
-            WrappedGraphicsPath.AddPolygon(points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphicsPath.AddPolygon(points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Appends the specified <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" /> to this path.</summary>
@@ -892,7 +892,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="srcRect">A <see cref="T:Common.Drawing.RectangleF" /> that represents the rectangle that is transformed to the parallelogram defined by <paramref name="destPoints" />. </param>
         public void Warp(PointF[] destPoints, RectangleF srcRect)
         {
-            WrappedGraphicsPath.Warp(destPoints.Cast<System.Drawing.PointF>().ToArray(), srcRect);
+            WrappedGraphicsPath.Warp(destPoints.Convert<System.Drawing.PointF>().ToArray(), srcRect);
         }
 
         /// <summary>Applies a warp transform, defined by a rectangle and a parallelogram, to this <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" />.</summary>
@@ -901,7 +901,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="matrix">A <see cref="T:Common.Drawing.Drawing2D.Matrix" /> that specifies a geometric transform to apply to the path. </param>
         public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix)
         {
-            WrappedGraphicsPath.Warp(destPoints.Cast<System.Drawing.PointF>().ToArray(), srcRect, matrix);
+            WrappedGraphicsPath.Warp(destPoints.Convert<System.Drawing.PointF>().ToArray(), srcRect, matrix);
         }
 
         /// <summary>Applies a warp transform, defined by a rectangle and a parallelogram, to this <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" />.</summary>
@@ -911,7 +911,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="warpMode">A <see cref="T:Common.Drawing.Drawing2D.WarpMode" /> enumeration that specifies whether this warp operation uses perspective or bilinear mode. </param>
         public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode)
         {
-            WrappedGraphicsPath.Warp(destPoints.Cast<System.Drawing.PointF>().ToArray(), srcRect, matrix, (System.Drawing.Drawing2D.WarpMode)warpMode);
+            WrappedGraphicsPath.Warp(destPoints.Convert<System.Drawing.PointF>().ToArray(), srcRect, matrix, (System.Drawing.Drawing2D.WarpMode)warpMode);
         }
 
         /// <summary>Applies a warp transform, defined by a rectangle and a parallelogram, to this <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" />.</summary>
@@ -922,7 +922,7 @@ namespace Common.Drawing.Drawing2D
         /// <param name="flatness">A value from 0 through 1 that specifies how flat the resulting path is. For more information, see the <see cref="M:Common.Drawing.Drawing2D.GraphicsPath.Flatten" /> methods. </param>
         public void Warp(PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode, float flatness)
         {
-            WrappedGraphicsPath.Warp(destPoints.Cast<System.Drawing.PointF>().ToArray(), srcRect, matrix, (System.Drawing.Drawing2D.WarpMode)warpMode, flatness);
+            WrappedGraphicsPath.Warp(destPoints.Convert<System.Drawing.PointF>().ToArray(), srcRect, matrix, (System.Drawing.Drawing2D.WarpMode)warpMode, flatness);
         }
 
         /// <summary>Converts the specified <see cref="T:System.Drawing.Drawing2D.GraphicsPath" /> to a <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" />.</summary>

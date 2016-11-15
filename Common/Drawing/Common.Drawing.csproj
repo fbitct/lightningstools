@@ -75,6 +75,7 @@
     <Compile Include="Drawing2D\RegionData.cs" />
     <Compile Include="Drawing2D\SmoothingMode.cs" />
     <Compile Include="Drawing2D\WarpMode.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Font.cs" />
     <Compile Include="FontFamily.cs" />
     <Compile Include="FontStyle.cs" />

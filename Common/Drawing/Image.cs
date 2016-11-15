@@ -179,7 +179,7 @@ namespace Common.Drawing
         [Browsable(false)]
         public PropertyItem[] PropertyItems
         {
-            get { return WrappedImage.PropertyItems.Cast<PropertyItem>().ToArray(); }
+            get { return WrappedImage.PropertyItems.Convert<PropertyItem>().ToArray(); }
         }
 
         protected Image(){}

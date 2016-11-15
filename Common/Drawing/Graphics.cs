@@ -564,7 +564,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void TransformPoints(CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF[] pts)
         {
-            WrappedGraphics.TransformPoints((System.Drawing.Drawing2D.CoordinateSpace)destSpace, (System.Drawing.Drawing2D.CoordinateSpace)srcSpace, pts.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphics.TransformPoints((System.Drawing.Drawing2D.CoordinateSpace)destSpace, (System.Drawing.Drawing2D.CoordinateSpace)srcSpace, pts.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Transforms an array of points from one coordinate space to another using the current world and page transformations of this <see cref="T:Common.Drawing.Graphics" />.</summary>
@@ -574,7 +574,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void TransformPoints(CoordinateSpace destSpace, CoordinateSpace srcSpace, Point[] pts)
         {
-            WrappedGraphics.TransformPoints((System.Drawing.Drawing2D.CoordinateSpace)destSpace, (System.Drawing.Drawing2D.CoordinateSpace)srcSpace, pts.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphics.TransformPoints((System.Drawing.Drawing2D.CoordinateSpace)destSpace, (System.Drawing.Drawing2D.CoordinateSpace)srcSpace, pts.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Gets the nearest color to the specified <see cref="T:Common.Drawing.Color" /> structure.</summary>
@@ -632,7 +632,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawLines(Pen pen, PointF[] points)
         {
-            WrappedGraphics.DrawLines(pen, points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphics.DrawLines(pen, points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Draws a line connecting the two points specified by the coordinate pairs.</summary>
@@ -677,7 +677,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawLines(Pen pen, Point[] points)
         {
-            WrappedGraphics.DrawLines(pen, points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphics.DrawLines(pen, points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Draws an arc representing a portion of an ellipse specified by a pair of coordinates, a width, and a height.</summary>
@@ -793,7 +793,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawBeziers(Pen pen, PointF[] points)
         {
-            WrappedGraphics.DrawBeziers(pen, points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphics.DrawBeziers(pen, points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Draws a Bézier spline defined by four <see cref="T:Common.Drawing.Point" /> structures.</summary>
@@ -824,7 +824,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawBeziers(Pen pen, Point[] points)
         {
-            WrappedGraphics.DrawBeziers(pen, points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphics.DrawBeziers(pen, points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Draws a rectangle specified by a <see cref="T:Common.Drawing.Rectangle" /> structure.</summary>
@@ -881,7 +881,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawRectangles(Pen pen, RectangleF[] rects)
         {
-            WrappedGraphics.DrawRectangles(pen, rects.Cast<System.Drawing.RectangleF>().ToArray());
+            WrappedGraphics.DrawRectangles(pen, rects.Convert<System.Drawing.RectangleF>().ToArray());
         }
 
         /// <summary>Draws a series of rectangles specified by <see cref="T:Common.Drawing.Rectangle" /> structures.</summary>
@@ -895,7 +895,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawRectangles(Pen pen, Rectangle[] rects)
         {
-            WrappedGraphics.DrawRectangles(pen, rects.Cast<System.Drawing.Rectangle>().ToArray());
+            WrappedGraphics.DrawRectangles(pen, rects.Convert<System.Drawing.Rectangle>().ToArray());
         }
 
         /// <summary>Draws an ellipse defined by a bounding <see cref="T:Common.Drawing.RectangleF" />.</summary>
@@ -1033,7 +1033,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawPolygon(Pen pen, PointF[] points)
         {
-            WrappedGraphics.DrawPolygon(pen, points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphics.DrawPolygon(pen, points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Draws a polygon defined by an array of <see cref="T:Common.Drawing.Point" /> structures.</summary>
@@ -1045,7 +1045,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawPolygon(Pen pen, Point[] points)
         {
-            WrappedGraphics.DrawPolygon(pen, points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphics.DrawPolygon(pen, points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Draws a <see cref="T:Common.Drawing.Drawing2D.GraphicsPath" />.</summary>
@@ -1073,7 +1073,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawCurve(Pen pen, PointF[] points)
         {
-            WrappedGraphics.DrawCurve(pen, points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphics.DrawCurve(pen, points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Draws a cardinal spline through a specified array of <see cref="T:Common.Drawing.PointF" /> structures using a specified tension.</summary>
@@ -1086,7 +1086,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawCurve(Pen pen, PointF[] points, float tension)
         {
-            WrappedGraphics.DrawCurve(pen, points.Cast<System.Drawing.PointF>().ToArray(), tension);
+            WrappedGraphics.DrawCurve(pen, points.Convert<System.Drawing.PointF>().ToArray(), tension);
         }
 
         /// <summary>Draws a cardinal spline through a specified array of <see cref="T:Common.Drawing.PointF" /> structures. The drawing begins offset from the beginning of the array.</summary>
@@ -1100,7 +1100,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawCurve(Pen pen, PointF[] points, int offset, int numberOfSegments)
         {
-            WrappedGraphics.DrawCurve(pen, points.Cast<System.Drawing.PointF>().ToArray(), offset,numberOfSegments);
+            WrappedGraphics.DrawCurve(pen, points.Convert<System.Drawing.PointF>().ToArray(), offset,numberOfSegments);
         }
 
         /// <summary>Draws a cardinal spline through a specified array of <see cref="T:Common.Drawing.PointF" /> structures using a specified tension. The drawing begins offset from the beginning of the array.</summary>
@@ -1115,7 +1115,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawCurve(Pen pen, PointF[] points, int offset, int numberOfSegments, float tension)
         {
-            WrappedGraphics.DrawCurve(pen, points.Cast<System.Drawing.PointF>().ToArray(), offset, numberOfSegments, tension);
+            WrappedGraphics.DrawCurve(pen, points.Convert<System.Drawing.PointF>().ToArray(), offset, numberOfSegments, tension);
         }
 
         /// <summary>Draws a cardinal spline through a specified array of <see cref="T:Common.Drawing.Point" /> structures.</summary>
@@ -1127,7 +1127,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawCurve(Pen pen, Point[] points)
         {
-            WrappedGraphics.DrawCurve(pen, points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphics.DrawCurve(pen, points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Draws a cardinal spline through a specified array of <see cref="T:Common.Drawing.Point" /> structures using a specified tension.</summary>
@@ -1140,7 +1140,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawCurve(Pen pen, Point[] points, float tension)
         {
-            WrappedGraphics.DrawCurve(pen, points.Cast<System.Drawing.Point>().ToArray(), tension);
+            WrappedGraphics.DrawCurve(pen, points.Convert<System.Drawing.Point>().ToArray(), tension);
         }
 
         /// <summary>Draws a cardinal spline through a specified array of <see cref="T:Common.Drawing.Point" /> structures using a specified tension.</summary>
@@ -1155,7 +1155,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawCurve(Pen pen, Point[] points, int offset, int numberOfSegments, float tension)
         {
-            WrappedGraphics.DrawCurve(pen, points.Cast<System.Drawing.Point>().ToArray(), offset, numberOfSegments, tension);
+            WrappedGraphics.DrawCurve(pen, points.Convert<System.Drawing.Point>().ToArray(), offset, numberOfSegments, tension);
         }
 
         /// <summary>Draws a closed cardinal spline defined by an array of <see cref="T:Common.Drawing.PointF" /> structures.</summary>
@@ -1167,7 +1167,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawClosedCurve(Pen pen, PointF[] points)
         {
-            WrappedGraphics.DrawClosedCurve(pen, points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphics.DrawClosedCurve(pen, points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Draws a closed cardinal spline defined by an array of <see cref="T:Common.Drawing.PointF" /> structures using a specified tension.</summary>
@@ -1181,7 +1181,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawClosedCurve(Pen pen, PointF[] points, float tension, FillMode fillmode)
         {
-            WrappedGraphics.DrawClosedCurve(pen, points.Cast<System.Drawing.PointF>().ToArray(), tension, (System.Drawing.Drawing2D.FillMode)fillmode);
+            WrappedGraphics.DrawClosedCurve(pen, points.Convert<System.Drawing.PointF>().ToArray(), tension, (System.Drawing.Drawing2D.FillMode)fillmode);
         }
 
         /// <summary>Draws a closed cardinal spline defined by an array of <see cref="T:Common.Drawing.Point" /> structures.</summary>
@@ -1193,7 +1193,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawClosedCurve(Pen pen, Point[] points)
         {
-            WrappedGraphics.DrawClosedCurve(pen, points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphics.DrawClosedCurve(pen, points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Draws a closed cardinal spline defined by an array of <see cref="T:Common.Drawing.Point" /> structures using a specified tension.</summary>
@@ -1207,7 +1207,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawClosedCurve(Pen pen, Point[] points, float tension, FillMode fillmode)
         {
-            WrappedGraphics.DrawClosedCurve(pen, points.Cast<System.Drawing.Point>().ToArray(), tension, (System.Drawing.Drawing2D.FillMode)fillmode);
+            WrappedGraphics.DrawClosedCurve(pen, points.Convert<System.Drawing.Point>().ToArray(), tension, (System.Drawing.Drawing2D.FillMode)fillmode);
         }
 
         /// <summary>Clears the entire drawing surface and fills it with the specified background color.</summary>
@@ -1295,7 +1295,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillRectangles(Brush brush, RectangleF[] rects)
         {
-            WrappedGraphics.FillRectangles(brush, rects.Cast<System.Drawing.RectangleF>().ToArray());
+            WrappedGraphics.FillRectangles(brush, rects.Convert<System.Drawing.RectangleF>().ToArray());
         }
 
         /// <summary>Fills the interiors of a series of rectangles specified by <see cref="T:Common.Drawing.Rectangle" /> structures.</summary>
@@ -1309,7 +1309,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillRectangles(Brush brush, Rectangle[] rects)
         {
-            WrappedGraphics.FillRectangles(brush, rects.Cast<System.Drawing.Rectangle>().ToArray());
+            WrappedGraphics.FillRectangles(brush, rects.Convert<System.Drawing.Rectangle>().ToArray());
         }
 
         /// <summary>Fills the interior of a polygon defined by an array of points specified by <see cref="T:Common.Drawing.PointF" /> structures.</summary>
@@ -1321,7 +1321,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillPolygon(Brush brush, PointF[] points)
         {
-            WrappedGraphics.FillPolygon(brush, points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphics.FillPolygon(brush, points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Fills the interior of a polygon defined by an array of points specified by <see cref="T:Common.Drawing.PointF" /> structures using the specified fill mode.</summary>
@@ -1334,7 +1334,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillPolygon(Brush brush, PointF[] points, FillMode fillMode)
         {
-            WrappedGraphics.FillPolygon(brush, points.Cast<System.Drawing.PointF>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillMode);
+            WrappedGraphics.FillPolygon(brush, points.Convert<System.Drawing.PointF>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillMode);
         }
 
         /// <summary>Fills the interior of a polygon defined by an array of points specified by <see cref="T:Common.Drawing.Point" /> structures.</summary>
@@ -1346,7 +1346,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillPolygon(Brush brush, Point[] points)
         {
-            WrappedGraphics.FillPolygon(brush, points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphics.FillPolygon(brush, points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Fills the interior of a polygon defined by an array of points specified by <see cref="T:Common.Drawing.Point" /> structures using the specified fill mode.</summary>
@@ -1359,7 +1359,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillPolygon(Brush brush, Point[] points, FillMode fillMode)
         {
-            WrappedGraphics.FillPolygon(brush, points.Cast<System.Drawing.Point>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillMode);
+            WrappedGraphics.FillPolygon(brush, points.Convert<System.Drawing.Point>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillMode);
         }
 
         /// <summary>Fills the interior of an ellipse defined by a bounding rectangle specified by a <see cref="T:Common.Drawing.RectangleF" /> structure.</summary>
@@ -1498,7 +1498,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillClosedCurve(Brush brush, PointF[] points)
         {
-            WrappedGraphics.FillClosedCurve(brush, points.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphics.FillClosedCurve(brush, points.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Fills the interior of a closed cardinal spline curve defined by an array of <see cref="T:Common.Drawing.PointF" /> structures using the specified fill mode.</summary>
@@ -1511,7 +1511,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillClosedCurve(Brush brush, PointF[] points, FillMode fillmode)
         {
-            WrappedGraphics.FillClosedCurve(brush, points.Cast<System.Drawing.PointF>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillmode);
+            WrappedGraphics.FillClosedCurve(brush, points.Convert<System.Drawing.PointF>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillmode);
         }
 
         /// <summary>Fills the interior of a closed cardinal spline curve defined by an array of <see cref="T:Common.Drawing.PointF" /> structures using the specified fill mode and tension.</summary>
@@ -1524,7 +1524,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillClosedCurve(Brush brush, PointF[] points, FillMode fillmode, float tension)
         {
-            WrappedGraphics.FillClosedCurve(brush, points.Cast<System.Drawing.PointF>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillmode, tension);
+            WrappedGraphics.FillClosedCurve(brush, points.Convert<System.Drawing.PointF>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillmode, tension);
         }
 
         /// <summary>Fills the interior of a closed cardinal spline curve defined by an array of <see cref="T:Common.Drawing.Point" /> structures.</summary>
@@ -1536,7 +1536,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillClosedCurve(Brush brush, Point[] points)
         {
-            WrappedGraphics.FillClosedCurve(brush, points.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphics.FillClosedCurve(brush, points.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Fills the interior of a closed cardinal spline curve defined by an array of <see cref="T:Common.Drawing.Point" /> structures using the specified fill mode.</summary>
@@ -1549,7 +1549,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillClosedCurve(Brush brush, Point[] points, FillMode fillmode)
         {
-            WrappedGraphics.FillClosedCurve(brush, points.Cast<System.Drawing.Point>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillmode);
+            WrappedGraphics.FillClosedCurve(brush, points.Convert<System.Drawing.Point>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillmode);
         }
 
         /// <summary>Fills the interior of a closed cardinal spline curve defined by an array of <see cref="T:Common.Drawing.Point" /> structures using the specified fill mode and tension.</summary>
@@ -1563,7 +1563,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void FillClosedCurve(Brush brush, Point[] points, FillMode fillmode, float tension)
         {
-            WrappedGraphics.FillClosedCurve(brush, points.Cast<System.Drawing.Point>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillmode, tension);
+            WrappedGraphics.FillClosedCurve(brush, points.Convert<System.Drawing.Point>().ToArray(), (System.Drawing.Drawing2D.FillMode)fillmode, tension);
         }
 
         /// <summary>Fills the interior of a <see cref="T:Common.Drawing.Region" />.</summary>
@@ -1776,7 +1776,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public SizeF MeasureString(string text, Font font, int width)
         {
-            return MeasureString(text, font, width);
+            return WrappedGraphics.MeasureString(text, font, width);
         }
 
         /// <summary>Measures the specified string when drawn with the specified <see cref="T:Common.Drawing.Font" /> and formatted with the specified <see cref="T:Common.Drawing.StringFormat" />.</summary>
@@ -1792,7 +1792,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public SizeF MeasureString(string text, Font font, int width, StringFormat format)
         {
-            return MeasureString(text, font, width, format);
+            return WrappedGraphics.MeasureString(text, font, width, format);
         }
 
         /// <summary>Gets an array of <see cref="T:Common.Drawing.Region" /> objects, each of which bounds a range of character positions within the specified string.</summary>
@@ -1807,7 +1807,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public Region[] MeasureCharacterRanges(string text, Font font, RectangleF layoutRect, StringFormat stringFormat)
         {
-            return WrappedGraphics.MeasureCharacterRanges(text, font, layoutRect, stringFormat).Cast<Region>().ToArray();
+            return WrappedGraphics.MeasureCharacterRanges(text, font, layoutRect, stringFormat).Convert<Region>().ToArray();
         }
 
         /// <summary>Draws the image represented by the specified <see cref="T:Common.Drawing.Icon" /> at the specified coordinates.</summary>
@@ -2058,7 +2058,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawImage(Image image, PointF[] destPoints)
         {
-            WrappedGraphics.DrawImage(image, destPoints.Cast<System.Drawing.PointF>().ToArray());
+            WrappedGraphics.DrawImage(image, destPoints.Convert<System.Drawing.PointF>().ToArray());
         }
 
         /// <summary>Draws the specified <see cref="T:Common.Drawing.Image" /> at the specified location and with the specified shape and size.</summary>
@@ -2070,7 +2070,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawImage(Image image, Point[] destPoints)
         {
-            WrappedGraphics.DrawImage(image, destPoints.Cast<System.Drawing.Point>().ToArray());
+            WrappedGraphics.DrawImage(image, destPoints.Convert<System.Drawing.Point>().ToArray());
         }
 
         /// <summary>Draws a portion of an image at a specified location.</summary>
@@ -2149,7 +2149,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawImage(Image image, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit)
         {
-            WrappedGraphics.DrawImage(image, destPoints.Cast<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit);
+            WrappedGraphics.DrawImage(image, destPoints.Convert<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit);
         }
 
         /// <summary>Draws the specified portion of the specified <see cref="T:Common.Drawing.Image" /> at the specified location and with the specified size.</summary>
@@ -2166,7 +2166,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawImage(Image image, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr)
         {
-            WrappedGraphics.DrawImage(image, destPoints.Cast<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr);
+            WrappedGraphics.DrawImage(image, destPoints.Convert<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr);
         }
 
         /// <summary>Draws the specified portion of the specified <see cref="T:Common.Drawing.Image" /> at the specified location and with the specified size.</summary>
@@ -2185,7 +2185,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawImage(Image image, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
         {
-            WrappedGraphics.DrawImage(image, destPoints.Cast<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr, new System.Drawing.Graphics.DrawImageAbort(callback));
+            WrappedGraphics.DrawImage(image, destPoints.Convert<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr, new System.Drawing.Graphics.DrawImageAbort(callback));
         }
 
         /// <summary>Draws the specified portion of the specified <see cref="T:Common.Drawing.Image" /> at the specified location and with the specified size.</summary>
@@ -2205,7 +2205,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawImage(Image image, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, Graphics.DrawImageAbort callback, int callbackData)
         {
-            WrappedGraphics.DrawImage(image, destPoints.Cast<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr, new System.Drawing.Graphics.DrawImageAbort(callback), callbackData);
+            WrappedGraphics.DrawImage(image, destPoints.Convert<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr, new System.Drawing.Graphics.DrawImageAbort(callback), callbackData);
         }
 
         /// <summary>Draws the specified portion of the specified <see cref="T:Common.Drawing.Image" /> at the specified location and with the specified size.</summary>
@@ -2220,7 +2220,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawImage(Image image, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)
         {
-            WrappedGraphics.DrawImage(image, destPoints.Cast<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit);
+            WrappedGraphics.DrawImage(image, destPoints.Convert<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit);
         }
 
         /// <summary>Draws the specified portion of the specified <see cref="T:Common.Drawing.Image" /> at the specified location.</summary>
@@ -2237,7 +2237,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawImage(Image image, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr)
         {
-            WrappedGraphics.DrawImage(image, destPoints.Cast<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr);
+            WrappedGraphics.DrawImage(image, destPoints.Convert<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr);
         }
 
         /// <summary>Draws the specified portion of the specified <see cref="T:Common.Drawing.Image" /> at the specified location and with the specified size.</summary>
@@ -2256,7 +2256,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawImage(Image image, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
         {
-            WrappedGraphics.DrawImage(image, destPoints.Cast<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr, new System.Drawing.Graphics.DrawImageAbort(callback));
+            WrappedGraphics.DrawImage(image, destPoints.Convert<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr, new System.Drawing.Graphics.DrawImageAbort(callback));
         }
 
         /// <summary>Draws the specified portion of the specified <see cref="T:Common.Drawing.Image" /> at the specified location and with the specified size.</summary>
@@ -2274,7 +2274,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void DrawImage(Image image, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, Graphics.DrawImageAbort callback, int callbackData)
         {
-            WrappedGraphics.DrawImage(image, destPoints.Cast<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr, new System.Drawing.Graphics.DrawImageAbort(callback), callbackData);
+            WrappedGraphics.DrawImage(image, destPoints.Convert<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, imageAttr, new System.Drawing.Graphics.DrawImageAbort(callback), callbackData);
         }
 
         /// <summary>Draws the specified portion of the specified <see cref="T:Common.Drawing.Image" /> at the specified location and with the specified size.</summary>
@@ -2624,7 +2624,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, PointF[] destPoints, EnumerateMetafileProc callback)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.PointF>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))));
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.PointF>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))));
         }
 
         /// <summary>Sends the records in the specified <see cref="T:Common.Drawing.Imaging.Metafile" />, one at a time, to a callback method for display in a specified parallelogram.</summary>
@@ -2637,7 +2637,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, PointF[] destPoints, EnumerateMetafileProc callback, IntPtr callbackData)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.PointF>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData);
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.PointF>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData);
         }
 
         /// <summary>Sends the records in the specified <see cref="T:Common.Drawing.Imaging.Metafile" />, one at a time, to a callback method for display in a specified parallelogram using specified image attributes.</summary>
@@ -2652,7 +2652,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, PointF[] destPoints, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.PointF>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData, imageAttr);
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.PointF>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData, imageAttr);
         }
 
         /// <summary>Sends the records in the specified <see cref="T:Common.Drawing.Imaging.Metafile" />, one at a time, to a callback method for display in a specified parallelogram.</summary>
@@ -2664,7 +2664,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, Point[] destPoints, EnumerateMetafileProc callback)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.Point>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))));
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.Point>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))));
         }
 
         /// <summary>Sends the records in the specified <see cref="T:Common.Drawing.Imaging.Metafile" />, one at a time, to a callback method for display in a specified parallelogram.</summary>
@@ -2677,7 +2677,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, Point[] destPoints, EnumerateMetafileProc callback, IntPtr callbackData)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.Point>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData);
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.Point>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData);
         }
 
         /// <summary>Sends the records in the specified <see cref="T:Common.Drawing.Imaging.Metafile" />, one at a time, to a callback method for display in a specified parallelogram using specified image attributes.</summary>
@@ -2692,7 +2692,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, Point[] destPoints, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.Point>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData, imageAttr);
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.Point>().ToArray(), new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData, imageAttr);
         }
 
         /// <summary>Sends the records in a selected rectangle from a <see cref="T:Common.Drawing.Imaging.Metafile" />, one at a time, to a callback method for display at a specified point.</summary>
@@ -2915,7 +2915,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))));
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))));
         }
 
         /// <summary>Sends the records in a selected rectangle from a <see cref="T:Common.Drawing.Imaging.Metafile" />, one at a time, to a callback method for display in a specified parallelogram.</summary>
@@ -2931,7 +2931,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, PointF[] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))));
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))));
         }
 
         /// <summary>Sends the records in a selected rectangle from a <see cref="T:Common.Drawing.Imaging.Metafile" />, one at a time, to a callback method for display in a specified parallelogram using specified image attributes.</summary>
@@ -2949,7 +2949,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, PointF[] destPoints, RectangleF srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)unit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData, imageAttr);
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.PointF>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)unit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData, imageAttr);
         }
 
         /// <summary>Sends the records in a selected rectangle from a <see cref="T:Common.Drawing.Imaging.Metafile" />, one at a time, to a callback method for display in a specified parallelogram.</summary>
@@ -2964,7 +2964,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))));
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))));
         }
 
         /// <summary>Sends the records in a selected rectangle from a <see cref="T:Common.Drawing.Imaging.Metafile" />, one at a time, to a callback method for display in a specified parallelogram.</summary>
@@ -2980,7 +2980,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, Point[] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, EnumerateMetafileProc callback, IntPtr callbackData)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData);
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)srcUnit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData);
         }
 
         /// <summary>Sends the records in a selected rectangle from a <see cref="T:Common.Drawing.Imaging.Metafile" />, one at a time, to a callback method for display in a specified parallelogram using specified image attributes.</summary>
@@ -2998,7 +2998,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void EnumerateMetafile(Metafile metafile, Point[] destPoints, Rectangle srcRect, GraphicsUnit unit, EnumerateMetafileProc callback, IntPtr callbackData, ImageAttributes imageAttr)
         {
-            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Cast<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)unit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData, imageAttr);
+            WrappedGraphics.EnumerateMetafile(metafile, destPoints.Convert<System.Drawing.Point>().ToArray(), srcRect, (System.Drawing.GraphicsUnit)unit, new System.Drawing.Graphics.EnumerateMetafileProc((a, b, c, d, e) => callback((EmfPlusRecordType)a, b, c, d, ((aa, bb, cc, dd) => e((System.Drawing.Imaging.EmfPlusRecordType)aa, bb, cc, dd)))), callbackData, imageAttr);
         }
 
         /// <summary>Sets the clipping region of this <see cref="T:Common.Drawing.Graphics" /> to the Clip property of the specified <see cref="T:Common.Drawing.Graphics" />.</summary>

@@ -181,7 +181,7 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public void SetMeasurableCharacterRanges(CharacterRange[] ranges)
         {
-            WrappedStringFormat.SetMeasurableCharacterRanges(ranges.Cast<System.Drawing.CharacterRange>().ToArray());
+            WrappedStringFormat.SetMeasurableCharacterRanges(ranges.Convert<System.Drawing.CharacterRange>().ToArray());
         }
 
         /// <summary>Sets tab stops for this <see cref="T:Common.Drawing.StringFormat" /> object.</summary>

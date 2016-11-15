@@ -176,7 +176,7 @@ namespace Common.Imaging
                     var encoder = Encoder.Compression;
                     var codecParams = new EncoderParameters(1);
                     var codecs = ImageCodecInfo.GetImageEncoders();
-                    codecParams.Param[0] = new EncoderParameter(encoder, encoderValue);
+                    codecParams.Param = new[] { new EncoderParameter(encoder, encoderValue) };
                     var codecToUse = codecs.FirstOrDefault(codec => codec.MimeType == codecMimeType);
                     try
                     {

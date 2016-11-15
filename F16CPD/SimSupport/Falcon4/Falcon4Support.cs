@@ -680,8 +680,11 @@ namespace F16CPD.SimSupport.Falcon4
             if (_terrainDB == null)
             {
                 _terrainDB = _terrainDBFactory.Create(false);
-                _theaterMapRetriever = new TheaterMapRetriever(_terrainDB, Manager.Client);
-                PublishTheaterMapForClients();
+                if (_terrainDB != null)
+                {
+                    _theaterMapRetriever = new TheaterMapRetriever(_terrainDB, Manager.Client);
+                    PublishTheaterMapForClients();
+                }
             }
         }
 

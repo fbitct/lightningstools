@@ -17,7 +17,7 @@ namespace Common.Drawing.Text
         /// <PermissionSet>
         ///   <IPermission class="System.Security.Permissions.SecurityPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" Flags="UnmanagedCode, ControlEvidence" />
         /// </PermissionSet>
-        public FontFamily[] Families { get { return WrappedFontCollection.Families.Cast<FontFamily>().ToArray(); } }
+        public FontFamily[] Families { get { return WrappedFontCollection.Families.Convert<FontFamily>().ToArray(); } }
 
         /// <summary>Releases all resources used by this <see cref="T:Common.Drawing.Text.FontCollection" />.</summary>
         public void Dispose()

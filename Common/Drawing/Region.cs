@@ -664,7 +664,7 @@ namespace Common.Drawing
         /// </PermissionSet>
         public RectangleF[] GetRegionScans(Matrix matrix)
         {
-            return WrappedRegion.GetRegionScans(matrix).Cast<RectangleF>().ToArray();
+            return WrappedRegion.GetRegionScans(matrix).Convert<RectangleF>().ToArray();
         }
 
         /// <summary>Converts the specified <see cref="T:System.Drawing.Region" /> to a <see cref="T:Common.Drawing.Region" />.</summary>

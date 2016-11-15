@@ -21,7 +21,7 @@ namespace Common.Drawing.Imaging
         /// <returns>The array of <see cref="T:Common.Drawing.Color" /> structure that make up this <see cref="T:Common.Drawing.Imaging.ColorPalette" />.</returns>
         public Color[] Entries
         {
-             get { return WrappedColorPalette.Entries.Cast<Color>().ToArray(); } 
+             get { return WrappedColorPalette.Entries.Convert<Color>().ToArray(); } 
         }
 
         /// <summary>Converts the specified <see cref="T:System.Drawing.Imaging.ColorPalette" /> to a <see cref="T:Common.Drawing.Imaging.ColorPalette" />.</summary>

@@ -116,7 +116,7 @@ namespace Common.Drawing.Imaging
         /// </PermissionSet>
         public static ImageCodecInfo[] GetImageDecoders()
         {
-            return System.Drawing.Imaging.ImageCodecInfo.GetImageDecoders().Cast<ImageCodecInfo>().ToArray();
+            return System.Drawing.Imaging.ImageCodecInfo.GetImageDecoders().Convert<ImageCodecInfo>().ToArray();
         }
 
         /// <summary>Returns an array of <see cref="T:Common.Drawing.Imaging.ImageCodecInfo" /> objects that contain information about the image encoders built into GDI+.</summary>
@@ -126,7 +126,7 @@ namespace Common.Drawing.Imaging
         /// </PermissionSet>
         public static ImageCodecInfo[] GetImageEncoders()
         {
-            return System.Drawing.Imaging.ImageCodecInfo.GetImageDecoders().Cast<ImageCodecInfo>().ToArray();
+            return System.Drawing.Imaging.ImageCodecInfo.GetImageDecoders().Convert<ImageCodecInfo>().ToArray();
         }
 
         /// <summary>Converts the specified <see cref="T:System.Drawing.Imaging.ImageCodecInfo" /> to a <see cref="T:Common.Drawing.Imaging.ImageCodecInfo" />.</summary>
