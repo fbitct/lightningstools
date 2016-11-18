@@ -332,41 +332,11 @@ namespace MFDExtractor
                 var pollingDelay = Settings.Default.PollingDelay;
                 while (State.KeepRunning)
                 {
-                    var thisLoopStartTime = DateTime.UtcNow;
-                    Application.DoEvents();
-
-                    ProcessNetworkMessages();
-                    if (_terrainDB == null && State.NetworkMode != NetworkMode.Client)
+                    try
                     {
-                        _terrainDB = _terrainDBFactory.Create(false);
+                        ExecuteOneCycle(pollingDelay);
                     }
-
-                    if (State.SimRunning || State.OptionsFormIsShowing || State.NetworkMode == NetworkMode.Client)
-                    {
-                        var currentFlightData = _flightDataRetriever.GetFlightData();
-                        SetFlightData(currentFlightData);
-
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_instruments, currentFlightData, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
-                    }
-                    else
-                    {
-                        var flightDataToSet = new FlightData { hsiBits = Int32.MaxValue };
-                        SetFlightData(flightDataToSet);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_instruments, flightDataToSet, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
-                    }
-                    
-                    Application.DoEvents();
-
-                    var thisLoopFinishTime = DateTime.UtcNow;
-                    var timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
-                    var millisToSleep = pollingDelay - ((int)timeElapsed.TotalMilliseconds);
-                    if (millisToSleep < 5) millisToSleep = 5;
-                    if ((!State.SimRunning && State.NetworkMode != NetworkMode.Client) && !State.OptionsFormIsShowing)
-                    {
-                        millisToSleep += 50;
-                    }
-                    Thread.Sleep((millisToSleep));
-
+                    catch { }
                 }
                 try
                 {
@@ -377,7 +347,45 @@ namespace MFDExtractor
             catch { }
         }
 
-	    private void ProcessNetworkMessages()
+        private void ExecuteOneCycle(int pollingDelay)
+        {
+            var thisLoopStartTime = DateTime.UtcNow;
+            Application.DoEvents();
+
+            ProcessNetworkMessages();
+            if (_terrainDB == null && State.NetworkMode != NetworkMode.Client)
+            {
+                _terrainDB = _terrainDBFactory.Create(false);
+            }
+
+            if (State.SimRunning || State.OptionsFormIsShowing || State.NetworkMode == NetworkMode.Client)
+            {
+                var currentFlightData = _flightDataRetriever.GetFlightData();
+                SetFlightData(currentFlightData);
+
+                _flightDataUpdater.UpdateRendererStatesFromFlightData(_instruments, currentFlightData, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
+            }
+            else
+            {
+                var flightDataToSet = new FlightData { hsiBits = Int32.MaxValue };
+                SetFlightData(flightDataToSet);
+                _flightDataUpdater.UpdateRendererStatesFromFlightData(_instruments, flightDataToSet, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
+            }
+
+            Application.DoEvents();
+
+            var thisLoopFinishTime = DateTime.UtcNow;
+            var timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
+            var millisToSleep = pollingDelay - ((int)timeElapsed.TotalMilliseconds);
+            if (millisToSleep < 5) millisToSleep = 5;
+            if ((!State.SimRunning && State.NetworkMode != NetworkMode.Client) && !State.OptionsFormIsShowing)
+            {
+                millisToSleep += 50;
+            }
+            Thread.Sleep((millisToSleep));
+        }
+
+        private void ProcessNetworkMessages()
 	    {
 	        switch (State.NetworkMode)
 	        {
