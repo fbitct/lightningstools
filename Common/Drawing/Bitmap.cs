@@ -7,7 +7,7 @@ namespace Common.Drawing
     public class Bitmap : Image
     {
         private Bitmap() { }
-        public Bitmap(string filename):this()
+        public Bitmap(string filename)
         {
             WrappedBitmap = new System.Drawing.Bitmap(filename);
         }
@@ -67,11 +67,10 @@ namespace Common.Drawing
             WrappedBitmap = new System.Drawing.Bitmap(original, newSize);
         }
 
-        private System.Drawing.Bitmap _wrappedBitmap;
         private System.Drawing.Bitmap WrappedBitmap
         {
-            get { return _wrappedBitmap; }
-            set { _wrappedBitmap = value; base.WrappedImage = value; }
+            get { return WrappedImage as System.Drawing.Bitmap; }
+            set { WrappedImage = value; }
         }
 
         public virtual Bitmap FromHicon(IntPtr hicon)
@@ -181,13 +180,6 @@ namespace Common.Drawing
         {
             return bitmap.WrappedBitmap;
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            WrappedBitmap.Dispose();
-            base.Dispose(disposing);
-        }
-
 
     }
     

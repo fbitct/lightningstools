@@ -94,7 +94,7 @@ namespace Common.Drawing
         /// <param name="width">The width of the new icon. </param>
         /// <param name="height">The height of the new icon. </param>
         /// <exception cref="T:System.ArgumentException">The <paramref name="original" /> parameter is null.</exception>
-        public Icon(Icon original, int width, int height) : this()
+        public Icon(Icon original, int width, int height) 
         {
             WrappedIcon = new System.Drawing.Icon(original, width, height);
         }
@@ -103,7 +103,7 @@ namespace Common.Drawing
         /// <param name="type">A <see cref="T:System.Type" /> that specifies the assembly in which to look for the resource. </param>
         /// <param name="resource">The resource name to load. </param>
         /// <exception cref="T:System.ArgumentException">An icon specified by <paramref name="resource" /> cannot be found in the assembly that contains the specified <paramref name="type" />.</exception>
-        public Icon(Type type, string resource) : this()
+        public Icon(Type type, string resource) 
         {
             WrappedIcon = new System.Drawing.Icon(type, resource);
         }
@@ -169,7 +169,10 @@ namespace Common.Drawing
 
         private void Dispose(bool disposing)
         {
-            WrappedIcon.Dispose();
+            if (disposing)
+            {
+                WrappedIcon.Dispose();
+            }
         }
 
         ~Icon()

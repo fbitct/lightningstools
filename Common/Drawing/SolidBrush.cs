@@ -4,13 +4,12 @@
     /// <filterpriority>1</filterpriority>
     public sealed class SolidBrush : Brush
     {
-        private System.Drawing.SolidBrush WrappedSolidBrush { get; set; }
-        private SolidBrush(System.Drawing.SolidBrush solidBrush):base(solidBrush)
+        internal SolidBrush(System.Drawing.SolidBrush solidBrush) : base(solidBrush) { }
+        private System.Drawing.SolidBrush WrappedSolidBrush
         {
-            WrappedSolidBrush = solidBrush;
-            base.WrappedBrush = WrappedSolidBrush;
+            get { return WrappedBrush as System.Drawing.SolidBrush; }
+            set { WrappedBrush = value; }
         }
-
         /// <summary>Gets or sets the color of this <see cref="T:Common.Drawing.SolidBrush" /> object.</summary>
         /// <returns>A <see cref="T:Common.Drawing.Color" /> structure that represents the color of this brush.</returns>
         /// <exception cref="T:System.ArgumentException">The <see cref="P:Common.Drawing.SolidBrush.Color" /> property is set on an immutable <see cref="T:Common.Drawing.SolidBrush" />.</exception>
@@ -26,10 +25,9 @@
 
         /// <summary>Initializes a new <see cref="T:Common.Drawing.SolidBrush" /> object of the specified color.</summary>
         /// <param name="color">A <see cref="T:Common.Drawing.Color" /> structure that represents the color of this brush. </param>
-        public SolidBrush(Color color)
+        public SolidBrush(Color color):base()
         {
             WrappedSolidBrush = new System.Drawing.SolidBrush(color);
-            base.WrappedBrush = WrappedSolidBrush;
         }
 
         /// <summary>Creates an exact copy of this <see cref="T:Common.Drawing.SolidBrush" /> object.</summary>
@@ -41,12 +39,6 @@
         public override object Clone()
         {
             return new SolidBrush((System.Drawing.SolidBrush)WrappedSolidBrush.Clone());
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            WrappedSolidBrush.Dispose();
-            base.Dispose(disposing);
         }
 
         /// <summary>Converts the specified <see cref="T:System.Drawing.SolidBrush" /> to a <see cref="T:Common.Drawing.SolidBrush" />.</summary>

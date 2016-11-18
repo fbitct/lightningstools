@@ -146,7 +146,10 @@ namespace Common.Drawing
 
         private void Dispose(bool disposing)
         {
-            WrappedFontFamily.Dispose();
+            if (disposing)
+            {
+                WrappedFontFamily.Dispose();
+            }
         }
 
         /// <summary>Returns the name, in the specified language, of this <see cref="T:Common.Drawing.FontFamily" />.</summary>

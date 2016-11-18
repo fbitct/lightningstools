@@ -161,7 +161,10 @@ namespace Common.Drawing
 
         private void Dispose(bool disposing)
         {
-            WrappedStringFormat.Dispose();
+            if (disposing)
+            {
+                WrappedStringFormat.Dispose();
+            }
         }
 
         /// <summary>Creates an exact copy of this <see cref="T:Common.Drawing.StringFormat" /> object.</summary>

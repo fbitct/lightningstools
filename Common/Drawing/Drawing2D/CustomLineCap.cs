@@ -97,7 +97,10 @@ namespace Common.Drawing.Drawing2D
         /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
         protected virtual void Dispose(bool disposing)
         {
-            WrappedCustomLineCap.Dispose();
+            if (disposing)
+            {
+                WrappedCustomLineCap.Dispose();
+            }
         }
 
         ~CustomLineCap()

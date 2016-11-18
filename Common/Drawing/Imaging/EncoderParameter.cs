@@ -57,7 +57,10 @@ namespace Common.Drawing.Imaging
 
         private void Dispose(bool disposing)
         {
-            WrappedEncoderParameter.Dispose();
+            if (disposing)
+            {
+                WrappedEncoderParameter.Dispose();
+            }
         }
 
         /// <summary>Initializes a new instance of the <see cref="T:Common.Drawing.Imaging.EncoderParameter" /> class with the specified <see cref="T:Common.Drawing.Imaging.Encoder" /> object and one unsigned 8-bit integer. Sets the <see cref="P:Common.Drawing.Imaging.EncoderParameter.ValueType" /> property to <see cref="F:Common.Drawing.Imaging.EncoderParameterValueType.ValueTypeByte" />, and sets the <see cref="P:Common.Drawing.Imaging.EncoderParameter.NumberOfValues" /> property to 1.</summary>

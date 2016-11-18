@@ -180,7 +180,24 @@ namespace Common.Drawing
         /// </PermissionSet>
         public Brush Brush
         {
-            get { return WrappedPen.Brush; }
+            get
+            {
+                switch (WrappedPen.PenType)
+                {
+                    case System.Drawing.Drawing2D.PenType.SolidColor:
+                        return new SolidBrush(WrappedPen.Brush as System.Drawing.SolidBrush);
+                    case System.Drawing.Drawing2D.PenType.HatchFill:
+                        return new HatchBrush(WrappedPen.Brush as System.Drawing.Drawing2D.HatchBrush);
+                    case System.Drawing.Drawing2D.PenType.TextureFill:
+                        return new TextureBrush(WrappedPen.Brush as System.Drawing.TextureBrush);
+                    case System.Drawing.Drawing2D.PenType.PathGradient:
+                        return new PathGradientBrush(WrappedPen.Brush as System.Drawing.Drawing2D.PathGradientBrush);
+                    case System.Drawing.Drawing2D.PenType.LinearGradient:
+                        return new LinearGradientBrush(WrappedPen.Brush as System.Drawing.Drawing2D.LinearGradientBrush);
+                    default:
+                        return null;
+                }
+            }
             set { WrappedPen.Brush = value; }
         }
 
@@ -238,8 +255,9 @@ namespace Common.Drawing
 
         /// <summary>Initializes a new instance of the <see cref="T:Common.Drawing.Pen" /> class with the specified color.</summary>
         /// <param name="color">A <see cref="T:Common.Drawing.Color" /> structure that indicates the color of this <see cref="T:Common.Drawing.Pen" />. </param>
-        public Pen(Color color) : this(color, 1f)
+        public Pen(Color color) 
         {
+            WrappedPen = new System.Drawing.Pen(color);
         }
 
         /// <summary>Initializes a new instance of the <see cref="T:Common.Drawing.Pen" /> class with the specified <see cref="T:Common.Drawing.Color" /> and <see cref="P:Common.Drawing.Pen.Width" /> properties.</summary>
@@ -294,7 +312,10 @@ namespace Common.Drawing
 
         private void Dispose(bool disposing)
         {
-            WrappedPen.Dispose();
+            if (disposing)
+            {
+                WrappedPen.Dispose();
+            }
         }
 
         ~Pen()

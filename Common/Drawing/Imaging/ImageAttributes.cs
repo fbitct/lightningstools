@@ -32,7 +32,10 @@ namespace Common.Drawing.Imaging
 
         private void Dispose(bool disposing)
         {
-            WrappedImageAttributes.Dispose();
+            if (disposing)
+            {
+                WrappedImageAttributes.Dispose();
+            }
         }
 
         ~ImageAttributes()

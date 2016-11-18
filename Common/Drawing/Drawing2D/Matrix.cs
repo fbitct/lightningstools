@@ -107,7 +107,10 @@ namespace Common.Drawing.Drawing2D
 
         private void Dispose(bool disposing)
         {
-            WrappedMatrix.Dispose();
+            if (disposing)
+            {
+                WrappedMatrix.Dispose();
+            }
         }
 
         ~Matrix()

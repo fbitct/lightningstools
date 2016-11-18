@@ -84,7 +84,10 @@ namespace Common.Drawing
 
         private void Dispose(bool disposing)
         {
-            WrappedRegion.Dispose();
+            if (disposing)
+            {
+                WrappedRegion.Dispose();
+            }
         }
 
         ~Region()

@@ -21,7 +21,10 @@ namespace Common.Drawing.Text
 
         protected override void Dispose(bool disposing)
         {
-            WrappedPrivateFontCollection.Dispose();
+            if (disposing)
+            {
+                WrappedPrivateFontCollection.Dispose();
+            }
         }
 
         /// <summary>Adds a font from the specified file to this <see cref="T:Common.Drawing.Text.PrivateFontCollection" />. </summary>

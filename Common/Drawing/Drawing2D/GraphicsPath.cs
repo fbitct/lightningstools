@@ -122,7 +122,10 @@ namespace Common.Drawing.Drawing2D
 
         private void Dispose(bool disposing)
         {
-            WrappedGraphicsPath.Dispose();
+            if (disposing)
+            {
+                WrappedGraphicsPath.Dispose();
+            }
         }
 
         ~GraphicsPath()

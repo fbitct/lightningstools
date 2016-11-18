@@ -377,7 +377,10 @@ namespace Common.Drawing
 
         private void Dispose(bool disposing)
         {
-            WrappedGraphics.Dispose();
+            if (disposing)
+            {
+                WrappedGraphics.Dispose();
+            }
         }
 
         ~Graphics()

@@ -345,7 +345,10 @@ namespace Common.Drawing
 
         private void Dispose(bool disposing)
         {
-            WrappedFont.Dispose();
+            if (disposing)
+            {
+                WrappedFont.Dispose();
+            }
         }
 
         /// <summary>Indicates whether the specified object is a <see cref="T:Common.Drawing.Font" /> and has the same <see cref="P:Common.Drawing.Font.FontFamily" />, <see cref="P:Common.Drawing.Font.GdiVerticalFont" />, <see cref="P:Common.Drawing.Font.GdiCharSet" />, <see cref="P:Common.Drawing.Font.Style" />, <see cref="P:Common.Drawing.Font.Size" />, and <see cref="P:Common.Drawing.Font.Unit" /> property values as this <see cref="T:Common.Drawing.Font" />.</summary>
