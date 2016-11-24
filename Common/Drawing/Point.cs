@@ -37,8 +37,8 @@ namespace Common.Drawing
         /// <filterpriority>1</filterpriority>
         public int Y
         {
-            get { return WrappedPoint.X; }
-            set { WrappedPoint.X = value; }
+            get { return WrappedPoint.Y; }
+            set { WrappedPoint.Y = value; }
         }
 
         /// <summary>Initializes a new instance of the <see cref="T:Common.Drawing.Point" /> class with the specified coordinates.</summary>
@@ -98,14 +98,14 @@ namespace Common.Drawing
         /// <param name="pt">The <see cref="T:Common.Drawing.Point" /> to translate. </param>
         /// <param name="sz">A <see cref="T:Common.Drawing.Size" /> that specifies the pair of numbers to add to the coordinates of <paramref name="pt" />. </param>
         /// <filterpriority>3</filterpriority>
-        public static Point operator +(Point pt, Size sz) { return pt.WrappedPoint + sz; }
+        public static Point operator +(Point pt, Size sz) { return System.Drawing.Point.Add(pt.WrappedPoint, sz); }
 
         /// <summary>Translates a <see cref="T:Common.Drawing.Point" /> by the negative of a given <see cref="T:Common.Drawing.Size" />.</summary>
         /// <returns>A <see cref="T:Common.Drawing.Point" /> structure that is translated by the negative of a given <see cref="T:Common.Drawing.Size" /> structure.</returns>
         /// <param name="pt">The <see cref="T:Common.Drawing.Point" /> to translate. </param>
         /// <param name="sz">A <see cref="T:Common.Drawing.Size" /> that specifies the pair of numbers to subtract from the coordinates of <paramref name="pt" />. </param>
         /// <filterpriority>3</filterpriority>
-        public static Point operator -(Point pt, Size sz) { return pt.WrappedPoint - sz; }
+        public static Point operator -(Point pt, Size sz) { return System.Drawing.Point.Subtract(pt.WrappedPoint,sz); }
         
 
         /// <summary>Compares two <see cref="T:Common.Drawing.Point" /> objects. The result specifies whether the values of the <see cref="P:Common.Drawing.Point.X" /> and <see cref="P:Common.Drawing.Point.Y" /> properties of the two <see cref="T:Common.Drawing.Point" /> objects are equal.</summary>
@@ -113,14 +113,14 @@ namespace Common.Drawing
         /// <param name="left">A <see cref="T:Common.Drawing.Point" /> to compare. </param>
         /// <param name="right">A <see cref="T:Common.Drawing.Point" /> to compare. </param>
         /// <filterpriority>3</filterpriority>
-        public static bool operator ==(Point left, Point right) { return left.WrappedPoint == right.WrappedPoint;}
+        public static bool operator ==(Point left, Point right) { return System.Drawing.Point.Equals(left.WrappedPoint, right.WrappedPoint);}
 
         /// <summary>Compares two <see cref="T:Common.Drawing.Point" /> objects. The result specifies whether the values of the <see cref="P:Common.Drawing.Point.X" /> or <see cref="P:Common.Drawing.Point.Y" /> properties of the two <see cref="T:Common.Drawing.Point" /> objects are unequal.</summary>
         /// <returns>true if the values of either the <see cref="P:Common.Drawing.Point.X" /> properties or the <see cref="P:Common.Drawing.Point.Y" /> properties of <paramref name="left" /> and <paramref name="right" /> differ; otherwise, false.</returns>
         /// <param name="left">A <see cref="T:Common.Drawing.Point" /> to compare. </param>
         /// <param name="right">A <see cref="T:Common.Drawing.Point" /> to compare. </param>
         /// <filterpriority>3</filterpriority>
-        public static bool operator !=(Point left, Point right) { return left.WrappedPoint != right.WrappedPoint; }
+        public static bool operator !=(Point left, Point right) { return !System.Drawing.Point.Equals(left.WrappedPoint, right.WrappedPoint); }
 
         /// <summary>Adds the specified <see cref="T:Common.Drawing.Size" /> to the specified <see cref="T:Common.Drawing.Point" />.</summary>
         /// <returns>The <see cref="T:Common.Drawing.Point" /> that is the result of the addition operation.</returns>

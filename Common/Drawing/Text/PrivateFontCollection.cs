@@ -6,17 +6,19 @@ namespace Common.Drawing.Text
     /// <summary>Provides a collection of font families built from font files that are provided by the client application.</summary>
     public sealed class PrivateFontCollection : FontCollection
     {
-        private System.Drawing.Text.PrivateFontCollection WrappedPrivateFontCollection { get; set; }
-        private PrivateFontCollection(System.Drawing.Text.PrivateFontCollection privateFontCollection):base(privateFontCollection)
+        private System.Drawing.Text.PrivateFontCollection WrappedPrivateFontCollection
+        {
+            get { return WrappedFontCollection as System.Drawing.Text.PrivateFontCollection; }
+            set { WrappedFontCollection = value; }
+        }
+        private PrivateFontCollection(System.Drawing.Text.PrivateFontCollection privateFontCollection)
         {
             WrappedPrivateFontCollection = privateFontCollection;
-            base.WrappedFontCollection = WrappedPrivateFontCollection;
         }
         /// <summary>Initializes a new instance of the <see cref="T:Common.Drawing.Text.PrivateFontCollection" /> class. </summary>
         public PrivateFontCollection()
         {
             WrappedPrivateFontCollection = new System.Drawing.Text.PrivateFontCollection();
-            base.WrappedFontCollection = WrappedPrivateFontCollection;
         }
 
         protected override void Dispose(bool disposing)

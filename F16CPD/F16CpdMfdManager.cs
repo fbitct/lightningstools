@@ -1022,10 +1022,10 @@ namespace F16CPD
             {
                 activeMFDImageBytes = FlightData.RMFDImage;
             }
-            Bitmap activeMFDImage=null;
+            Image activeMFDImage=null;
             if (activeMFDImageBytes !=null)
             {
-                activeMFDImage = (Bitmap)Common.Imaging.Util.BitmapFromBytes(activeMFDImageBytes);
+                activeMFDImage = Common.Imaging.Util.BitmapFromBytes(activeMFDImageBytes);
             }
 
             if (activeMFDImage != null)

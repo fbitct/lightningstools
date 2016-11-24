@@ -4,7 +4,10 @@
     /// <filterpriority>1</filterpriority>
     public sealed class SolidBrush : Brush
     {
-        internal SolidBrush(System.Drawing.SolidBrush solidBrush) : base(solidBrush) { }
+        internal SolidBrush(System.Drawing.SolidBrush solidBrush)
+        {
+            WrappedSolidBrush = solidBrush;
+        }
         private System.Drawing.SolidBrush WrappedSolidBrush
         {
             get { return WrappedBrush as System.Drawing.SolidBrush; }
@@ -25,7 +28,7 @@
 
         /// <summary>Initializes a new <see cref="T:Common.Drawing.SolidBrush" /> object of the specified color.</summary>
         /// <param name="color">A <see cref="T:Common.Drawing.Color" /> structure that represents the color of this brush. </param>
-        public SolidBrush(Color color):base()
+        public SolidBrush(Color color)
         {
             WrappedSolidBrush = new System.Drawing.SolidBrush(color);
         }
