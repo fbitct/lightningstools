@@ -133,7 +133,10 @@ namespace AnalogDevicesTestTool
         }
         private void DACChannelSelectRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateUIValuesForSelectedDACChannel();
+            if ((sender as RadioButton).Checked)
+            {
+                UpdateUIValuesForSelectedDACChannel();
+            }
         }
         private void UpdateUIValuesForSelectedDACChannel()
         {
@@ -329,17 +332,25 @@ namespace AnalogDevicesTestTool
                 errorProvider1.SetError(control, string.Format("Value must be a positive integer or decimal between {0} and {1}", low, high));
             }
         }
-
+        private bool _initialized=false;
+        private void Initialize()
+        {
+            SetDACChannelOffset();
+            SetDACChannelGain();
+            UpdateOffsetDAC0();
+            UpdateOffsetDAC1();
+            SetDACChannelDataSourceAndUpdateDataValue();
+            _initialized = true;
+        }
         private void btnUpdateAllDacOutputs_Click(object sender, EventArgs e)
         {
             UpdateCalculatedOutputVoltage();
             if (_selectedDevice != null)
             {
-                SetDACChannelOffset();
-                SetDACChannelGain();
-                UpdateOffsetDAC0();
-                UpdateOffsetDAC1();
-                SetDACChannelDataSourceAndUpdateDataValue();
+                if (_initialized)
+                {
+                    Initialize();
+                }
                 _selectedDevice.UpdateAllDacOutputs();
             }
         }

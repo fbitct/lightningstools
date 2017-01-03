@@ -1,5 +1,8 @@
-﻿namespace AnalogDevices
+﻿using System;
+
+namespace AnalogDevices
 {
+    [Flags]
     internal enum ABSelectRegisterBits
     {
         F0 = BasicMasks.BitZero,

@@ -1,5 +1,8 @@
-﻿namespace AnalogDevices
+﻿using System;
+
+namespace AnalogDevices
 {
+    [Flags]
     internal enum SerialInterfaceModeBits:uint
     {
         M1 = 1 << 23, //bit I23 in serial word bit assignment

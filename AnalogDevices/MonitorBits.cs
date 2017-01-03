@@ -1,5 +1,8 @@
-﻿namespace AnalogDevices
+﻿using System;
+
+namespace AnalogDevices
 {
+    [Flags]
     internal enum MonitorBits:ushort
     {
         F0=BasicMasks.BitZero,
